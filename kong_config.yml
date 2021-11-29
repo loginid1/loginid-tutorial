@@ -1,0 +1,64 @@
+# ------------------------------------------------------------------------------
+# This is an example file to get you started with using
+# declarative configuration in Kong.
+# ------------------------------------------------------------------------------
+
+# Metadata fields start with an underscore (_)
+# Fields that do not start with an underscore represent Kong entities and attributes
+
+# _format_version is mandatory,
+# it specifies the minimum version of Kong that supports the format
+
+_format_version: "2.1"
+
+# _transform is optional, defaulting to true.
+# It specifies whether schema transformations should be applied when importing this file
+# as a rule of thumb, leave this setting to true if you are importing credentials
+# with plain passwords, which need to be encrypted/hashed before storing on the database.
+# On the other hand, if you are reimporting a database with passwords already encrypted/hashed,
+# set it to false.
+
+_transform: true
+
+  # Each Kong entity (core entity or custom entity introduced by a plugin)
+# can be listed in the top-level as an array of objects:
+
+services:
+  - name: cat-fact
+    url: https://catfact.ninja/fact
+    routes:
+    - name: fact-route
+      paths:
+      - /fact
+
+plugins:
+  - name: loginid
+    service: cat-fact
+    config:
+      login_id_base_url: https://directweb.usw1.loginid.io
+      login_id_client_id: 3CgcOsTIq-Qe24An5Al79FajqU3-7jAGk4f-ZD5cTjVESyIB3wFbhY9Gmu8yUTTGlkWXZiTC6BkO9CGng0wIEQ==
+      login_id_public_key_url: https://directweb.usw1.loginid.io/certs
+      issuer: loginid.io
+      audience: 3CgcOsTIq-Qe24An5Al79FajqU3-7jAGk4f-ZD5cTjVESyIB3wFbhY9Gmu8yUTTGlkWXZiTC6BkO9CGng0wIEQ==
+  - name: cors
+    service: cat-fact
+    config:
+      origins:
+        - http://localhost:8080
+        - http://localhost:8090
+      methods:
+        - GET
+        - POST
+      headers:
+        - Accept
+        - Accept-Version
+        - Content-Length
+        - Content-MD5
+        - Content-Type
+        - Date
+        - X-Auth-Token
+      exposed_headers:
+        - X-Auth-Token
+      credentials: true
+      max_age: 3600
+      preflight_continue: false

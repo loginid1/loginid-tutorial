@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FIDO2 Authentication</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="script/eval.js"></script>
+    <script type="module">
+        import * as WebSDK from './js/loginid.web.min.js';
+        const dw = new web.default(
+            "https://directweb.usw1.loginid.io", "3CgcOsTIq-Qe24An5Al79FajqU3-7jAGk4f-ZD5cTjVESyIB3wFbhY9Gmu8yUTTGlkWXZiTC6BkO9CGng0wIEQ=="
+        );
+        window.dw = dw;
+    </script>
+</head>
+<body>
+<p>Please login before accessing exciting content!</p>
+<p><strong>Sign-In: </strong><input type="email" id="idSignInName" name="signInName" size="35"
+                                    placeholder="Your LoginID Username/EMail">
+    <button type="button" value="check" id="idBtnSignInName" name="btnSignInName" onclick="return signInUser(dw);"><img
+            src="images/button_loginid.png" alt="sign-in" width="70px"/></button>
+</p>
+<div id="divResponses"></div>
+</body>
+</html>
