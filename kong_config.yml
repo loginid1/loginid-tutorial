@@ -36,14 +36,15 @@ plugins:
     service: cat-fact
     config:
       login_id_base_url: https://directweb.usw1.loginid.io
-      login_id_client_id: 3CgcOsTIq-Qe24An5Al79FajqU3-7jAGk4f-ZD5cTjVESyIB3wFbhY9Gmu8yUTTGlkWXZiTC6BkO9CGng0wIEQ==
+      login_id_client_id: SCTepXzT_zsF6BRY29IBi0WV1FnhX8bUyteFvt0yaXzfFduxuSaag_P7G9Mg10vyWBFD_aVPTpKPr0Do_bBPgw
       login_id_public_key_url: https://directweb.usw1.loginid.io/certs
       issuer: loginid.io
-      audience: 3CgcOsTIq-Qe24An5Al79FajqU3-7jAGk4f-ZD5cTjVESyIB3wFbhY9Gmu8yUTTGlkWXZiTC6BkO9CGng0wIEQ==
+      audience: SCTepXzT_zsF6BRY29IBi0WV1FnhX8bUyteFvt0yaXzfFduxuSaag_P7G9Mg10vyWBFD_aVPTpKPr0Do_bBPgw
   - name: cors
     service: cat-fact
     config:
       origins:
+        - http://localhost
         - http://localhost:8080
         - http://localhost:8090
       methods:
@@ -57,6 +58,7 @@ plugins:
         - Content-Type
         - Date
         - X-Auth-Token
+        - Authorization
       exposed_headers:
         - X-Auth-Token
       credentials: true

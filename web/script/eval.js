@@ -15,7 +15,9 @@ async function signInUser(dw) {
     try {
         result = await dw.authenticateWithFido2(username);
         postMsg("/users", "credential="+result.jwt);
-        document.getElementById('divResponses').innerHTML = "<strong>Thanks for authenticating, " + result.user.username + "!</strong>"
+        let msg = "<strong>Thanks for authenticating, " + result.user.username + "!</strong>"
+        msg = msg + "<p>Click <a href='http://localhost:8080#jwt=" + result.jwt + "'>here</a> to get cat-fatcs!</p>"
+        document.getElementById('divResponses').innerHTML = msg;
     } catch (err) {
         if ("user_not_found" === err.code) {
             document.getElementById('divResponses').innerHTML =
@@ -25,31 +27,16 @@ async function signInUser(dw) {
     }
 }
 
-async function findUser(dw) {
-    let username = document.getElementById('idUsername').value;
-    try {
-        result = await dw.authenticateWithFido2(username);
-        postMsg("/users", "credential="+result.jwt);
-        document.getElementById('divResponses').innerHTML = "<strong>Thanks for authenticating, " + result.user.username + "!</strong>"
-    } catch (err) {
-        if ("user_not_found" === err.code) {
-            document.getElementById('divResponses').innerHTML =
-                "<strong>You have not been registered yet, would you like to do that now?</strong>" +
-                "<button type=\"button\" onclick=\"return registerUser(dw, username)\">Yes, Register</button>"
-        }
-    }
-}
-
 function postMsg(targetUrl, msg) {
     $.ajax({
         type: 'POST',
-        url: targetUrl,
+        url: 'http://localhost' + targetUrl,
         data: msg,
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
         async: false,
         success: function (data) {
-            alert(JSON.stringify(data));
+            alert(JSON.stringify(data.jwt));
         },
         error: function (data) {
             alert(JSON.stringify(data));

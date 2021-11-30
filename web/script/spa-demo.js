@@ -29,6 +29,10 @@
  * - next = empty string or /token, the next endpoint to call
  * - code_verifier = empty string or PKCE code_verifier
  */
+var userJwt="";
+if (location.href.indexOf('#') >= 0) {
+    userJwt = window.location.hash.substr(1).split('=')[1];
+}
 
 // always write the top part of the UI
 // add any other content into the div 'divResponse'
@@ -208,13 +212,14 @@ function directCall(targetUrl) {
 }
 
 function protectedCall(targetUrl) {
-    getMsg(targetUrl, null);
+    getMsg(targetUrl, userJwt);
 }
 
 function getMsg(targetUrl, credential) {
     $.ajax({
         type: 'GET',
         url: targetUrl,
+        headers: {"Authorization": "Bearer " + credential},
         dataType: 'json',
         async: false,
         statusCode: {

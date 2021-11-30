@@ -3,6 +3,7 @@ version: "3.4"
 services:
 
   nginx:
+    container_name: demo_app
     image: local/kongclient
     restart: always
     ports:
@@ -11,8 +12,8 @@ services:
       - ./web:/usr/share/nginx/html:ro
 
   kong:
+    container_name: api_gateway
     image: local/kong
-    container_name: kong
     restart: always
     ports:
       - "8090:8000"
@@ -25,3 +26,16 @@ services:
       - "KONG_PROXY_ERROR_LOG=/dev/stderr"
       - "KONG_ADMIN_ERROR_LOG=/dev/stderr"
       - "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl"
+
+  java-server-side-sdk-demo:
+    container_name: user_mgmt_api
+    image: sascha/fido:latest
+    restart: always
+    ports:
+      - "80:8080"
+      - "8000:8000"
+    volumes:
+      - ./local/users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+    environment:
+      - "BASE_URL=https://directweb.usw1.loginid.io"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,address=8000,suspend=n,server=y"
