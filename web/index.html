@@ -1,12 +1,4 @@
 <!DOCTYPE html>
-<!--
-  ~ Copyright (c) 2018. . All rights reserved.
-  ~
-  ~ This software may be modified and distributed under the terms of the Apache License 2.0 license.
-  ~ See http://www.apache.org/licenses/LICENSE-2.0 for details.
-  ~
-  -->
-
 <html>
 <head>
     <meta charset="utf-8">
@@ -16,11 +8,7 @@
     <title>FIDO2 Client Demo</title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css">
-
-    <link href="favicon.ico" rel="icon" type="image/x-icon"/>
-    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-    <link href="css/prism.css"/>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -28,11 +16,55 @@
     <script src="js/html5shiv.min.js"></script>
     <script src="js/respond.min.js"></script>
     <![endif]-->
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="js/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/prism.js"></script>
+
     <script src="script/spa-demo.js"></script>
+
+    <link href="css/prism.css" rel="stylesheet"/>
+    <script src="js/prism.js"></script>
 </head>
+<body>
+<div class="container" id="content">
+    <h1>Welcome to the FIDO2-Democlient!</h1>
+    <p>This is a demo client of <a href="https://loginid.io" target="_blank"><strong>LoginID</strong></a>.</p>
+    <p>This client simulates a <strong>Single Page App (SPA)</strong> that a developer may build.</p>
+    <p>Please note that this client is pretty simple. Check the comments in <strong>script/spa-demo.js</strong> to learn
+        more about it. However, hopefully it does help to understand how a FIDO2 flow in a SPA works!</p>
+    <p>This demo is also used to show how the <a href="https://konghq.com" target="_blank"><strong>Kong</strong></a>
+        validation plugin can be used.</p>
+    <p>This demo makes a request to Kong which returns an error if no FIDO2 based credential is included in the
+        request.</p>
+    <hr/>
+    <h3>APIs</h3>
+    <p><strong>https://catfact.ninja</strong>: the public API which is called directly.</p>
+    <p><strong>http://localhost:8090/facts</strong>: the same public API but hosted on Kong as a protected API. A
+        request to this API requires a valid FIDO2 credential in the form of a JSON Web Token (JWT), issued by <strong>LoginID</strong>.
+    </p>
+    <table>
+        <tr>
+            <td><label for="btnDirect">Direct request:</label></td>
+            <td>
+                <button id="btnDirect" type="button" class="btn btn-primary btn-sm"
+                        onclick="return directCall('https://catfact.ninja/fact');">https://catfact.ninja
+                </button>
+            </td>
+            <td>(client --> cat-fact-API)</td>
+        </tr>
+        <tr>
+            <td><label for="btnProtected">Protected request:</label></td>
+            <td>
+                <button id="btnProtected" type="button" class="btn btn-primary btn-sm"
+                        onclick="return protectedCall('http://localhost:8090/fact');">http://localhost:8090/fact
+                </button>
+            </td>
+            <td>(client --> Kong --> cat-fact-API)</td>
+        </tr>
+    </table>
+    <h3>API Responses</h3>
+    <p>The responses of the API calls are displayed below:</p>
+    <hr/>
+    <div id="divResponse"></div>
+</div>
+</body>
 </html>
