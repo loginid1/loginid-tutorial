@@ -8,7 +8,11 @@ Load Kong static config:
 
 Whenever the config changes!
 
+- `make build`
+- `docker-compose up`
 - `http :8001/config config=@kong_config.yml`
+- browser: `http://localhost:8080`
+- username: `sascha@example.com`
 
 Rebuild nginx (make build) whenever nginx.conf changes!
 
