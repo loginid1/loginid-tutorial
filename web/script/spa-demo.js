@@ -20,7 +20,7 @@ async function signInUser(dw) {
         result = await dw.authenticateWithFido2(username);
         postMsg("/users", "credential="+result.jwt);
         let msg = "<strong>Thanks for authenticating, " + result.user.username + "!</strong>"
-        msg = msg + "<p>Click <a href='http://localhost:8080#jwt=" + result.jwt + "'>here</a> to get cat-fatcs!</p>"
+        msg = msg + "<p>Click <a href='http://localhost#jwt=" + result.jwt + "'>here</a> to get cat-fatcs!</p>"
         document.getElementById('divResponses').innerHTML = msg;
     } catch (err) {
         if ("user_not_found" === err.code) {
@@ -42,7 +42,7 @@ function protectedCall(targetUrl) {
 function postMsg(targetUrl, msg) {
     $.ajax({
         type: 'POST',
-        url: 'http://localhost' + targetUrl,
+        url: 'http://localhost:8080' + targetUrl,
         data: msg,
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',

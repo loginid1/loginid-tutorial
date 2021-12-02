@@ -37,8 +37,8 @@
         request.</p>
     <hr/>
     <h3>APIs</h3>
-    <p><strong>https://catfact.ninja</strong>: the public API which is called directly.</p>
-    <p><strong>http://localhost:8090/facts</strong>: the same public API but hosted on Kong as a protected API. A
+    <p><strong>https://catfact.ninja/fact</strong>: the public API which is called directly.</p>
+    <p><strong>http://localhost:8090/fact</strong>: the same public API but hosted on Kong as a protected API. A
         request to this API requires a valid FIDO2 credential in the form of a JSON Web Token (JWT), issued by <strong>LoginID</strong>.
     </p>
     <table>
@@ -46,7 +46,7 @@
             <td><label for="btnDirect">Direct request:</label></td>
             <td>
                 <button id="btnDirect" type="button" class="btn btn-primary btn-sm"
-                        onclick="return directCall('https://catfact.ninja/fact');">https://catfact.ninja
+                        onclick="return directCall('https://catfact.ninja/fact');">https://catfact.ninja/fact
                 </button>
             </td>
             <td>(client --> cat-fact-API)</td>
