@@ -11,6 +11,15 @@ services:
     volumes:
       - ./web:/usr/share/nginx/html:ro
 
+  ui:
+    container_name: demo_ui
+    image: local/ui
+    restart: always
+    ports:
+      - '3000:3000'
+    command:
+      "npm start"
+
   kong:
     container_name: api_gateway
     image: local/kong

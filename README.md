@@ -68,6 +68,10 @@ If all those are available, do this:
 - `http://localhost`  // open a browser at that location and follow the prompts
 - when authenticating, choose a username of you choice (which is hopefully not taken)
 
+To view user flows, open this page:
+
+- `http://localhost:3000`
+
 ## Note
 
 The demo was not build to show off a perfect implementation but to show that the Kong plugin works and to be able to run through a simple user flow!

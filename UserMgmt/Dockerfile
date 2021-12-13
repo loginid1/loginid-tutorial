@@ -4,8 +4,8 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 
 RUN mkdir -p /usr/local/tomcat/webapps/ROOT/WEB-INF/lib
 
-COPY UserMgmt/web/ /usr/local/tomcat/webapps/ROOT
-COPY UserMgmt/target/user-mgmt-1.0-SNAPSHOT-jar-with-dependencies.jar /usr/local/tomcat/webapps/ROOT/WEB-INF/lib/userMgmt.jar
+COPY web /usr/local/tomcat/webapps/ROOT
+COPY target/user-mgmt-1.0-SNAPSHOT-jar-with-dependencies.jar /usr/local/tomcat/webapps/ROOT/WEB-INF/lib/userMgmt.jar
 
 RUN addgroup tomcat
 RUN adduser -SG tomcat tomcat

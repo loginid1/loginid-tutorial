@@ -1,0 +1,18 @@
+extends template.pug
+
+block content
+	h1 Welcome #{user.username}
+	form(method="POST" action="/logout")
+		button Logout
+
+	h2 Transaction Confirmation
+
+	div.group
+		span#tx-id(class="copy")
+		span#message
+		input#tx-payload(placeholder="Transaction Payload")
+		button#tx-create Create Transaction ID
+		button#tx-confirm Confirm Transaction
+		button#tx-create-confirm Create and Confirm Transaction
+
+	script(src="/transactionConfirmationExample.js")

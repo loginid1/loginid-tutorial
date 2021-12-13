@@ -1,0 +1,21 @@
+extends template.pug
+
+block content
+
+	h2 Generate Codes
+
+	h3 Push Authentication Code
+	div.group
+		span#code-push(class="message")
+		input#code-push-username(placeholder="Username")
+		button#code-push-button Create Code
+
+	h3 Add Authentication Code
+	div.group
+		span#code-add(class="message")
+		input#code-add-username(placeholder="Username")
+		button#code-add-button Create Code
+		button#code-add-credential-button Add Credential
+
+	a.link(href="/") Register/Login
+	script(src="/codes.js")

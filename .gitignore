@@ -1,5 +1,9 @@
 .idea
 local
 *.iml
-*.DS_Store
+.DS_Store
 */target
+*/node_modules
+*/package-lock.json
+package-lock.json
+.env

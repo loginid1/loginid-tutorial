@@ -1,0 +1,12 @@
+doctype html
+html(lang="env")
+	head
+		meta(charset="utf-8")
+		meta(name="viewport" content="width=device-width, inital-scale=1")
+		meta(name="author" content="LoginID")
+		link(rel="stylesheet" href="index.css")
+	body
+		data(data-client-id=env.WEB_CLIENT_ID data-base-url=env.BASE_URL data-username=(user ? user.username : ""))
+		script(src="https://loginid-sdk.s3-us-west-1.amazonaws.com/sdk/js/0.9.9/loginid.web.min.js")
+		block content
+	// Web SDK is imported here but can be imported through your favourite bundler	

@@ -1,0 +1,28 @@
+extends template.pug
+
+block content
+	h2 Register/Login
+
+	p These two fields enable users to register or authenticate.
+
+	div.group
+		input#name-fido2(placeholder="Username")
+		button#register-fido2 Register
+		button#authenticate-fido2 Login
+
+	h3 Push Authentication
+	div.group
+		input#name-push(placeholder="Username")
+		input#code-push(placeholder="Code")
+		button#button-push Authenticate
+
+	h3 Add Credential
+	span#message
+	div.group
+		input#name-add(placeholder="Username")
+		input#code-add(placeholder="Code")
+		button#button-add Authenticate
+
+	a.link(href="/codes") On a Secondary Device? Click Here
+
+	script(src="/registerLoginExample.js")

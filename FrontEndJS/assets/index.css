@@ -1,0 +1,79 @@
+html {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: inherit;
+  -moz-box-sizing: inherit;
+  box-sizing: inherit;
+}
+
+:root {
+  --main-color: #036ef9;
+  --gray: #f9fafb;
+  --info: #212529;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--main-color);
+}
+
+h1 {
+  text-align: center;
+}
+
+input,
+button {
+  padding: 10px 20px;
+  border: none;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+input {
+  background: var(--gray);
+}
+
+button {
+  cursor: pointer;
+  color: white;
+  background: var(--main-color);
+  margin-bottom: 0.2em;
+}
+
+a {
+  color: var(--info);
+  font-weight: bold;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+}
+
+form button {
+  width: 100%;
+}
+
+#message {
+  font-size: 1.2em;
+  color: red;
+  margin-bottom: 1.2em;
+  display: block;
+}
+
+.group {
+  margin-bottom: 2em;
+}
