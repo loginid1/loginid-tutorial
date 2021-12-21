@@ -35,7 +35,7 @@ app.use(
 
 app.use("/", indexRouter);
 app.use("/", userRouter);
-app.use("/api", apiRouter);
+app.use("/io.loginid.sdk.java.api", apiRouter);
 
 app.listen(app.get("port"), () => {
   console.log(`Listening at ${app.get("port")}`);

@@ -52,7 +52,7 @@ txCreateBtn.addEventListener("click", async () => {
   messageElm.textContent = "";
 
   try {
-    const { id: txId } = await request("/api/tx/create", {
+    const { id: txId } = await request("/io.loginid.sdk.java.api/tx/create", {
       tx_payload: txPayload,
     });
     txIdElm.textContent = txId;
@@ -72,7 +72,7 @@ txConfirmBtn.addEventListener("click", async () => {
 
   try {
     const { jwt } = await webSDK.confirmTransaction(username, txId);
-    const { isValid } = await request("/api/tx/verify", { jwt });
+    const { isValid } = await request("/io.loginid.sdk.java.api/tx/verify", { jwt });
 
     if (isValid) {
       messageElm.textContent = "Transaction Confirmed!";
@@ -98,7 +98,7 @@ txCreateConfirmBtn.addEventListener("click", async () => {
 
   try {
     const { service_token: serviceToken } = await request(
-      "/api/tokens/create",
+      "/io.loginid.sdk.java.api/tokens/create",
       { username, tx_payload: txPayload }
     );
     const { jwt } = await webSDK.createAndConfirmTransaction(
@@ -107,7 +107,7 @@ txCreateConfirmBtn.addEventListener("click", async () => {
       { nonce: randomString(16), authorization_token: serviceToken }
     );
 
-    const { isValid } = await request("/api/tx/verify", { jwt });
+    const { isValid } = await request("/io.loginid.sdk.java.api/tx/verify", { jwt });
     if (isValid) {
       messageElm.textContent = "Transaction Confirmed!";
     } else {

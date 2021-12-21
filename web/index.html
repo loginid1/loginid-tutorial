@@ -60,6 +60,15 @@
             </td>
             <td>(client --> Kong --> cat-fact-API)</td>
         </tr>
+        <tr>
+            <td><label for="btnCredentials">Get Credentials:</label></td>
+            <td>
+                <button id="btnCredentials" type="button" class="btn btn-primary btn-sm"
+                        onclick="return protectedCall('http://localhost:8080/users');">http://localhost:8080/users
+                </button>
+            </td>
+            <td>(client --> UserMgmt)</td>
+        </tr>
     </table>
     <h3>API Responses</h3>
     <p>The responses of the API calls are displayed below:</p>

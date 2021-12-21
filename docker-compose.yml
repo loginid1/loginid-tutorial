@@ -44,3 +44,5 @@ services:
       - "8080:8080"
     environment:
       - "BASE_URL=https://directweb.usw1.loginid.io"
+    volumes:
+      - /Users/sascha/.loginid/config:/opt/docker/loginid/config

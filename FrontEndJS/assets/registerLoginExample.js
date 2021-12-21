@@ -43,9 +43,9 @@ const handlerRegisterFido2 = async () => {
   try {
     const username = nameInputFido2.value;
     const { service_token: serviceToken } = await request(
-      "/api/tokens/create",
+      "/io.loginid.sdk.java.api/tokens/create",
       {
-        type: "auth.register",
+        type: "io.loginid.sdk.java.auth.register",
         username,
       }
     );
@@ -65,9 +65,9 @@ const handlerAuthenticateFido2 = async () => {
   try {
     const username = nameInputFido2.value;
     const { service_token: serviceToken } = await request(
-      "/api/tokens/create",
+      "/io.loginid.sdk.java.api/tokens/create",
       {
-        type: "auth.login",
+        type: "io.loginid.sdk.java.auth.login",
         username,
       }
     );
@@ -89,9 +89,9 @@ const handlerPushAuth = async () => {
     const code = codeInputPush.value;
     //1. Authenticate user
     const { service_token: serviceToken } = await request(
-      "/api/tokens/create",
+      "/io.loginid.sdk.java.api/tokens/create",
       {
-        type: "auth.login",
+        type: "io.loginid.sdk.java.auth.login",
         username,
       }
     );
@@ -100,7 +100,7 @@ const handlerPushAuth = async () => {
     });
 
     //2 Authorize code
-    await request("/api/codes/push/authorize", { username, code });
+    await request("/io.loginid.sdk.java.api/codes/push/authorize", { username, code });
   } catch (e) {
     console.log(e);
     alert(e.message);
@@ -113,9 +113,9 @@ const handlerAddAuth = async () => {
     const code = codeInputAdd.value;
     //1. Authenticate user
     const { service_token: serviceToken } = await request(
-      "/api/tokens/create",
+      "/io.loginid.sdk.java.api/tokens/create",
       {
-        type: "auth.login",
+        type: "io.loginid.sdk.java.auth.login",
         username,
       }
     );
@@ -124,7 +124,7 @@ const handlerAddAuth = async () => {
     });
 
     //2 Authorize code
-    await request("/api/codes/add/authorize", { username, code });
+    await request("/io.loginid.sdk.java.api/codes/add/authorize", { username, code });
     messageElm.textContent = "Code Authorized";
   } catch (e) {
     alert(e.message);

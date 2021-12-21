@@ -85,7 +85,8 @@ function getPostMsgResponse(data) {
 }
 
 function getLoginMsgResponse() {
-    window.location = '../authenticate.html';
+    window.location = 'http://localhost:3000';
+    // window.location = '../authenticate.html';
 }
 
 function printFlowResponse(title, output) {

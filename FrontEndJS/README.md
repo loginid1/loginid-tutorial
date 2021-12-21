@@ -21,7 +21,7 @@ If `WEB_CLIENT_ID` is a private application(credential attached), make sure that
 Here is an example of how a `.env` should look like:
 
 ```
-BASE_URL=https://sandbox-usw1.api.loginid.io
+BASE_URL=https://sandbox-usw1.io.loginid.sdk.java.api.loginid.io
 WEB_CLIENT_ID=am_pUlDE1dnKq11qzIkD_KIzqyoK8t-g1dZnUdwzbGehg7p2Q3R8eLa4rNr_x7mlfMadN5GFKkSef4K2UKsoSQ
 MANAGEMENT_CLIENT_ID=gbxEg41g6WLPX0ggD19fcu6pnD9q25pcUR8_Wd0swhdiIcFbpACEW7j4QAofxe_-Q8tg8KUfd9H0oPsn4cvMLA
 PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM4..........93Kii1dYrh2Kf8KQnjJ1v\n-----END PRIVATE KEY-----"

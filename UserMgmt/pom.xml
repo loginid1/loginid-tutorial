@@ -95,6 +95,11 @@
             <version>0.11.2</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>io.loginid</groupId>
+            <artifactId>java-client</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- Evaluation -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -109,7 +114,7 @@
         </dependency>
     </dependencies>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <swagger-core-version>2.0.0</swagger-core-version>

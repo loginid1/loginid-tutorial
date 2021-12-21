@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.loginid.mgmt.LoginIDUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -36,6 +37,34 @@ public class UserMgmt extends HttpServlet {
                 // if("logind.io".equalsIgnoreCase(jws.getBody().getIssuer()) && .... ) {
                     response.setStatus(200);
                     response.getWriter().printf("{\"username\":\"%s\"}", jws.getBody().get("udata"));
+                // } else {
+                //   return error ...
+                // }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.setStatus(400);
+                response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"something went badly wrong ... !\"}");
+            }
+        } else {
+            response.setStatus(400);
+            response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"no credential (JWT) given\"}");
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        String authJwt = request.getHeader("authorization").split("[ ]")[1].trim();
+        if (authJwt != null) {
+            try {
+                JsonElement jwtHeader = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[0])));
+                Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(lookupVerificationKey(jwtHeader.getAsJsonObject().get("kid").getAsString())).build().parseClaimsJws(authJwt);
+
+                // TODO: validate claims and do something useful with the given JWT claims!
+                // if("logind.io".equalsIgnoreCase(jws.getBody().getIssuer()) && .... ) {
+                response.setStatus(200);
+                response.getWriter().printf(new LoginIDUtil().getCredentials((String)jws.getBody().get("udata")).toString());
                 // } else {
                 //   return error ...
                 // }

@@ -37,11 +37,11 @@ const handlerPushAuth = async () => {
   const username = pushUsernameInput.value;
   try {
     //1. Create unauthorized code
-    const { code } = await request("/api/codes/push/generate", { username });
+    const { code } = await request("/io.loginid.sdk.java.api/codes/push/generate", { username });
     pushMessageElm.textContent = code;
 
     //2. Wait for code to be authorized
-    await request("/api/codes/wait", { username, code });
+    await request("/io.loginid.sdk.java.api/codes/wait", { username, code });
     window.location.replace("/dashboard");
   } catch (e) {
     console.log(e);
@@ -53,7 +53,7 @@ const handlerAddAuthCode = async () => {
   const username = addUsernameInput.value;
   try {
     //1. Create unauthorized code
-    const { code } = await request("/api/codes/add/generate", { username });
+    const { code } = await request("/io.loginid.sdk.java.api/codes/add/generate", { username });
     addMessageElm.textContent = code;
   } catch (e) {
     console.log(e);
@@ -65,9 +65,9 @@ const handlerAddAuth = async () => {
   const username = addUsernameInput.value;
   const code = addMessageElm.textContent;
   try {
-    //2. Start add auth process
+    //2. Start add io.loginid.sdk.java.auth process
     const { service_token: serviceToken } = await request(
-      "/api/tokens/create",
+      "/io.loginid.sdk.java.api/tokens/create",
       {
         type: "credentials.add",
         username,
