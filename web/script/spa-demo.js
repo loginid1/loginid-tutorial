@@ -24,10 +24,10 @@ async function signInUser(dw) {
     }
 }
 
-async function addAuthenticator(dw) {
+async function addAuthenticator(dw, idUsernameField, idAuthCodeFieldName) {
     let result;
-    let username = document.getElementById('idSignInName').value;
-    let code = document.getElementById('idAuthCode').value;
+    let username = document.getElementById(idUsernameField).value;
+    let code = document.getElementById(idAuthCodeFieldName).value;
     try {
         result = await dw.addFido2CredentialWithCode(username, code);
         sessionStorage.setItem("token", result.jwt);
@@ -49,6 +49,8 @@ function requestAuthCodeAuthenticator(targetUrl) {
         async: true,
         statusCode: {
             200: function (data) {
+                document.getElementById('idReqAuthCodeUsernameConfirm').value = data.username;
+                document.getElementById('idAuthCodeConfirm').value = data.code;
                 printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
             },
             400: function (data) {

@@ -28,13 +28,13 @@ Once that is done, update the following files:
   - in both files update **BASE_URL** if needed
   - the second file runs the *user management* container with remote debugging enabled on port 8000
   - the user management container uses the BASE url to retrieve the public signing cert of LoginID
-- `./web/authenticate.html`
+- `./web/index.html`
   - update the BASE_URL and client_id within the constructor of the SDK (e.g.: `const dw = new web.default\("https://directweb.usw1.loginid.io", "pW2GlAFMYRgHRa0CGMT....)`
 - `./docker-build/add-ons/kong/kong.yml`
   - update **login_id_base_url**, **login_id_client_id**, **login_id_public_key_url** and **audience** of the plugin
   - usually *audience* will match the client_id
 
-### Plugin configuration
+### Kong Plugin configuration
 
 For your convenience, these values may be configured for the plugin:
 
@@ -67,10 +67,6 @@ If all those are available, do this:
 - `docker-compose up`  // this launches the system
 - `http://localhost`  // open a browser at that location and follow the prompts
 - when authenticating, choose a username of you choice (which is hopefully not taken)
-
-To view user flows, open this page:
-
-- `http://localhost:3000`
 
 ## Note
 
