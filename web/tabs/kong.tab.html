@@ -1,0 +1,30 @@
+<h2>Kong Plugin</h2>
+<p>LoginID provides a <a href="https://konghq.com" target="_blank"><strong>Kong</strong></a> plugin that enables developers to require
+FIDO2 based user authentication on any Kong protected API.</p>
+<p>LoginID issues JSON Web Token (JWT) whenever users authenticate. These JWT have several claims which may be used for validation purposes.</p>
+<p>This demo shows off how Kong fails any request if the current user has not authenticated beforehand.</p>
+<hr/>
+<p><strong>https://catfact.ninja/fact</strong>: the public API which is called directly.</p>
+<p><strong>http://localhost:8090/fact</strong>: the same public API but hosted on Kong as a protected API which requires a
+    valid FIDO2 credential, issued by <strong>LoginID</strong>.
+</p>
+<table>
+    <tr>
+        <td><label for="btnDirect">Direct request:</label></td>
+        <td>
+            <button id="btnDirect" type="button" class="btn btn-primary btn-sm"
+                    onclick="return directCall('https://catfact.ninja/fact');">https://catfact.ninja/fact
+            </button>
+        </td>
+        <td>(client --> cat-fact-API)</td>
+    </tr>
+    <tr>
+        <td><label for="btnProtected">Protected request:</label></td>
+        <td>
+            <button id="btnProtected" type="button" class="btn btn-primary btn-sm"
+                    onclick="return protectedCall('http://localhost:8090/fact');">http://localhost:8090/fact
+            </button>
+        </td>
+        <td>(client --> Kong --> cat-fact-API)</td>
+    </tr>
+</table>

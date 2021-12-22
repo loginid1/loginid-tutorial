@@ -1,0 +1,100 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>FIDO2 Authentication</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.min.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script type="module">
+        import * as WebSDK from '../js/loginid.web.min.js';
+
+        const dw = new web.default(
+            "https://directweb.usw1.loginid.io", "pW2GlAFMYRgHRa0CGMTN7szVIjGAZBsRZnAnA1gT3VThVv86wlI258l5V--1r23_59R-iTcRLbU6sPgi6pGI_Q"
+        );
+        window.dw = dw;
+    </script>
+
+    <script src="script/spa-demo.js"></script>
+
+    <link href="css/prism.css" rel="stylesheet"/>
+    <script src="js/prism.js"></script>
+
+</head>
+<body>
+<div class="container" id="content">
+    <h1>Welcome to the FIDO2-Democlient!</h1>
+    <p>This client demonstrates different features that are available with FIDO2 enabled devices in combination with LoginID features.</p>
+    <hr/>
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#tabAuthenticate" data-toggle="tab"
+               onclick="getTabContent('tabs/authenticate.tab.html', 'tabAuthenticate');">Authentication</a>
+        </li>
+        <li>
+            <a href="#tabGrantAddCred" data-toggle="tab" onclick="getTabContent('tabs/grantauthenticator.tab.html', 'tabGrantAddCred');">Add Authenticator</a>
+        </li>
+        <li>
+            <a href="#tabManageCreds" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html', 'tabManageCreds');">Manage Authenticators (Devices)</a>
+        </li>
+        <li>
+            <a href="#tabCreateTx" data-toggle="tab">Create Transaction Confirmation</a>
+        </li>
+        <li>
+            <a href="#tabGrantTempCred" data-toggle="tab">Grant Temporary Device</a>
+        </li>
+        <li>
+            <a href="#tabReqTempCred" data-toggle="tab">Request Temporary Credential</a>
+        </li>
+        <li>
+            <a href="#tabReqAddCred" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html', 'tabReqAddCred');">Request Adding Authenticator</a>
+        </li>
+        <li>
+            <a href="#tabKong" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html', 'tabKong');">Kong Plugin</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div id="tabAuthenticate" class="tab-pane active">
+            <p>tabAuthenticate</p>
+        </div>
+        <div id="tabGrantTempCred" class="tab-pane">
+            <p>tabGrantTempCred</p>
+        </div>
+        <div id="tabGrantAddCred" class="tab-pane">
+            <p>tabGrantAddCred</p>
+        </div>
+        <div id="tabCreateTx" class="tab-pane">
+            <p>tabCreateTx</p>
+        </div>
+        <div id="tabManageCreds" class="tab-pane">
+            <p>tabManageCreds</p>
+        </div>
+        <div id="tabReqTempCred" class="tab-pane">
+            <p>tabReqTempCred</p>
+        </div>
+        <div id="tabReqAddCred" class="tab-pane">
+            <p>tabReqAddCred</p>
+        </div>
+        <div id="tabKong" class="tab-pane">
+            <p>tabKong</p>
+        </div>
+    </div>
+    <hr/>
+    <h3>API Responses</h3>
+    <p>The responses of the API calls are displayed below:</p>
+    <div id="divResponse"></div>
+</div>
+</body>
+</html>

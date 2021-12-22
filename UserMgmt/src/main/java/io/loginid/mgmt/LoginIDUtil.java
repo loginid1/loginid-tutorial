@@ -20,7 +20,6 @@ public class LoginIDUtil {
     public LoginIDUtil() {
         try {
             props = new Properties();
-//            props.load(new FileReader(String.format("%s/%s", System.getProperty("user.home"), ".loginid/config")));
             props.load(new FileReader("/opt/docker/loginid/config"));
 
             mgmt = new LoginIdManagement(
@@ -57,5 +56,17 @@ public class LoginIDUtil {
         c4ui.setStatus(cred.getCredential().getStatus().getValue());
         c4ui.setName(cred.getCredential().getName());
         return c4ui;
+    }
+
+    public String requestAuthCodeAuthenticator(String username) throws Exception {
+        UUID userId = mgmt.getUserId(username);
+        String code = mgmt.generateCode(userId.toString(), "short", "add_credential", true).getCode();
+        return String.format("{\"code\":\"%s\"}", code);
+    }
+
+    public String authorizeAuthCodeAuthenticator(String username, String code) throws Exception {
+        UUID userId = mgmt.getUserId(username);
+        boolean granted = mgmt.authorizeCode(userId.toString(), code, "short", "add_credential").isIsAuthorized();
+        return String.format("{\"status\":\"%s\"}", granted ? "authorized" : "failed");
     }
 }

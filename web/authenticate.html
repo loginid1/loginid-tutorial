@@ -23,7 +23,6 @@
 
     <script type="module">
         import * as WebSDK from './js/loginid.web.min.js';
-
         const dw = new web.default(
             "https://directweb.usw1.loginid.io", "pW2GlAFMYRgHRa0CGMTN7szVIjGAZBsRZnAnA1gT3VThVv86wlI258l5V--1r23_59R-iTcRLbU6sPgi6pGI_Q"
         );
@@ -32,14 +31,23 @@
 </head>
 <body>
 <div class="container" id="content">
-    <h1>Welcome to the FIDO2-Democlient Authentication!</h1>
-    <p>Please sign-in!</p>
+    <h2>Authentication</h2>
+    <p>This screen supports two features:</p>
+    <ol>
+        <li>Register a username on a first (primary) device (authenticator)</li>
+        <li>Login with a username from the first (primary) device (authenticator)</li>
+    </ol>
+    <p>The application will figure out if the user is already known and will prompt for registration if needed!</p>
+    <p><strong>Important: </strong> in the context of FIDO based authentication, usernames are always tied to an authenticator and authenticators are always bound to domains!</p>
+    <hr/>
     <p><strong>Sign-In: </strong><input type="email" id="idSignInName" name="signInName" size="35"
                                         placeholder="Your LoginID Username/EMail">
         <button type="button" value="check" id="idBtnSignInName" name="btnSignInName" onclick="return signInUser(dw);">
             <img src="images/button_loginid.png" alt="sign-in" width="70px"/></button>
     </p>
     <div id="divResponses"></div>
+    <hr/>
+    <p><strong>Already have an account but used from a different device (authenticator)?</strong><br/>You may add this device (authenticator) but the primary device needs to be available.<br/>Choose <strong>Request Adding Credential</strong> from the top menu.</p>
 </div>
 </body>
 </html>

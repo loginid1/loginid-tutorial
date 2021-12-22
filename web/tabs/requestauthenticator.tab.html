@@ -1,0 +1,30 @@
+<h2>Request Adding Authenticator</h2>
+<p>Adding an authenticator (device) is the task of enabling an additional device to use with an user account.</p>
+<p>It requires <strong>three steps</strong>:</p>
+<ul>
+    <li>an authorization code has to be generated on the new device</li>
+    <li>the generated authorization code has to be granted on the first device</li>
+    <li>register the authenticator on the new device</li>
+</ul>
+<p>To execute this feature on a MacBook two different browsers can be used. Follow these steps:</p>
+<h3>Open this page on the <strong>other</strong> browser!</h3>
+<ol>
+    <li><strong>this browser - Request Adding Authenticator</strong>: sign-in and copy the generated authorization code.</li>
+    <li><strong>other browser - Add Authenticator</strong>: assuming that authenticator (device/browser) has been used to sign-up initially. If so, paste the code, click <strong>Grant</strong>.</li>
+    <li><strong>this browser - Request Adding Authenticator</strong>: click <strong>Add Authenticator</strong></li>
+</ol>
+<hr/>
+<p>Use the dialog below to generate an authorization code:</p>
+<form>
+<label for="idReqAuthCodeUsername">Provide your username as used with other devices: </label>
+<input id="idReqAuthCodeUsername" type="text" class="input-sm" placeholder="your existing username" size="25">
+<button id="btnReqAuthCode" type="button" class="btn btn-primary btn-sm"
+    onclick="return requestAuthCodeAuthenticator('http://localhost:8080/users/reqauthenticator');">Generate Code</button>
+<hr/>
+<p>Once the authorization code was authorized, provide your username and the code again to complete the process.</p>
+<label for="idSignInName">Provide your username and the authorized code: </label>
+<input id="idSignInName" type="text" class="input-sm" placeholder="your existing username" size="25">
+<input id="idAuthCode" type="text" class="input-sm" placeholder="the authorized code" size="25">
+<button id="btnAddAuthenticator" type="button" class="btn btn-primary btn-sm"
+    onclick="return addAuthenticator();">Add Authenticator</button>
+</form>

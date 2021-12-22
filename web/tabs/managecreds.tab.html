@@ -1,0 +1,31 @@
+<h2>Manage Authenticators (Devices)</h2>
+<p>In FIDO2 users may use more than oen authenticator (deice) to access an account. In those cases it is useful to
+    provide
+    an interface that enables users to get an overview of authenticators, name them, revoke them.</p>
+<p>This page is simple but is fully functional.</p>
+<p>This page leverages a backend for its implementation. <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#idArch" aria-expanded="false" aria-controls="idArch">show/hide architecture</button></p>
+<div id="idArch" class="collapse">
+    <img src="../images/managecreds.png" alt="Manage-Credentials-Design"/>
+    <ul>
+        <li>The frontend displays the demo screens which are accessed via a browser</li>
+        <li>The frontend is configured with a <strong>Web App ClientID</strong> which it uses when
+            registering/authenticating users
+        </li>
+        <li>The backend exposes a simple management API and requires an authenticated user (valid JWT)</li>
+        <li>The backend is configured with a <strong>Backend / API Credential</strong> and is able to generate
+            serviceToken
+            that are required to access LoginID management APIs
+        </li>
+    </ul>
+</div>
+<p>For this use case of <strong>Manage Authenticators (Devices)</strong> the frontend uses the backend to connect to the
+    <strong>/credential</strong> API at LoginID.</p>
+<table class="table">
+    <tr>
+        <td>
+            <button id="btnCredentials" type="button" class="btn btn-primary btn-sm"
+                    onclick="return protectedCall('http://localhost:8080/users/credentials');">List Credentials
+            </button>
+        </td>
+    </tr>
+</table>

@@ -1,15 +1,10 @@
-var userJwt="";
-if (location.href.indexOf('#') >= 0) {
-    userJwt = window.location.hash.substr(1).split('=')[1];
-}
-
 async function registerUser(dw) {
     try {
         let result = await dw.registerWithFido2(document.getElementById('idSignInName').value);
-        postMsg("/users", "credential="+result.jwt);
-        document.getElementById('divResponses').innerHTML = "<strong>Thanks for registering, " + result.user.username + "!</strong>"
+        sessionStorage.setItem("token", result.jwt);
+        getMsg("http://localhost:8080/users/session", result.jwt);
     } catch (err) {
-        document.getElementById('divResponses').innerHTML = "<strong>" + err.message + "</strong>"
+        document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
     }
 }
 
@@ -18,17 +13,76 @@ async function signInUser(dw) {
     let username = document.getElementById('idSignInName').value;
     try {
         result = await dw.authenticateWithFido2(username);
-        postMsg("/users", "credential="+result.jwt);
-        let msg = "<strong>Thanks for authenticating, " + result.user.username + "!</strong>"
-        msg = msg + "<p>Click <a href='http://localhost#jwt=" + result.jwt + "'>here</a> to get cat-fatcs!</p>"
-        document.getElementById('divResponses').innerHTML = msg;
+        sessionStorage.setItem("token", result.jwt);
+        getMsg("http://localhost:8080/users/session", result.jwt);
     } catch (err) {
         if ("user_not_found" === err.code) {
-            document.getElementById('divResponses').innerHTML =
-                "<strong>You have not been registered yet, would you like to do that now?</strong>" +
+            document.getElementById('divResponse').innerHTML =
+                "<strong>You have not registered yet, would you like to do that now?</strong>" +
                 "<button type=\"button\" onclick=\"return registerUser(dw)\">Yes, Register</button>"
         }
     }
+}
+
+async function addAuthenticator(dw) {
+    let result;
+    let username = document.getElementById('idSignInName').value;
+    let code = document.getElementById('idAuthCode').value;
+    try {
+        result = await dw.addFido2CredentialWithCode(username, code);
+        sessionStorage.setItem("token", result.jwt);
+        getMsg("http://localhost:8080/users/session", result.jwt);
+    } catch (err) {
+        document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
+    }
+}
+
+function requestAuthCodeAuthenticator(targetUrl) {
+    let username = document.getElementById('idReqAuthCodeUsername').value;
+    let msg = 'username=' + encodeURI(username);
+    $.ajax({
+        type: 'POST',
+        url: targetUrl,
+        data: msg,
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded',
+        async: true,
+        statusCode: {
+            200: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            400: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            }
+        }
+    });
+}
+
+function grantAuthCodeAuthenticator(targetUrl) {
+    let code = document.getElementById('idAuthCode').value;
+    let msg = 'code=' + encodeURI(code);
+    $.ajax({
+        type: 'POST',
+        url: targetUrl,
+        data: msg,
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded',
+        async: true,
+        headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")},
+        statusCode: {
+            200: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            400: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            401: function (data) {
+                sessionStorage.removeItem("token");
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper menu to authenticate"}');
+                printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
+            }
+        }
+    });
 }
 
 function directCall(targetUrl) {
@@ -36,24 +90,7 @@ function directCall(targetUrl) {
 }
 
 function protectedCall(targetUrl) {
-    getMsg(targetUrl, userJwt);
-}
-
-function postMsg(targetUrl, msg) {
-    $.ajax({
-        type: 'POST',
-        url: 'http://localhost:8080' + targetUrl,
-        data: msg,
-        dataType: 'json',
-        contentType: 'application/x-www-form-urlencoded',
-        async: false,
-        success: function (data) {
-            alert(JSON.stringify(data));
-        },
-        error: function (data) {
-            alert(JSON.stringify(data));
-        }
-    });
+    getMsg(targetUrl, sessionStorage.getItem("token"));
 }
 
 function getMsg(targetUrl, credential) {
@@ -62,34 +99,50 @@ function getMsg(targetUrl, credential) {
         url: targetUrl,
         headers: {"Authorization": "Bearer " + credential},
         dataType: 'json',
-        async: false,
+        async: true,
         statusCode: {
             200: function (data) {
-                printFlowResponse('Success!<br/>This is the service response details:', getPostMsgResponse(data));
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            400: function (data) {
+                sessionStorage.removeItem("token");
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
             },
             401: function (data) {
-                printFlowResponse('Authentication error!<br/>A credential is missing. Details :', getLoginMsgResponse());
+                sessionStorage.removeItem("token");
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper menu to authenticate"}');
+                printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             },
             404: function (data) {
-                printFlowResponse('Service not found!<br/>Did you deploy kong_config.yml? Details :', getPostMsgResponse(data));
+                sessionStorage.removeItem("token");
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"the requested service is unknown. Check the console!"}');
+                printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }
         },
         error: function (data) {
-            printFlowResponse('Error!<br/>Something went wrong!:', getPostMsgResponse(data));
+            console.error(data);
+            let error = JSON.parse('{"error":"invalid_request", "error_description":"something went terribly wrong! Check the console!"}');
+            printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
         }
     });
 }
 
-function getPostMsgResponse(data) {
-    return '<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>';
+function getTabContent(pageName, targetId) {
+    $.ajax({
+        type: 'GET',
+        url: pageName,
+        dataType: 'html',
+        async: true,
+        success: function (data) {
+            document.getElementById(targetId).innerHTML = data;
+        },
+        error: function (data) {
+            document.getElementById(targetId).innerHTML = data;
+        }
+    });
 }
 
-function getLoginMsgResponse() {
-    window.location = 'http://localhost:3000';
-    // window.location = '../authenticate.html';
-}
-
-function printFlowResponse(title, output) {
-    document.getElementById('divResponse').innerHTML = '<h3>' + title + '</h3><pre>' + output + '</pre>';
+function printFlowResponse(output) {
+    document.getElementById('divResponse').innerHTML = '<pre>' + output + '</pre>';
     Prism.highlightAll(false, null);
 }

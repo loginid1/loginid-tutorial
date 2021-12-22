@@ -1,0 +1,25 @@
+<h2>Authentication</h2>
+<p>With FIDO2 users do not only register a username but also the used authenticator (i.e.: TouchID). After registering,
+    a user can login to the website by using the registered authenticator, no password required.</p>
+<p>Please note that <strong>device</strong> and <strong>authenticator</strong> are often user interchangeably in FIDO2!
+</p>
+<p>This screen supports both features:</p>
+<ol>
+    <li>Registering a username with an authenticator (device)</li>
+    <li>Login with a username using a registered authenticator (device)</li>
+</ol>
+<p>The <strong>Sign-In</strong> feature will figure out if the user is already known and will prompt for registration if
+    needed!</p>
+<hr/>
+<p><strong>Sign-In: </strong><input type="email" id="idSignInName" name="signInName" size="35"
+                                    placeholder="Your username">
+    <button type="button" value="check" id="idBtnSignInName" name="btnSignInName" onclick="return signInUser(dw);">
+        <img src="../images/button_loginid.png" alt="sign-in" width="70px"/></button>
+</p>
+<hr/>
+<p><strong>NOTE:</strong></p>
+<p>If <strong>Sign-In</strong> and <strong>Register</strong> both fail, please be sure that the device is used
+    which was originally used to register the username!</strong>
+</p>
+<p>If this is a different device, find your initial device and register this one!</p>
+<p>Follow the instructions found in the top menu <strong>Add Authenticator</strong>.</p>

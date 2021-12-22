@@ -26,15 +26,15 @@
         <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
         <init-param>
             <param-name>cors.allowed.origins</param-name>
-            <param-value>*</param-value>
+            <param-value>http://localhost,http://localhost:8080,http://localhost:8090</param-value>
         </init-param>
         <init-param>
             <param-name>cors.allowed.methods</param-name>
-            <param-value>GET,POST</param-value>
+            <param-value>GET,POST,OPTIONS</param-value>
         </init-param>
         <init-param>
             <param-name>cors.allowed.headers</param-name>
-            <param-value>Content-Type,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization</param-value>
+            <param-value>Content-Type,accept,Origin,Access-Control-Request-Method,Access-Control-Allow-Origin,Access-Control-Request-Headers,Authorization,x-user</param-value>
         </init-param>
         <init-param>
             <param-name>cors.exposed.headers</param-name>
@@ -47,7 +47,7 @@
     </filter>
     <filter-mapping>
         <filter-name>CorsFilter</filter-name>
-        <url-pattern>/users</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <servlet>
@@ -58,6 +58,22 @@
     <servlet-mapping>
         <servlet-name>UserMgmt</servlet-name>
         <url-pattern>/users</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserMgmt</servlet-name>
+        <url-pattern>/users/session</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserMgmt</servlet-name>
+        <url-pattern>/users/credentials</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserMgmt</servlet-name>
+        <url-pattern>/users/reqauthenticator</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserMgmt</servlet-name>
+        <url-pattern>/users/grantauthenticator</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

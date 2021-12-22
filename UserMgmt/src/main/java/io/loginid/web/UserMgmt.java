@@ -26,57 +26,109 @@ public class UserMgmt extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json");
-        String authJwt = request.getParameter("credential");
-        if (authJwt != null) {
-            try {
-                JsonElement jwtHeader = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[0])));
-                Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(lookupVerificationKey(jwtHeader.getAsJsonObject().get("kid").getAsString())).build().parseClaimsJws(authJwt);
 
-                // TODO: validate claims and do something useful with the given JWT claims!
-                // if("logind.io".equalsIgnoreCase(jws.getBody().getIssuer()) && .... ) {
-                    response.setStatus(200);
-                    response.getWriter().printf("{\"username\":\"%s\"}", jws.getBody().get("udata"));
-                // } else {
-                //   return error ...
-                // }
+        // To keep it simple, handle unauthenticated requests first simply to avoid multiple servlets
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.setStatus(400);
-                response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"something went badly wrong ... !\"}");
+        try {
+            if (request.getServletPath().endsWith("/users/reqauthenticator")) {
+                String username = request.getParameter("username");
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(new LoginIDUtil().requestAuthCodeAuthenticator(username));
+                return;
             }
-        } else {
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setContentType("application/json");
             response.setStatus(400);
-            response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"no credential (JWT) given\"}");
+            response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
+            return;
+        }
+
+        // as of here require an authenticated user (JWT)
+
+        Jws<Claims> jws = null;
+        String udata = null;
+
+        try {
+            jws = requireJwt(request);
+        } catch (Exception e) {
+            response.setContentType("application/json");
+            response.setStatus(401);
+            return;
+        }
+
+        try {
+            udata = (String) jws.getBody().get("udata");
+            if (request.getServletPath().endsWith("/users/grantauthenticator")) {
+                String code = request.getParameter("code");
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(new LoginIDUtil().authorizeAuthCodeAuthenticator(udata, code));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setContentType("application/json");
+            response.setStatus(400);
+            response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json");
-        String authJwt = request.getHeader("authorization").split("[ ]")[1].trim();
+
+        Jws<Claims> jws = null;
+        String udata = null;
+
+        try {
+            jws = requireJwt(request);
+        } catch (Exception e) {
+            response.setContentType("application/json");
+            response.setStatus(401);
+            return;
+        }
+        try {
+            udata = (String) jws.getBody().get("udata");
+            if (request.getServletPath().endsWith("/users/session")) {
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf("{\"user\":\"%s\"}", udata);
+            } else if (request.getServletPath().endsWith("/users/credentials")) {
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(new LoginIDUtil().getCredentials(udata).toString());
+            } else {
+                response.setContentType("application/json");
+                response.setStatus(400);
+                response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\": \"you are looking for something that does not exist\"}");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setContentType("application/json");
+            response.setStatus(400);
+            response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
+        }
+    }
+
+    private Jws<Claims> requireJwt(HttpServletRequest request) throws Exception {
+        String authJwt = request.getHeader("authorization");
         if (authJwt != null) {
             try {
+                authJwt = authJwt.split("[ ]")[1].trim(); // this may end up in an error ... exception
                 JsonElement jwtHeader = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[0])));
-                Jws<Claims> jws = Jwts.parserBuilder().setSigningKey(lookupVerificationKey(jwtHeader.getAsJsonObject().get("kid").getAsString())).build().parseClaimsJws(authJwt);
-
-                // TODO: validate claims and do something useful with the given JWT claims!
-                // if("logind.io".equalsIgnoreCase(jws.getBody().getIssuer()) && .... ) {
-                response.setStatus(200);
-                response.getWriter().printf(new LoginIDUtil().getCredentials((String)jws.getBody().get("udata")).toString());
-                // } else {
-                //   return error ...
-                // }
-
+                return Jwts.parserBuilder()
+                        .setSigningKey(
+                                lookupVerificationKey(
+                                        jwtHeader.getAsJsonObject().get("kid").getAsString()))
+                        .requireIssuer("loginid.io")
+                        .build()
+                        .parseClaimsJws(authJwt);
             } catch (Exception e) {
                 e.printStackTrace();
-                response.setStatus(400);
-                response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"something went badly wrong ... !\"}");
+                throw e;
             }
         } else {
-            response.setStatus(400);
-            response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"no credential (JWT) given\"}");
+            throw new IllegalArgumentException("Missing or invalid authorization header");
         }
     }
 
