@@ -1,7 +1,18 @@
+function updateSession(token, username) {
+    sessionStorage.setItem("token", token);
+    document.getElementById('idCurrentUser').innerText = username;
+}
+
+function deleteSession() {
+    sessionStorage.removeItem('token;')
+    document.getElementById('idCurrentUser').innerText = 'you are logged out';
+}
+
 async function registerUser(dw) {
     try {
-        let result = await dw.registerWithFido2(document.getElementById('idSignInName').value);
-        sessionStorage.setItem("token", result.jwt);
+        let user = document.getElementById('idSignInName').value;
+        let result = await dw.registerWithFido2(user);
+        updateSession(result.jwt, user);
         getMsg("http://localhost:8080/users/session", result.jwt);
     } catch (err) {
         document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
@@ -10,10 +21,10 @@ async function registerUser(dw) {
 
 async function signInUser(dw) {
     let result;
-    let username = document.getElementById('idSignInName').value;
+    let user = document.getElementById('idSignInName').value;
     try {
-        result = await dw.authenticateWithFido2(username);
-        sessionStorage.setItem("token", result.jwt);
+        result = await dw.authenticateWithFido2(user);
+        updateSession(result.jwt, user);
         getMsg("http://localhost:8080/users/session", result.jwt);
     } catch (err) {
         if ("user_not_found" === err.code) {
@@ -26,11 +37,11 @@ async function signInUser(dw) {
 
 async function addAuthenticator(dw, idUsernameField, idAuthCodeFieldName) {
     let result;
-    let username = document.getElementById(idUsernameField).value;
+    let user = document.getElementById(idUsernameField).value;
     let code = document.getElementById(idAuthCodeFieldName).value;
     try {
-        result = await dw.addFido2CredentialWithCode(username, code);
-        sessionStorage.setItem("token", result.jwt);
+        result = await dw.addFido2CredentialWithCode(user, code);
+        updateSession(result.jwt, user);
         getMsg("http://localhost:8080/users/session", result.jwt);
     } catch (err) {
         document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
@@ -60,6 +71,48 @@ function requestAuthCodeAuthenticator(targetUrl) {
     });
 }
 
+function updateCredentialName(targetUrl) {
+    let credentialId = encodeURI(document.getElementById('idCredentialId').value);
+    let credentialName = encodeURI(document.getElementById('idNewCredentialName').value);
+    let msg = 'credentialId=' + credentialId + '&credentialName=' + credentialName;
+    $.ajax({
+        type: 'POST',
+        url: targetUrl,
+        data: msg,
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded',
+        async: true,
+        headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")},
+        statusCode: {
+            200: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            400: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            }
+        }
+    });
+}
+
+function deleteCredentialName(targetUrl) {
+    let credentialId = encodeURI(document.getElementById('idCredentialIdDelete').value);
+    $.ajax({
+        type: 'DELETE',
+        url: targetUrl + '?credentialId=' + credentialId,
+        dataType: 'json',
+        async: true,
+        headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")},
+        statusCode: {
+            200: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            400: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            }
+        }
+    });
+}
+
 function grantAuthCodeAuthenticator(targetUrl) {
     let code = document.getElementById('idAuthCode').value;
     let msg = 'code=' + encodeURI(code);
@@ -79,7 +132,7 @@ function grantAuthCodeAuthenticator(targetUrl) {
                 printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
             },
             401: function (data) {
-                sessionStorage.removeItem("token");
+                deleteSession();
                 let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper menu to authenticate"}');
                 printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }
@@ -107,16 +160,16 @@ function getMsg(targetUrl, credential) {
                 printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
             },
             400: function (data) {
-                sessionStorage.removeItem("token");
+                deleteSession();
                 printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
             },
             401: function (data) {
-                sessionStorage.removeItem("token");
+                deleteSession();
                 let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper menu to authenticate"}');
                 printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             },
             404: function (data) {
-                sessionStorage.removeItem("token");
+                deleteSession();
                 let error = JSON.parse('{"error":"invalid_request", "error_description":"the requested service is unknown. Check the console!"}');
                 printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }

@@ -23,8 +23,8 @@
 <hr/>
 <p>Once the authorization code was authorized, provide your username and the code again to complete the process.</p>
 <label for="idReqAuthCodeUsernameConfirm">Provide your username and the authorized code: </label>
-<input id="idReqAuthCodeUsernameConfirm" type="text" class="input-sm" placeholder="your existing username" size="25">
-<input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code" size="25">
+<input id="idReqAuthCodeUsernameConfirm" type="text" class="input-sm" placeholder="your existing username" size="25" readonly>
+<input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code" size="25" readonly>
 <button id="btnAddAuthenticator" type="button" class="btn btn-primary btn-sm"
     onclick="return addAuthenticator(dw, 'idReqAuthCodeUsernameConfirm', 'idAuthCodeConfirm');">Add Authenticator</button>
 </form>

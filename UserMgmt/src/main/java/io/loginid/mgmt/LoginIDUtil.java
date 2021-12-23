@@ -56,6 +56,17 @@ public class LoginIDUtil {
         return c4ui;
     }
 
+    public CredentialForUI deleteCredential(String username, String credentialId) throws Exception {
+        UUID userId = mgmt.getUserId(username);
+        CredentialsChangeResponse cred = mgmt.revokeCredential(userId.toString(), credentialId);
+        CredentialForUI c4ui = new CredentialForUI();
+        c4ui.setId(cred.getCredential().getUuid().toString());
+        c4ui.setType(cred.getCredential().getType());
+        c4ui.setStatus(cred.getCredential().getStatus().getValue());
+        c4ui.setName(cred.getCredential().getName());
+        return c4ui;
+    }
+
     public String requestAuthCodeAuthenticator(String username) throws Exception {
         UUID userId = mgmt.getUserId(username);
         CodesCodeTypeGenerateResponse generateResponse = mgmt.generateCode(userId.toString(), "short", "add_credential", false);

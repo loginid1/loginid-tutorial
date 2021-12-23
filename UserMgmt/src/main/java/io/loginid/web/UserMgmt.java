@@ -65,6 +65,12 @@ public class UserMgmt extends HttpServlet {
                 response.setContentType("application/json");
                 response.setStatus(200);
                 response.getWriter().printf(new LoginIDUtil().authorizeAuthCodeAuthenticator(udata, code));
+            } else if (request.getServletPath().endsWith("/users/credentials")) {
+                String credentialId = request.getParameter("credentialId");
+                String credentialName = request.getParameter("credentialName");
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(new LoginIDUtil().updateCredentialName(udata, credentialId, credentialName).toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,6 +103,39 @@ public class UserMgmt extends HttpServlet {
                 response.setContentType("application/json");
                 response.setStatus(200);
                 response.getWriter().printf(new LoginIDUtil().getCredentials(udata).toString());
+            } else {
+                response.setContentType("application/json");
+                response.setStatus(400);
+                response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\": \"you are looking for something that does not exist\"}");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setContentType("application/json");
+            response.setStatus(400);
+            response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        Jws<Claims> jws = null;
+        String udata = null;
+
+        try {
+            jws = requireJwt(request);
+        } catch (Exception e) {
+            response.setContentType("application/json");
+            response.setStatus(401);
+            return;
+        }
+        try {
+            udata = (String) jws.getBody().get("udata");
+            if (request.getServletPath().endsWith("/users/credentials")) {
+                String credentialId = request.getParameter("credentialId");
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(new LoginIDUtil().deleteCredential(udata, credentialId).toString());
             } else {
                 response.setContentType("application/json");
                 response.setStatus(400);

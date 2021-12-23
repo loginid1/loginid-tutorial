@@ -33,13 +33,17 @@
     <script src="js/prism.js"></script>
 
 </head>
-<body>
+<body onload="deleteSession();">
 <div class="container" id="content">
     <h1>Welcome to the FIDO2-Democlient!</h1>
     <p>This client demonstrates different features that are available with FIDO2 enabled devices in combination with LoginID features.</p>
+    <h4>You are currently logged in as: <strong><span id="idCurrentUser">you are no logged in</span></strong></h4>
     <hr/>
     <ul class="nav nav-tabs">
         <li class="active">
+            <a href="#tabOverview" data-toggle="tab">Overview</a>
+        </li>
+        <li>
             <a href="#tabAuthenticate" data-toggle="tab"
                onclick="getTabContent('tabs/authenticate.tab.html', 'tabAuthenticate');">Authentication</a>
         </li>
@@ -53,10 +57,10 @@
             <a href="#tabCreateTx" data-toggle="tab">Create Transaction Confirmation</a>
         </li>
         <li>
-            <a href="#tabGrantTempCred" data-toggle="tab">Grant Temporary Device</a>
+            <a href="#tabGrantTempCred" data-toggle="tab">Grant Temporary Access</a>
         </li>
         <li>
-            <a href="#tabReqTempCred" data-toggle="tab">Request Temporary Credential</a>
+            <a href="#tabReqTempCred" data-toggle="tab">Request Temporary Access</a>
         </li>
         <li>
             <a href="#tabReqAddCred" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html', 'tabReqAddCred');">Request Adding Authenticator</a>
@@ -66,7 +70,49 @@
         </li>
     </ul>
     <div class="tab-content">
-        <div id="tabAuthenticate" class="tab-pane active">
+        <div id="tabOverview" class="tab-pane active">
+            <h2>Overview</h2>
+            <p>Here is a brief overview of the different features that are found behind each menu:</p>
+            <table class="table-condensed table-striped">
+                <tr>
+                    <th>Menu</th>
+                    <th>Feature</th>
+                </tr>
+                <tr>
+                    <td><strong>Authentication</strong></td>
+                    <td>This menu allows users to register and login to you application</td>
+                </tr>
+                <tr>
+                    <td><strong>Add Authenticator</strong></td>
+                    <td>Whenever a user requested access to another device, this menu allows the user to authorize an authentication code that was generated on the other device</td>
+                </tr>
+                <tr>
+                    <td><strong>Manage Authenticators (devices)</strong></td>
+                    <td>This menu provides a user with a simple interface to manage registered devices (authenticators)</td>
+                </tr>
+                <tr>
+                    <td><strong>Create Transaction Confirmation</strong></td>
+                    <td>This menu displays the <strong>Transaction Confirmation</strong> feature which represents a digital receipt for any given transaction</td>
+                </tr>
+                <tr>
+                    <td><strong>Grant Temporary Access</strong></td>
+                    <td>The menu enables a user to <strong>grant</strong> temporary access to his account from a device that may not be owned by the user or which does not support FIDO2</td>
+                </tr>
+                <tr>
+                    <td><strong>Request Temporary Access</strong></td>
+                    <td>The menu enables a user to <strong>request</strong> temporary access to his account from a device that may not be owned by the user or which does not support FIDO2</td>
+                </tr>
+                <tr>
+                    <td><strong>Request Adding Authenticator</strong></td>
+                    <td>The menu enables a user to add additional devices (authenticators) to his account</td>
+                </tr>
+                <tr>
+                    <td><strong>Kong Plugin</strong></td>
+                    <td>The menu shows how LoginIDs plugin for Kong may be used to protect APIs by requiring a FIDO2 credential, issued by LoginID</td>
+                </tr>
+            </table>
+        </div>
+        <div id="tabAuthenticate" class="tab-pane">
             <p>tabAuthenticate</p>
         </div>
         <div id="tabGrantTempCred" class="tab-pane">

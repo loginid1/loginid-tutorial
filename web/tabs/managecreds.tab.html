@@ -18,13 +18,38 @@
         </li>
     </ul>
 </div>
-<p>For this use case of <strong>Manage Authenticators (Devices)</strong> the frontend uses the backend to connect to the
-    <strong>/credential</strong> API at LoginID.</p>
+<p>Choose one of the tasks from the list below:</p>
 <table class="table">
     <tr>
         <td>
+            <label for="btnCredentials">List all credentials: </label>
+        </td>
+        <td>
             <button id="btnCredentials" type="button" class="btn btn-primary btn-sm"
                     onclick="return protectedCall('http://localhost:8080/users/credentials');">List Credentials
+            </button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="btnUpdateCredential">Update a credentials name: </label>
+        </td>
+        <td>
+            <input id="idCredentialId" type="text" class="input-sm" placeholder="id of the credential" size="25">
+            <input id="idNewCredentialName" type="text" class="input-sm" placeholder="new name for the credential" size="25">
+            <button id="btnUpdateCredential" type="button" class="btn btn-primary btn-sm"
+                    onclick="return updateCredentialName('http://localhost:8080/users/credentials');">Update
+            </button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="btnUpdateCredential">Revoke a credential: </label>
+        </td>
+        <td>
+            <input id="idCredentialIdDelete" type="text" class="input-sm" placeholder="id of the credential" size="25">
+            <button id="btnDeleteCredential" type="button" class="btn btn-primary btn-sm"
+                    onclick="return deleteCredentialName('http://localhost:8080/users/credentials');">Revoke (Disable)
             </button>
         </td>
     </tr>
