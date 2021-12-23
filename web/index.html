@@ -33,7 +33,7 @@
     <script src="js/prism.js"></script>
 
 </head>
-<body onload="deleteSession();">
+<body onload="checkSession();">
 <div class="container" id="content">
     <h1>Welcome to the FIDO2-Democlient!</h1>
     <p>This client demonstrates different features that are available with FIDO2 enabled devices in combination with LoginID features.</p>
@@ -48,7 +48,7 @@
                onclick="getTabContent('tabs/authenticate.tab.html', 'tabAuthenticate');">Authentication</a>
         </li>
         <li>
-            <a href="#tabGrantAddCred" data-toggle="tab" onclick="getTabContent('tabs/grantauthenticator.tab.html', 'tabGrantAddCred');">Add Authenticator</a>
+            <a href="#tabAddAuthenticator" data-toggle="tab" onclick="getTabContent('tabs/addAuthenticator.tab.html', 'tabAddAuthenticator');">Add Authenticator</a>
         </li>
         <li>
             <a href="#tabManageCreds" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html', 'tabManageCreds');">Manage Authenticators (Devices)</a>
@@ -75,8 +75,8 @@
             <p>Here is a brief overview of the different features that are found behind each menu:</p>
             <table class="table-condensed table-striped">
                 <tr>
-                    <th>Menu</th>
-                    <th>Feature</th>
+                    <th text-align="center">Menu</th>
+                    <th text-algin="center">Feature</th>
                 </tr>
                 <tr>
                     <td><strong>Authentication</strong></td>
@@ -118,8 +118,8 @@
         <div id="tabGrantTempCred" class="tab-pane">
             <p>tabGrantTempCred</p>
         </div>
-        <div id="tabGrantAddCred" class="tab-pane">
-            <p>tabGrantAddCred</p>
+        <div id="tabAddAuthenticator" class="tab-pane">
+            <p>tabAddAuthenticator</p>
         </div>
         <div id="tabCreateTx" class="tab-pane">
             <p>tabCreateTx</p>
@@ -139,8 +139,7 @@
     </div>
     <hr/>
     <h3>API Responses</h3>
-    <p>The responses of the API calls are displayed below:</p>
-    <div id="divResponse"></div>
+    <div id="divResponse">Nothing to show</div>
 </div>
 </body>
 </html>

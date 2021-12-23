@@ -30,6 +30,10 @@ public class LoginIDUtil {
         }
     }
 
+    public String getBaseUrl() {
+        return props.getProperty("base_url");
+    }
+
     public List<CredentialForUI> getCredentials(String username) throws Exception {
         UUID userId = mgmt.getUserId(username);
         CredentialsResponse credentials = mgmt.getCredentials(userId.toString());
@@ -38,7 +42,7 @@ public class LoginIDUtil {
             CredentialForUI c4ui = new CredentialForUI();
             c4ui.setId(cred.getUuid().toString());
             c4ui.setType(cred.getType());
-            c4ui.setStatus(cred.getStatus() == null ? "pending" : cred.getStatus().getValue());
+            c4ui.setStatus(cred.getStatus() == null ? "" : cred.getStatus().getValue());
             c4ui.setName(cred.getName());
             creds.add(c4ui);
         }

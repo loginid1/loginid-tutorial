@@ -3,7 +3,11 @@
     provide
     an interface that enables users to get an overview of authenticators, name them, revoke them.</p>
 <p>This page is simple but is fully functional.</p>
-<p>This page leverages a backend for its implementation. <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#idArch" aria-expanded="false" aria-controls="idArch">show/hide architecture</button></p>
+<p>This page leverages a backend for its implementation:
+<button id="btnArchitecture" class="btn btn-primary btn-sm" type="button" data-toggle="collapse"
+        data-target="#idArch" aria-expanded="false" aria-controls="idArch">show/hide architecture
+</button>
+</p>
 <div id="idArch" class="collapse">
     <img src="../images/managecreds.png" alt="Manage-Credentials-Design"/>
     <ul>
@@ -18,8 +22,9 @@
         </li>
     </ul>
 </div>
+<hr/>
 <p>Choose one of the tasks from the list below:</p>
-<table class="table">
+<table class="table-condensed">
     <tr>
         <td>
             <label for="btnCredentials">List all credentials: </label>
@@ -36,7 +41,8 @@
         </td>
         <td>
             <input id="idCredentialId" type="text" class="input-sm" placeholder="id of the credential" size="25">
-            <input id="idNewCredentialName" type="text" class="input-sm" placeholder="new name for the credential" size="25">
+            <input id="idNewCredentialName" type="text" class="input-sm" placeholder="new name for the credential"
+                   size="25">
             <button id="btnUpdateCredential" type="button" class="btn btn-primary btn-sm"
                     onclick="return updateCredentialName('http://localhost:8080/users/credentials');">Update
             </button>

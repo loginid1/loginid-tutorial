@@ -1,11 +1,15 @@
 package io.loginid.web;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.loginid.mgmt.LoginIDUtil;
+import io.loginid.sdk.java.LoginIdManagement;
+import io.loginid.sdk.java.invokers.ApiException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -24,6 +28,14 @@ import java.util.Base64;
 
 public class UserMgmt extends HttpServlet {
 
+    private LoginIDUtil util;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        util = new LoginIDUtil();
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -34,7 +46,7 @@ public class UserMgmt extends HttpServlet {
                 String username = request.getParameter("username");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(new LoginIDUtil().requestAuthCodeAuthenticator(username));
+                response.getWriter().printf(util.requestAuthCodeAuthenticator(username));
                 return;
             }
         } catch (Exception e) {
@@ -64,13 +76,13 @@ public class UserMgmt extends HttpServlet {
                 String code = request.getParameter("code");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(new LoginIDUtil().authorizeAuthCodeAuthenticator(udata, code));
+                response.getWriter().printf(util.authorizeAuthCodeAuthenticator(udata, code));
             } else if (request.getServletPath().endsWith("/users/credentials")) {
                 String credentialId = request.getParameter("credentialId");
                 String credentialName = request.getParameter("credentialName");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(new LoginIDUtil().updateCredentialName(udata, credentialId, credentialName).toString());
+                response.getWriter().printf(util.updateCredentialName(udata, credentialId, credentialName).toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,7 +114,7 @@ public class UserMgmt extends HttpServlet {
             } else if (request.getServletPath().endsWith("/users/credentials")) {
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(new LoginIDUtil().getCredentials(udata).toString());
+                response.getWriter().printf(util.getCredentials(udata).toString());
             } else {
                 response.setContentType("application/json");
                 response.setStatus(400);
@@ -135,7 +147,7 @@ public class UserMgmt extends HttpServlet {
                 String credentialId = request.getParameter("credentialId");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(new LoginIDUtil().deleteCredential(udata, credentialId).toString());
+                response.getWriter().printf(util.deleteCredential(udata, credentialId).toString());
             } else {
                 response.setContentType("application/json");
                 response.setStatus(400);
@@ -143,9 +155,16 @@ public class UserMgmt extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            String error = e.getMessage();
+            if(e instanceof ApiException) {
+                error = ((ApiException) e).getResponseBody();
+            }
             response.setContentType("application/json");
             response.setStatus(400);
-            response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
+            JsonObject jo = new JsonObject();
+            jo.addProperty("error", "invalid_request");
+            jo.addProperty("error_description", error);
+            response.getWriter().printf(jo.toString());
         }
     }
 
@@ -173,7 +192,7 @@ public class UserMgmt extends HttpServlet {
 
     private Key lookupVerificationKey(String keyId) throws Exception {
 
-        HttpGet req = new HttpGet(String.format("%s/certs?kid=%s", System.getenv("BASE_URL"), keyId));
+        HttpGet req = new HttpGet(String.format("%s/certs?kid=%s", util.getBaseUrl(), keyId));
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponse response = httpClient.execute(req);
 

@@ -1,3 +1,11 @@
+function checkSession() {
+    let token = sessionStorage.getItem('token');
+    if(token) {
+        let username = JSON.parse(atob(token.split(".")[1])).udata;
+        document.getElementById('idCurrentUser').innerText = username;
+    }
+}
+
 function updateSession(token, username) {
     sessionStorage.setItem("token", token);
     document.getElementById('idCurrentUser').innerText = username;

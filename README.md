@@ -4,52 +4,50 @@ This demo simulates a small setup that includes these components:
 
 - **Demo App**:
   - a simple web application that leverages our javascript libraries for FIDO2 based user registration and authentication
-  - the app can be used to call the Cat-Fact API directly or via Kong
-  - if called via Kong a user may have to authenticate against LoginID
+  - the app demos several features and flows
+  - the app demos the usage of the LoginID provided Kong gateway plugin
 - **Kong**:
   - a Docker version of the Kong API Gateway
   - Kong is configured to validate a LoginID issued JWT and return an error if not provided or invalid
+  - the demo connects to the public service Cat-Fact, once as an open API call, once protected by Kong
 - **User Management**:
   - simulates a simple user management API. It receives a LoginID issued JWT and ... returns the username
-- **Cat-Fact**:
-  - a simple, publicly available service that returns facts about cats. It is used simply because it is available
+  - connects to LoginID to call LoginID APis that require so called *service token*
 
 The visual version of the setup looks like this:
 
-![alt overview](web/images/setup.png)
+![alt overview](web/images/managecreds.png)
 
 ## Preparing the demo
 
-To make it work you have to register a **Web App** at LoginIDs dashboard.
+To make it work you have to register a **Web App** and **Backend/API** credential at LoginIDs dashboard.
+
+**NOTE:** Do NOT attach an API credential to the Web App but to the Backend/API configuration! 
+
+To include the backend api credentials in this setup, create a private file (e.g.: `~/.loginid/config`) having this structure:
+
+```properties
+client_id_backend=b5NaU...TpUhfQ==
+base_url=https://directweb.usw1.loginid.io
+API_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqG...S/asw3QwkJ/7B\n-----END PRIVATE KEY-----
+```
+
+Update the properties to your values!
 
 Once that is done, update the following files:
 
 - `./docker-compose.yml, ./docker-compose-dev.yml`
-  - in both files update **BASE_URL** if needed
-  - the second file runs the *user management* container with remote debugging enabled on port 8000
-  - the user management container uses the BASE url to retrieve the public signing cert of LoginID
+  - in both files update the volume to point to your configuration file!
+  - i.e. from: `/Users/sascha/.loginid/config:/opt/docker/loginid/config` to: `{your-path}/.loginid/config:/opt/docker/loginid/config`
+  - the *...-dev.yml* file runs the *usermgmt* container with remote debugging enabled on port 8000
+  - the *usermgmt* container uses the BASE url to retrieve the public signing cert of LoginID
 - `./web/index.html`
   - update the BASE_URL and client_id within the constructor of the SDK (e.g.: `const dw = new web.default\("https://directweb.usw1.loginid.io", "pW2GlAFMYRgHRa0CGMT....)`
+  - use the values of the *Web App*
 - `./docker-build/add-ons/kong/kong.yml`
   - update **login_id_base_url**, **login_id_client_id**, **login_id_public_key_url** and **audience** of the plugin
   - usually *audience* will match the client_id
-
-### Kong Plugin configuration
-
-For your convenience, these values may be configured for the plugin:
-
-|Parameter|Description|Type|Required|
-|---------|-----------|----|--------|
-|login_id_base_url|The base URL as given by LoginID|String|X|
-|login_id_client_id|The client_id as given by LoginID|String|X|
-|login_id_public_key_url|LoginID public key retrieval URL|String|X|
-|issuer|Expected issuer of the JWT. This value will be validated against **iss** value in JWT payload. Defaults to **loginid.io**|String|-|
-|audience|Expected audience. This value will be validated against **aud** value in JWT payload|String|X|
-|maximum_age|Expected max. age in seconds. Default value is 300 seconds. Difference between current time and **
-iat** value in JWT payload need to be below this max age|Number|-|
-|acr|Expected acr value. This value will be validated if the acr value is configured in the plugin. If not, this value will not be validated|String|-|
-|algorithm|Expected signing algorithm. Default value is ES256. This value will be validated against **alg** value in JWT header|String|-|
-|namespace_id|Expected namespace ID. This value will be validated against nid value in JWT payload|String|-|
+  - use the client_id of your *Web App* configuration
 
 ## Building the demo
 
@@ -64,10 +62,26 @@ The whole system is docker based. To build it these tools are needed:
 If all those are available, do this:
 
 - `make build`  // this compiles code and build the docker images
-- `docker-compose up`  // this launches the system
-- `http://localhost`  // open a browser at that location and follow the prompts
-- when authenticating, choose a username of you choice (which is hopefully not taken)
+- `docker-compose up`  // this launches the system, use `docker-compose -f docker-compose-dev.yml up` to use the debugging enabled user management container
+- `http://localhost`  // open a browser at that location and enjoy the app
+- when authenticating, choose a username of your choice (which is hopefully not taken)
 
-## Note
+The application uses the LoginID issued JWT as its session token and when authenticating users against the user management API. 
+For this demo the JWT is stored in the session store of the browser.
 
-The demo was not build to show off a perfect implementation but to show that the Kong plugin works and to be able to run through a simple user flow!
+## Info: Kong Plugin configuration
+
+For your convenience, these values may be configured for the Kong plugin:
+
+|Parameter|Description|Type|Required|
+|---------|-----------|----|--------|
+|login_id_base_url|The base URL as given by LoginID|String|X|
+|login_id_client_id|The client_id as given by LoginID|String|X|
+|login_id_public_key_url|LoginID public key retrieval URL|String|X|
+|issuer|Expected issuer of the JWT. This value will be validated against **iss** value in JWT payload. Defaults to **loginid.io**|String|-|
+|audience|Expected audience. This value will be validated against **aud** value in JWT payload|String|X|
+|maximum_age|Expected max. age in seconds. Default value is 300 seconds. Difference between current time and **
+iat** value in JWT payload need to be below this max age|Number|-|
+|acr|Expected acr value. This value will be validated if the acr value is configured in the plugin. If not, this value will not be validated|String|-|
+|algorithm|Expected signing algorithm. Default value is ES256. This value will be validated against **alg** value in JWT header|String|-|
+|namespace_id|Expected namespace ID. This value will be validated against nid value in JWT payload|String|-|
