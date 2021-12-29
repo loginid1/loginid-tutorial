@@ -1,7 +1,10 @@
 package io.loginid.mgmt;
 
 import io.loginid.mgmt.model.CredentialForUI;
+import io.loginid.sdk.java.LoginId;
 import io.loginid.sdk.java.LoginIdManagement;
+import io.loginid.sdk.java.api.TransactionsApi;
+import io.loginid.sdk.java.invokers.ApiClient;
 import io.loginid.sdk.java.model.*;
 
 import java.io.FileReader;
@@ -83,5 +86,22 @@ public class LoginIDUtil {
         CodesCodeTypeAuthorizeResponse authorizeResponse = mgmt.authorizeCode(userId.toString(), code, "short", "add_credential");
         boolean granted = authorizeResponse.isIsAuthorized();
         return String.format("{\"status\":\"%s\"}", granted ? "authorized" : "failed");
+    }
+
+    public String getTransactionId(String payload, String username, String txClientId) throws Exception {
+        TransactionsApi transactionsApi = new TransactionsApi();
+
+        ApiClient apiClient = transactionsApi.getApiClient();
+        apiClient.setBasePath(mgmt.getBaseUrl());
+
+        TxBody txBody = new TxBody();
+        txBody.setClientId(txClientId);
+        txBody.setTxType("text");
+        txBody.setTxPayload(payload);
+        String nonce = UUID.randomUUID().toString();
+        txBody.setNonce(nonce);
+
+        TxResponse result = transactionsApi.txPost(txBody);
+        return String.format("{\"transactionId\":\"%s\", \"nonce\":\"%s\"}", result.getTxId(), nonce);
     }
 }

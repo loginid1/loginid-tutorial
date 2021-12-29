@@ -56,6 +56,51 @@ async function addAuthenticator(dw, idUsernameField, idAuthCodeFieldName) {
     }
 }
 
+function initiateTransaction(targetUrl) {
+    let msg = document.getElementById('txtPayload').value;
+    $.ajax({
+        type: 'POST',
+        url: targetUrl,
+        data: msg,
+        dataType: 'json',
+        contentType: 'text/plain',
+        async: true,
+        headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")},
+        statusCode: {
+            200: function (data) {
+                document.getElementById('transactionId').setAttribute('value', data.transactionId);
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            400: function (data) {
+                printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            401: function (data) {
+                deleteSession();
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper menu to authenticate"}');
+                printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
+            }
+        }
+    });
+}
+
+async function confirmTransaction(dw) {
+    try {
+        let transactionId = document.getElementById('transactionId').value;
+        let username = document.getElementById('idCurrentUser').innerText
+        let result = await dw.confirmTransaction(username, transactionId);
+
+        let jwtHeader = JSON.parse(atob(result.jwt.split(".")[0]));
+        let jwtPayload = JSON.parse(atob(result.jwt.split(".")[1]));
+
+        result['jwt_header'] = jwtHeader;
+        result['jwt_payload'] = jwtPayload;
+
+        printFlowResponse('<code class="language-json">' + JSON.stringify(result, null, 2) + '</code>');
+    } catch (err) {
+        document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
+    }
+}
+
 function requestAuthCodeAuthenticator(targetUrl) {
     let username = document.getElementById('idReqAuthCodeUsername').value;
     let msg = 'username=' + encodeURI(username);

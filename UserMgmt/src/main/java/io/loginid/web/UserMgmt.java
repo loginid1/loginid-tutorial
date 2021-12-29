@@ -1,6 +1,5 @@
 package io.loginid.web;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,7 +7,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.loginid.mgmt.LoginIDUtil;
-import io.loginid.sdk.java.LoginIdManagement;
 import io.loginid.sdk.java.invokers.ApiException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -20,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -39,7 +38,7 @@ public class UserMgmt extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // To keep it simple, handle unauthenticated requests first simply to avoid multiple servlets
+        // To keep it simple, handle unauthenticated requests first, only to avoid multiple servlets
 
         try {
             if (request.getServletPath().endsWith("/users/reqauthenticator")) {
@@ -72,6 +71,7 @@ public class UserMgmt extends HttpServlet {
 
         try {
             udata = (String) jws.getBody().get("udata");
+            String txClientId = (String) jws.getBody().get("aud");
             if (request.getServletPath().endsWith("/users/grantauthenticator")) {
                 String code = request.getParameter("code");
                 response.setContentType("application/json");
@@ -83,6 +83,11 @@ public class UserMgmt extends HttpServlet {
                 response.setContentType("application/json");
                 response.setStatus(200);
                 response.getWriter().printf(util.updateCredentialName(udata, credentialId, credentialName).toString());
+            } else if (request.getServletPath().endsWith("/users/trx")) {
+                String payload = readMessageBody(request.getReader());
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(util.getTransactionId(payload, udata, txClientId));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,5 +212,14 @@ public class UserMgmt extends HttpServlet {
         X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
         return keyFactory.generatePublic(keySpecX509);
 
+    }
+
+    public String readMessageBody(BufferedReader reader) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String nextLine = "";
+        while((nextLine = reader.readLine()) != null) {
+            sb.append(nextLine);
+        }
+        return sb.toString().trim();
     }
 }

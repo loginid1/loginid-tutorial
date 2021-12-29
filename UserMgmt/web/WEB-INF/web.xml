@@ -75,6 +75,10 @@
         <servlet-name>UserMgmt</servlet-name>
         <url-pattern>/users/grantauthenticator</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserMgmt</servlet-name>
+        <url-pattern>/users/trx</url-pattern>
+    </servlet-mapping>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
