@@ -73,7 +73,19 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UserMgmt</servlet-name>
+        <url-pattern>/users/reqtemporary</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserMgmt</servlet-name>
+        <url-pattern>/users/waittemporary</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserMgmt</servlet-name>
         <url-pattern>/users/grantauthenticator</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserMgmt</servlet-name>
+        <url-pattern>/users/granttempaccess</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UserMgmt</servlet-name>

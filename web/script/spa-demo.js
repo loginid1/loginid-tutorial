@@ -56,6 +56,32 @@ async function addAuthenticator(dw, idUsernameField, idAuthCodeFieldName) {
     }
 }
 
+async function waiForTemporaryAccess(targetUrl) {
+    let result;
+    let user = document.getElementById('idReqAuthCodeUsername').value;
+    let code = document.getElementById('idAuthCodeConfirm').value;
+    let msg = 'username=' + encodeURI(user) + '&code=' + encodeURI(code);
+    $.ajax({
+        type: 'POST',
+        url: targetUrl,
+        data: msg,
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded',
+        async: true,
+        statusCode: {
+            200: function (data) {
+                updateSession(data.jwt, user);
+                getMsg("http://localhost:8080/users/session", data.jwt);
+            }
+        },
+        error: function (data) {
+            console.error(data);
+            let error = JSON.parse('{"error":"invalid_request", "error_description":"something went terribly wrong! Check the console!"}');
+            printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
+        }
+    });
+}
+
 function initiateTransaction(targetUrl) {
     let msg = document.getElementById('txtPayload').value;
     $.ajax({
@@ -101,7 +127,7 @@ async function confirmTransaction(dw) {
     }
 }
 
-function requestAuthCodeAuthenticator(targetUrl) {
+function requestAuthCode(targetUrl, confirmUsername) {
     let username = document.getElementById('idReqAuthCodeUsername').value;
     let msg = 'username=' + encodeURI(username);
     $.ajax({
@@ -113,8 +139,13 @@ function requestAuthCodeAuthenticator(targetUrl) {
         async: true,
         statusCode: {
             200: function (data) {
-                document.getElementById('idReqAuthCodeUsernameConfirm').value = data.username;
-                document.getElementById('idAuthCodeConfirm').value = data.code;
+                let field = document.getElementById('idAuthCodeConfirm')
+                field.value = data.code;
+                if(confirmUsername) {  // add authenticator
+                    document.getElementById('idReqAuthCodeUsernameConfirm').value = data.username;
+                } else {  // grant temporary, click the field so that we wait for the  granted authorization code
+                    field.click();
+                }
                 printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
             },
             400: function (data) {
@@ -166,7 +197,7 @@ function deleteCredentialName(targetUrl) {
     });
 }
 
-function grantAuthCodeAuthenticator(targetUrl) {
+function grantAuthCode(targetUrl) {
     let code = document.getElementById('idAuthCode').value;
     let msg = 'code=' + encodeURI(code);
     $.ajax({

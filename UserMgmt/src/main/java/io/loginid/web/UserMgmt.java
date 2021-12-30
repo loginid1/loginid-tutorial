@@ -20,8 +20,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
@@ -45,7 +48,20 @@ public class UserMgmt extends HttpServlet {
                 String username = request.getParameter("username");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.requestAuthCodeAuthenticator(username));
+                response.getWriter().printf(util.requestAuthCodeAuthenticator(username,  LoginIDUtil.CODE_TYPE.CREDENTIAL));
+                return;
+            } else if (request.getServletPath().endsWith("/users/reqtemporary")) {
+                String username = request.getParameter("username");
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(util.requestAuthCodeAuthenticator(username, LoginIDUtil.CODE_TYPE.TEMPORARY));
+                return;
+            } else if (request.getServletPath().endsWith("/users/waittemporary")) {
+                String username = request.getParameter("username");
+                String code = request.getParameter("code");
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(util.waitForAuthorizeAuthCode(username, code));
                 return;
             }
         } catch (Exception e) {
@@ -76,7 +92,12 @@ public class UserMgmt extends HttpServlet {
                 String code = request.getParameter("code");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.authorizeAuthCodeAuthenticator(udata, code));
+                response.getWriter().printf(util.authorizeAuthCode(udata, code, LoginIDUtil.CODE_TYPE.CREDENTIAL));
+            } else if (request.getServletPath().endsWith("/users/granttempaccess")) {
+                String code = request.getParameter("code");
+                response.setContentType("application/json");
+                response.setStatus(200);
+                response.getWriter().printf(util.authorizeAuthCode(udata, code, LoginIDUtil.CODE_TYPE.TEMPORARY));
             } else if (request.getServletPath().endsWith("/users/credentials")) {
                 String credentialId = request.getParameter("credentialId");
                 String credentialName = request.getParameter("credentialName");
@@ -214,7 +235,7 @@ public class UserMgmt extends HttpServlet {
 
     }
 
-    public String readMessageBody(BufferedReader reader) throws IOException {
+    private String readMessageBody(BufferedReader reader) throws IOException {
         StringBuilder sb = new StringBuilder();
         String nextLine = "";
         while((nextLine = reader.readLine()) != null) {
@@ -222,4 +243,17 @@ public class UserMgmt extends HttpServlet {
         }
         return sb.toString().trim();
     }
+
+    private boolean verifyTxHash(String txHash, String payload, String nonce, String serverNonce) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedhash = digest.digest((payload+nonce+serverNonce).getBytes(StandardCharsets.UTF_8));
+            return txHash.equals(new String(Base64.getUrlEncoder().encode(encodedhash)).replace("=", ""));
+        } catch (NoSuchAlgorithmException e) {
+            // this should never ever happen!
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

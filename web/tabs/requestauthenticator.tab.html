@@ -2,22 +2,17 @@
 <p>Adding an authenticator (device) is the task of enabling an additional device to use with an user account.</p>
 <p>It requires <strong>three steps</strong>:</p>
 <ul>
-    <li>an authorization code has to be generated on the new device</li>
-    <li>the generated authorization code has to be granted on the first device</li>
-    <li>register the authenticator on the new device</li>
+    <li>generate an authorization code on the <strong>new device</strong></li>
+    <li>grant the authorization code on the <strong>first device</strong></li>
+    <li>complete the process on the <strong>new device</strong></li>
 </ul>
-<p>To execute this feature on a MacBook two different browsers can be used. Follow these steps:</p>
-<h3>Open this page on the <strong>other</strong> browser!</h3>
+<p>To use this feature on a MacBook, two different browsers can be used. Follow these steps:</p>
 <ol>
-    <li><strong>this browser - Request Adding Authenticator</strong>: sign-in and copy the generated authorization code.
-    </li>
-    <li><strong>other browser - Add Authenticator</strong>: assuming that authenticator (device/browser) has been used
-        to sign-up initially. If so, paste the code, click <strong>Authorize</strong>.
-    </li>
-    <li><strong>this browser - Request Adding Authenticator</strong>: click <strong>Add Authenticator</strong></li>
+    <li>Open <strong>this dialog in a different browser</strong> (and leave it open), provide the username, click <strong>Generate Code</strong> and copy the generated authorization code</li>
+    <li>Open <strong>Grant Request</strong> in this browser, assuming this one has been used to create an account earlier</li>
+    <li><strong>Come back to this dialog</strong> and click <strong>Add Authenticator</strong></li>
 </ol>
 <hr/>
-<p>Use the dialog below to generate an authorization code:</p>
 <form>
     <table class="table-condensed">
         <tr>
@@ -25,30 +20,19 @@
                 <label for="idReqAuthCodeUsername">Provide your username as used with other devices: </label>
             </td>
             <td>
-                <input id="idReqAuthCodeUsername" type="text" class="input-sm" placeholder="your existing username"
-                       size="25">
-                <button id="btnReqAuthCode" type="button" class="btn btn-primary btn-sm"
-                        onclick="return requestAuthCodeAuthenticator('http://localhost:8080/users/reqauthenticator');">
+                <input id="idReqAuthCodeUsername" type="text" class="input-sm" placeholder="your existing username" size="25">
+                <button id="btnReqAuthCode" type="button" class="btn btn-primary btn-sm" onclick="return requestAuthCode('http://localhost:8080/users/reqauthenticator', true);">
                     Generate Code
                 </button>
             </td>
         </tr>
         <tr>
-            <td colspan="2">
-                <p>Once the authorization code was authorized, provide your username and the code again to complete the
-                    process.</p>
-            </td>
-        </tr>
-        <tr>
             <td>
-                <label for="idReqAuthCodeUsernameConfirm">Provide your username and the authorized code: </label>
+                <label for="idReqAuthCodeUsernameConfirm">Continue after granting the authorization code: </label>
             </td>
             <td>
-                <input id="idReqAuthCodeUsernameConfirm" type="text" class="input-sm"
-                       placeholder="your existing username"
-                       size="25" readonly>
-                <input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code" size="25"
-                       readonly>
+                <input id="idReqAuthCodeUsernameConfirm" type="text" class="input-sm" placeholder="your existing username" size="25" readonly>
+                <input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code" size="25" readonly>
                 <button id="btnAddAuthenticator" type="button" class="btn btn-primary btn-sm"
                         onclick="return addAuthenticator(dw, 'idReqAuthCodeUsernameConfirm', 'idAuthCodeConfirm');">Add
                     Authenticator

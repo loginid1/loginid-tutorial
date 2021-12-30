@@ -48,22 +48,19 @@
                onclick="getTabContent('tabs/authenticate.tab.html', 'tabAuthenticate');">Authentication</a>
         </li>
         <li>
-            <a href="#tabAddAuthenticator" data-toggle="tab" onclick="getTabContent('tabs/addAuthenticator.tab.html', 'tabAddAuthenticator');">Add Authenticator</a>
-        </li>
-        <li>
             <a href="#tabManageCreds" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html', 'tabManageCreds');">Manage Authenticators (Devices)</a>
         </li>
         <li>
             <a href="#tabCreateTx" data-toggle="tab" onclick="getTabContent('tabs/createTrx.tab.html', 'tabCreateTx');">Create Transaction Confirmation</a>
         </li>
         <li>
-            <a href="#tabGrantTempCred" data-toggle="tab">Grant Temporary Access</a>
-        </li>
-        <li>
-            <a href="#tabReqTempCred" data-toggle="tab">Request Temporary Access</a>
+            <a href="#tabGrantRequest" data-toggle="tab" onclick="getTabContent('tabs/grantRequest.tab.html', 'tabGrantRequest');">Grant Request</a>
         </li>
         <li>
             <a href="#tabReqAddCred" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html', 'tabReqAddCred');">Request Adding Authenticator</a>
+        </li>
+        <li>
+            <a href="#tabReqTempCred" data-toggle="tab" onclick="getTabContent('tabs/requesttempaccess.tab.html', 'tabReqTempCred');">Request Temporary Access</a>
         </li>
         <li>
             <a href="#tabKong" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html', 'tabKong');">Kong Plugin</a>
@@ -83,8 +80,8 @@
                     <td>This menu allows users to register and login to you application</td>
                 </tr>
                 <tr>
-                    <td><strong>Add Authenticator</strong></td>
-                    <td>Whenever a user requested access to another device, this menu allows the user to authorize an authentication code that was generated on the other device</td>
+                    <td><strong>Grant Request</strong></td>
+                    <td>Whenever a user requested access to another device, this menu allows the user to authorize an authentication code that was generated on another device</td>
                 </tr>
                 <tr>
                     <td><strong>Manage Authenticators (devices)</strong></td>
@@ -93,10 +90,6 @@
                 <tr>
                     <td><strong>Create Transaction Confirmation</strong></td>
                     <td>This menu displays the <strong>Transaction Confirmation</strong> feature which represents a digital receipt for any given transaction</td>
-                </tr>
-                <tr>
-                    <td><strong>Grant Temporary Access</strong></td>
-                    <td>The menu enables a user to <strong>grant</strong> temporary access to his account from a device that may not be owned by the user or which does not support FIDO2</td>
                 </tr>
                 <tr>
                     <td><strong>Request Temporary Access</strong></td>
@@ -115,11 +108,8 @@
         <div id="tabAuthenticate" class="tab-pane">
             <p>tabAuthenticate</p>
         </div>
-        <div id="tabGrantTempCred" class="tab-pane">
-            <p>tabGrantTempCred</p>
-        </div>
-        <div id="tabAddAuthenticator" class="tab-pane">
-            <p>tabAddAuthenticator</p>
+        <div id="tabGrantRequest" class="tab-pane">
+            <p>tabGrantRequest</p>
         </div>
         <div id="tabCreateTx" class="tab-pane">
             <p>tabCreateTx</p>
