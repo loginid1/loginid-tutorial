@@ -3,6 +3,8 @@ function checkSession() {
     if(token) {
         let username = JSON.parse(atob(token.split(".")[1])).udata;
         document.getElementById('idCurrentUser').innerText = username;
+    } else {
+        document.getElementById('idCurrentUser').innerText = 'logged out';
     }
 }
 
@@ -102,7 +104,7 @@ function initiateTransaction(targetUrl) {
             },
             401: function (data) {
                 deleteSession();
-                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper menu to authenticate"}');
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper Features menu to login"}');
                 printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }
         }
@@ -217,7 +219,7 @@ function grantAuthCode(targetUrl) {
             },
             401: function (data) {
                 deleteSession();
-                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper menu to authenticate"}');
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper Features menu to login"}');
                 printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }
         }
@@ -249,7 +251,7 @@ function getMsg(targetUrl, credential) {
             },
             401: function (data) {
                 deleteSession();
-                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper menu to authenticate"}');
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper Features menu to login"}');
                 printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             },
             404: function (data) {

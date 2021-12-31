@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>FIDO2 Authentication</title>
+    <title>LoginID - FIDO2 demo</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -34,38 +34,48 @@
 
 </head>
 <body onload="checkSession();">
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#tabOverview" data-toggle="tab" onclick="getTabContent('tabs/overview.tab.html', 'tabOverview');">LoginID Demo</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navBar">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Features <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#tabAuthenticate" data-toggle="tab" onclick="getTabContent('tabs/authenticate.tab.html', 'tabAuthenticate');">Authentication</a></li>
+                        <li><a href="#tabManageCreds" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html', 'tabManageCreds');">Manage Authenticators (Devices)</a></li>
+                        <li><a href="#tabCreateTx" data-toggle="tab" onclick="getTabContent('tabs/createTrx.tab.html', 'tabCreateTx');">Create Transaction Confirmation</a></li>
+                        <li><a href="#tabGrantRequest" data-toggle="tab" onclick="getTabContent('tabs/grantRequest.tab.html', 'tabGrantRequest');">Grant Request</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Simulated Second Device <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#tabReqAddCred" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html', 'tabReqAddCred');">Request Adding Authenticator</a></li>
+                        <li><a href="#tabReqTempCred" data-toggle="tab" onclick="getTabContent('tabs/requesttempaccess.tab.html', 'tabReqTempCred');">Request Temporary Access</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#tabKong" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html', 'tabKong');">Kong Plugin</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" data-toggle="tab">Logged in as: <span id="idCurrentUser"></span></a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <div class="container" id="content">
-    <h1>Welcome to the LoginID's FIDO2 demo client!</h1>
-    <p>This client demonstrates the uses cases available in the LoginID platform using FIDO2 authentication.</p>
-    <h4>You are currently logged in as: <strong><span id="idCurrentUser">you are not logged in</span></strong></h4>
-    <hr/>
-    <ul class="nav nav-tabs">
-        <li class="active">
-            <a href="#tabOverview" data-toggle="tab">Overview</a>
-        </li>
-        <li>
-            <a href="#tabAuthenticate" data-toggle="tab"
-               onclick="getTabContent('tabs/authenticate.tab.html', 'tabAuthenticate');">Authentication</a>
-        </li>
-        <li>
-            <a href="#tabManageCreds" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html', 'tabManageCreds');">Manage Authenticators (Devices)</a>
-        </li>
-        <li>
-            <a href="#tabCreateTx" data-toggle="tab" onclick="getTabContent('tabs/createTrx.tab.html', 'tabCreateTx');">Create Transaction Confirmation</a>
-        </li>
-        <li>
-            <a href="#tabReqAddCred" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html', 'tabReqAddCred');">Request Adding Authenticator</a>
-        </li>
-        <li>
-            <a href="#tabReqTempCred" data-toggle="tab" onclick="getTabContent('tabs/requesttempaccess.tab.html', 'tabReqTempCred');">Request Temporary Access</a>
-        </li>
-        <li>
-            <a href="#tabGrantRequest" data-toggle="tab" onclick="getTabContent('tabs/grantRequest.tab.html', 'tabGrantRequest');">Grant Request</a>
-        </li>
-        <li>
-            <a href="#tabKong" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html', 'tabKong');">Kong Plugin</a>
-        </li>
-    </ul>
     <div class="tab-content">
         <div id="tabOverview" class="tab-pane active">
             <h2>Overview</h2>
@@ -104,6 +114,9 @@
                     <td>The menu shows how LoginIDs plugin for Kong may be used to protect APIs by requiring a FIDO2 credential, issued by LoginID</td>
                 </tr>
             </table>
+            <hr/>
+            <p>To learn more about LoginID please visit <a href="https://loginid.io" target="_blank">https://loginid.io</a></p>
+            <p>More examples can be found on GitHub: <a href="https://github.com/loginid1" target="_blank">LoginID @ GitHub</a></p>
         </div>
         <div id="tabAuthenticate" class="tab-pane">
             <p>tabAuthenticate</p>
@@ -130,6 +143,7 @@
     <hr/>
     <h3>API Responses</h3>
     <div id="divResponse">Nothing to show</div>
+    <hr/>
 </div>
 </body>
 </html>
