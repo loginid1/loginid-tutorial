@@ -1,3 +1,14 @@
+/**
+ * LoginID-Demo
+ *
+ * This code is meant for educational purposes. It is provided as-is and is not expected to be used in production systems.
+ * - Use this code at your own risk!
+ * - Use this code to get a better understanding for FIDO2 enabled authentication and authorization flows.
+ *
+ * For more information, please visit http://loginid.io.
+ *
+ * LoginID, January 2022
+ */
 package io.loginid.web;
 
 import com.google.gson.JsonElement;
@@ -244,6 +255,15 @@ public class UserMgmt extends HttpServlet {
         return sb.toString().trim();
     }
 
+    /**
+     * Not used in the demo, just here as an example
+     *
+     * @param txHash
+     * @param payload
+     * @param nonce
+     * @param serverNonce
+     * @return
+     */
     private boolean verifyTxHash(String txHash, String payload, String nonce, String serverNonce) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

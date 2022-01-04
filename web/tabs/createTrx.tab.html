@@ -7,9 +7,6 @@
     received, it is passed back to this client. This client then prompts the user to confirm the transaction.</p>
 <p><strong>Important:</strong><br/>The relationship between <strong>Payload, TransactionId</strong> and <strong>Transaction Confirmation</strong> has to be managed
     by the client!</p>
-<p>There are two types of verifications a client can implement locally:</p>
-<ul><strong>tx_hash: </strong><code>tx_hash == base64url(SHA256(payload + nonce + server_nonce))</code></ul>
-<ul><strong>jwt-signature: </strong>default jwt-signature validation</ul>
 <p>This also means that the client is responsible for maintaining the payload as long as verifications are supported!</p>
 <hr/>
 <form>
@@ -34,11 +31,14 @@
                 </button>
             </td>
         </tr>
-        <tr>
-            <td colspan="3"><small><strong>NOTE: </strong><br/>The Transaction Confirmation returns a token (JWT) and a
-                success indicator. However, the
-                below API response attaches the base64url decoded jwt_header and jwt_payload for convenience!</small>
-            </td>
-        </tr>
     </table>
 </form>
+
+<h3>Transaction Verifications</h3>
+<p>There are two types of verifications a client can implement locally:</p>
+<ul>
+    <li>Verifying the payload based hash against this value: <strong>tx_hash</strong> Calculation: <code>tx_hash == base64url(SHA256(payload + nonce + server_nonce))</code></li>
+    <li>Verifying the jwt-signature</li>
+</ul>
+
+<p><strong>NOTE: </strong><br/>The Transaction Confirmation returns a token (JWT) and a success indicator. However, the below API response attaches the base64url decoded jwt_header and jwt_payload for convenience!</small></p>

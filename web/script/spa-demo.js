@@ -1,27 +1,31 @@
-function checkSession() {
-    let token = sessionStorage.getItem('token');
-    if(token) {
-        let username = JSON.parse(atob(token.split(".")[1])).udata;
-        document.getElementById('idCurrentUser').innerText = username;
-    } else {
-        document.getElementById('idCurrentUser').innerText = 'logged out';
-    }
-}
+/**
+ * LoginID-Demo
+ *
+ * This code is meant for educational purposes. It is provided as-is and is not expected to be used in production systems.
+ * - Use this code at your own risk!
+ * - Use this code to get a better understanding for FIDO2 enabled authentication and authorization flows.
+ *
+ * For more information, please visit http://loginid.io.
+ *
+ * LoginID, January 2022
+ */
 
-function updateSession(token, username) {
-    sessionStorage.setItem("token", token);
-    document.getElementById('idCurrentUser').innerText = username;
-}
+/********************************************/
+/* Functions that leverage LoginIDs Web SDK */
+/********************************************/
 
-function deleteSession() {
-    sessionStorage.removeItem('token;')
-    document.getElementById('idCurrentUser').innerText = 'you are logged out';
-}
-
+/**
+ * Uses the Web SDK to register a user using a FIDO2 authenticator.
+ * @param dw An instance of the LoginID Web SDK
+ */
 async function registerUser(dw) {
     try {
         let user = document.getElementById('idSignInName').value;
-        let result = await dw.registerWithFido2(user);
+
+        // the call prompts a user to authenticate using a FIDO2 authenticator
+        // the result contains a JSON message which includes a 'jwt' which represents the registered user
+        let result = await dw.registerWithFido2(user, {roaming_authenticator: true});
+
         updateSession(result.jwt, user);
         getMsg("http://localhost:8080/users/session", result.jwt);
     } catch (err) {
@@ -29,14 +33,24 @@ async function registerUser(dw) {
     }
 }
 
+/**
+ * Uses the Web SDK to authenticate a user using a FIDO2 authenticator.
+ * @param dw An instance of the LoginID Web SDK
+ */
 async function signInUser(dw) {
     let result;
     let user = document.getElementById('idSignInName').value;
     try {
-        result = await dw.authenticateWithFido2(user);
+
+        // the call prompts a user to authenticate using a FIDO2 authenticator
+        // the result contains a JSON message which includes a 'jwt' which represents the authenticated user
+        result = await dw.authenticateWithFido2(user, {roaming_authenticator: true});
+
         updateSession(result.jwt, user);
         getMsg("http://localhost:8080/users/session", result.jwt);
     } catch (err) {
+
+        // err occurs if the user has not yet registered the username or the device
         if ("user_not_found" === err.code) {
             document.getElementById('divResponse').innerHTML =
                 "<strong>You have not registered yet, would you like to do that now?</strong>" +
@@ -45,12 +59,20 @@ async function signInUser(dw) {
     }
 }
 
-async function addAuthenticator(dw, idUsernameField, idAuthCodeFieldName) {
+/**
+ * Uses the Web SDK to add a FIDO2 authenticator.
+ * @param dw An instance of the LoginID Web SDK
+ */
+async function addAuthenticator(dw) {
     let result;
-    let user = document.getElementById(idUsernameField).value;
-    let code = document.getElementById(idAuthCodeFieldName).value;
+    let user = document.getElementById('idReqAuthCodeUsernameConfirm').value;
+    let code = document.getElementById('idAuthCodeConfirm').value;
     try {
+
+        // authenticates a user based on the username and the authorized code
+        // the result contains a JSON message which includes a 'jwt' which represents the authenticated user
         result = await dw.addFido2CredentialWithCode(user, code);
+
         updateSession(result.jwt, user);
         getMsg("http://localhost:8080/users/session", result.jwt);
     } catch (err) {
@@ -58,8 +80,40 @@ async function addAuthenticator(dw, idUsernameField, idAuthCodeFieldName) {
     }
 }
 
+/**
+ * Uses the Web SDK to sign a transaction using the FIDO2 key of the current user. This function is called after receiving a response from 'initiateTransaction'
+ * @param dw An instance of the LoginID Web SDK
+ */
+async function confirmTransaction(dw) {
+    try {
+        let transactionId = document.getElementById('transactionId').value;
+        let username = document.getElementById('idCurrentUser').innerText
+
+        // the call prompts a user to authenticate using a FIDO2 authenticator. This is when the transaction gets signed
+        // the result contains a JSON message which includes a 'jwt' which represents the confirmed transaction
+        let result = await dw.confirmTransaction(username, transactionId);
+
+        let jwtHeader = JSON.parse(atob(result.jwt.split(".")[0]));
+        let jwtPayload = JSON.parse(atob(result.jwt.split(".")[1]));
+
+        result['jwt_header'] = jwtHeader;
+        result['jwt_payload'] = jwtPayload;
+
+        printFlowResponse('<code class="language-json">' + JSON.stringify(result, null, 2) + '</code>');
+    } catch (err) {
+        document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
+    }
+}
+
+/*************************************/
+/* Functions that leverage a backend */
+/*************************************/
+
+/**
+ * Awaits the authorization of an authorization code to access an account temporarily.
+ * @param targetUrl Points to the simulated backend which calls LoginID
+ */
 async function waiForTemporaryAccess(targetUrl) {
-    let result;
     let user = document.getElementById('idReqAuthCodeUsername').value;
     let code = document.getElementById('idAuthCodeConfirm').value;
     let msg = 'username=' + encodeURI(user) + '&code=' + encodeURI(code);
@@ -84,6 +138,10 @@ async function waiForTemporaryAccess(targetUrl) {
     });
 }
 
+/**
+ * Initiates a transaction confirmation by requesting a transactionId via the clients backend.
+ * @param targetUrl Points to the simulated backend which calls LoginID
+ */
 function initiateTransaction(targetUrl) {
     let msg = document.getElementById('txtPayload').value;
     $.ajax({
@@ -111,24 +169,11 @@ function initiateTransaction(targetUrl) {
     });
 }
 
-async function confirmTransaction(dw) {
-    try {
-        let transactionId = document.getElementById('transactionId').value;
-        let username = document.getElementById('idCurrentUser').innerText
-        let result = await dw.confirmTransaction(username, transactionId);
-
-        let jwtHeader = JSON.parse(atob(result.jwt.split(".")[0]));
-        let jwtPayload = JSON.parse(atob(result.jwt.split(".")[1]));
-
-        result['jwt_header'] = jwtHeader;
-        result['jwt_payload'] = jwtPayload;
-
-        printFlowResponse('<code class="language-json">' + JSON.stringify(result, null, 2) + '</code>');
-    } catch (err) {
-        document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
-    }
-}
-
+/**
+ * Requests an authorization code to either add an authenticator or ask for access on a non-FIDO2 supported device.
+ * @param targetUrl Points to the simulated backend which calls LoginID
+ * @param confirmUsername 'true' for Add Authenticator. Simply places the username into a second text field
+ */
 function requestAuthCode(targetUrl, confirmUsername) {
     let username = document.getElementById('idReqAuthCodeUsername').value;
     let msg = 'username=' + encodeURI(username);
@@ -143,7 +188,7 @@ function requestAuthCode(targetUrl, confirmUsername) {
             200: function (data) {
                 let field = document.getElementById('idAuthCodeConfirm')
                 field.value = data.code;
-                if(confirmUsername) {  // add authenticator
+                if (confirmUsername) {  // add authenticator
                     document.getElementById('idReqAuthCodeUsernameConfirm').value = data.username;
                 } else {  // grant temporary, click the field so that we wait for the  granted authorization code
                     field.click();
@@ -157,6 +202,10 @@ function requestAuthCode(targetUrl, confirmUsername) {
     });
 }
 
+/**
+ * Sets a new name for an existing credential.
+ * @param targetUrl Points to the simulated backend which calls LoginID
+ */
 function updateCredentialName(targetUrl) {
     let credentialId = encodeURI(document.getElementById('idCredentialId').value);
     let credentialName = encodeURI(document.getElementById('idNewCredentialName').value);
@@ -180,6 +229,10 @@ function updateCredentialName(targetUrl) {
     });
 }
 
+/**
+ * Named 'delete' but actually 'revokes' an existing credential.
+ * @param targetUrl Points to the simulated backend which calls LoginID
+ */
 function deleteCredentialName(targetUrl) {
     let credentialId = encodeURI(document.getElementById('idCredentialIdDelete').value);
     $.ajax({
@@ -199,6 +252,10 @@ function deleteCredentialName(targetUrl) {
     });
 }
 
+/**
+ * Granting an authorization code. Either for adding a device or for granting temporary access
+ * @param targetUrl Points to the simulated backend which calls LoginID
+ */
 function grantAuthCode(targetUrl) {
     let code = document.getElementById('idAuthCode').value;
     let msg = 'code=' + encodeURI(code);
@@ -225,6 +282,10 @@ function grantAuthCode(targetUrl) {
         }
     });
 }
+
+/************************************/
+/* Helper functions to cal backends */
+/************************************/
 
 function directCall(targetUrl) {
     getMsg(targetUrl, null);
@@ -268,6 +329,10 @@ function getMsg(targetUrl, credential) {
     });
 }
 
+/********************/
+/* Helper functions */
+/********************/
+
 function getTabContent(pageName, targetId) {
     $.ajax({
         type: 'GET',
@@ -281,6 +346,30 @@ function getTabContent(pageName, targetId) {
             document.getElementById(targetId).innerHTML = data;
         }
     });
+}
+
+function checkSession() {
+    let token = sessionStorage.getItem('token');
+    if (token) {
+        let username = JSON.parse(atob(token.split(".")[1])).udata;
+        document.getElementById('idCurrentUser').innerText = username;
+    } else {
+        document.getElementById('idCurrentUser').innerText = 'logged out';
+    }
+}
+
+function updateSession(token, username) {
+    sessionStorage.setItem("token", token);
+    document.getElementById('idCurrentUser').innerText = username;
+}
+
+function deleteSession() {
+    sessionStorage.removeItem('token')
+    document.getElementById('idCurrentUser').innerText = 'logged out';
+}
+
+function clearApiResponses() {
+    document.getElementById('divResponse').innerHTML = 'Nothing to show';
 }
 
 function printFlowResponse(output) {

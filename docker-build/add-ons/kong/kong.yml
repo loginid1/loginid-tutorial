@@ -20,9 +20,10 @@ _format_version: "2.1"
 
 _transform: true
 
-  # Each Kong entity (core entity or custom entity introduced by a plugin)
+# Each Kong entity (core entity or custom entity introduced by a plugin)
 # can be listed in the top-level as an array of objects:
 
+# Demo service just to have something to call
 services:
   - name: cat-fact
     url: https://catfact.ninja/fact

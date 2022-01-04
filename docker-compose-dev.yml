@@ -37,4 +37,4 @@ services:
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000"
     volumes:
-      - /Users/sascha/.loginid/config:/opt/docker/loginid/config
+      - .env:/opt/docker/loginid/config

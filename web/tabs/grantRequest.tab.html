@@ -1,9 +1,13 @@
 <h2>Grant Request</h2>
-<p>Adding an authenticator (device) or temporary access is the task of enabling a user to access an account from an additional device. Either permanently or once only.</p>
+<p>Adding an authenticator (device) or temporary access is the task of enabling a user to access an account from an
+    additional device. Either permanently or once only.</p>
 <p>This screen allows a user to grant an authorization code that was requested at one of these screens:</p>
 <ul>
-    <li><strong>Request Adding Authenticator</strong>: generates an authorization code to add an authenticator permanently</li>
-    <li><strong>Request Temporary Access</strong>: generates an authorization code to get once only access to an account</li>
+    <li><strong>Request Adding Authenticator</strong>: generates an authorization code to add an authenticator
+        permanently
+    </li>
+    <li><strong>Request Temporary Access</strong>: generates an authorization code to get once only access to an account
+    </li>
 </ul>
 <hr/>
 <p>Use the dialog below after generating an authorization code in the other browser.</p>
@@ -11,12 +15,20 @@
     <table class="table-condensed">
         <tr>
             <td><label for="idAuthCode">Paste the authorization code: </label></td>
+            <td><input id="idAuthCode" type="text" class="input-sm" placeholder="authorization-code" size="25"></td>
+        </tr>
+        <tr>
+            <td><label for="btnCredentials">Authorize a new authenticator: </label></td>
             <td>
-                <input id="idAuthCode" type="text" class="input-sm" placeholder="authorization-code" size="25">
                 <button id="btnCredentials" type="button" class="btn btn-primary btn-sm"
                         onclick="return grantAuthCode('http://localhost:8080/users/grantauthenticator');">
                     Authorize Authenticator
                 </button>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="btnTempAccess">Grant temporary access: </label></td>
+            <td>
                 <button id="btnTempAccess" type="button" class="btn btn-primary btn-sm"
                         onclick="return grantAuthCode('http://localhost:8080/users/granttempaccess');">
                     Grant Temporary Access

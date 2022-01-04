@@ -70,7 +70,7 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" data-toggle="tab">Logged in as: <span id="idCurrentUser"></span></a></li>
+                <li><a href="#" onclick="return deleteSession();" data-toggle="tab">Logged in as: <span id="idCurrentUser"></span> (click to logout)</a></li>
             </ul>
         </div>
     </div>
@@ -91,11 +91,11 @@
                 </tr>
                 <tr>
                     <td><strong>Grant Request</strong></td>
-                    <td>Whenever a user requested access to another device, this menu allows the user to authorize an authentication code that was generated on another device</td>
+                    <td>This menu allows the user to authorize an authorization code that was generated on another device</td>
                 </tr>
                 <tr>
-                    <td><strong>Manage Authenticators (devices)</strong></td>
-                    <td>This menu provides a user with a simple interface to manage registered devices (authenticators)</td>
+                    <td><strong>Manage Authenticators</strong></td>
+                    <td>This menu provides a user with a simple interface to manage registered authenticators (devices)</td>
                 </tr>
                 <tr>
                     <td><strong>Create Transaction Confirmation</strong></td>
@@ -103,15 +103,15 @@
                 </tr>
                 <tr>
                     <td><strong>Request Temporary Access</strong></td>
-                    <td>The menu enables a user to <strong>request</strong> temporary access to his account from a device that may not be owned by the user or which does not support FIDO2</td>
+                    <td>The menu enables a user to request <strong>temporary access</strong> to his account from a device that may not be owned by the user or which does not support FIDO2</td>
                 </tr>
                 <tr>
                     <td><strong>Request Adding Authenticator</strong></td>
-                    <td>The menu enables a user to add additional devices (authenticators) to his account</td>
+                    <td>The menu enables a user to <strong>add additional authenticators</strong> (devices) to his account</td>
                 </tr>
                 <tr>
                     <td><strong>Kong Plugin</strong></td>
-                    <td>The menu shows how LoginIDs plugin for Kong may be used to protect APIs by requiring a FIDO2 credential, issued by LoginID</td>
+                    <td>The menu shows how LoginIDs <strong>plugin for Kong</strong> may be used to protect APIs by requiring a LoginID issued FIDO2 credential</td>
                 </tr>
             </table>
             <hr/>
@@ -142,6 +142,7 @@
     </div>
     <hr/>
     <h3>API Responses</h3>
+    <button type="button" class="btn btn-primary btn-sm" onclick="return clearApiResponses();">clear</button>
     <div id="divResponse">Nothing to show</div>
     <hr/>
 </div>

@@ -1,5 +1,5 @@
 <h2>Request Temporary Access</h2>
-<p>Adding temporary access to an account from a temporary device or one that does not support FIDO2.</p>
+<p>Adding one-time access to an account from a temporary device or one that does not support FIDO2.</p>
 <p>It requires <strong>two steps</strong>:</p>
 <ul>
     <li>generate an authorization code on the <strong>new device</strong></li>
@@ -8,7 +8,7 @@
 <p>To use this feature on a MacBook, two different browsers can be used. Follow these steps:</p>
 <ol>
     <li>Open <strong>this dialog in a different browser</strong> (and leave it open), provide the username, click <strong>Generate Code</strong> and copy the generated authorization code</li>
-    <li>Open <strong>Grant Request</strong> in this browser, assuming this one has been used to create an account earlier</li>
+    <li>Open <strong>Features - Grant Request</strong> in this browser, assuming this one has been used to create an account earlier</li>
     <li><strong>Come back to this dialog</strong> and simply wait to be logged in!</li>
 </ol>
 <hr/>
@@ -34,11 +34,6 @@
                        onclick="return waiForTemporaryAccess('http://localhost:8080/users/waittemporary', false);">
             </td>
         </tr>
-        <tr>
-            <td colspan="2">
-                <p>Copy the code, authorize it, and you are logged in!</p>
-                <p><strong>Note: </strong> this credential cannot be used with the Kong Plugin demo!</p>
-            </td>
-        </tr>
     </table>
+    <p><strong>Note: </strong> this credential cannot be used with the Kong Plugin demo!</p>
 </form>
