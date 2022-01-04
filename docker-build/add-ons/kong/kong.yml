@@ -37,10 +37,10 @@ plugins:
     service: cat-fact
     config:
       login_id_base_url: https://directweb.usw1.loginid.io
-      login_id_client_id: pW2GlAFMYRgHRa0CGMTN7szVIjGAZBsRZnAnA1gT3VThVv86wlI258l5V--1r23_59R-iTcRLbU6sPgi6pGI_Q
+      login_id_client_id: {web-sdk-client_id}
       login_id_public_key_url: https://directweb.usw1.loginid.io/certs
       issuer: loginid.io
-      audience: pW2GlAFMYRgHRa0CGMTN7szVIjGAZBsRZnAnA1gT3VThVv86wlI258l5V--1r23_59R-iTcRLbU6sPgi6pGI_Q
+      audience: {web-sdk-client_id}
   - name: cors
     service: cat-fact
     config:

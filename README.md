@@ -1,4 +1,4 @@
-# Demo
+# LoginID-Demo
 
 This demo simulates a small setup that includes these components:
 
@@ -12,7 +12,7 @@ This demo simulates a small setup that includes these components:
   - the demo connects to the public service Cat-Fact, once as an open API call, once protected by Kong
 - **User Management**:
   - simulates a simple user management API. It receives a LoginID issued JWT and ... returns the username
-  - connects to LoginID to call LoginID APis that require so called *service token*
+  - connects to LoginID to call LoginID APIs that require so called *service token*
 
 The visual version of the setup looks like this:
 
@@ -24,30 +24,17 @@ To make it work you have to register a **Web App** and **Backend/API** credentia
 
 **NOTE:** Do NOT attach an API credential to the Web App but to the Backend/API configuration! 
 
-To include the backend api credentials in this setup, create a private file (e.g.: `~/.loginid/config`) having this structure:
+To include the backend api credentials in this setup, copy the file `.env_template` and paste it as `.env`. Afterwards, configure it!
 
-```properties
-client_id_backend=b5NaU...TpUhfQ==
-base_url=https://directweb.usw1.loginid.io
-API_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqG...S/asw3QwkJ/7B\n-----END PRIVATE KEY-----
-```
-
-Update the properties to your values!
+Please look inside that file for instructions!
 
 Once that is done, update the following files:
 
-- `./docker-compose.yml, ./docker-compose-dev.yml`
-  - in both files update the volume to point to your configuration file!
-  - i.e. from: `/Users/sascha/.loginid/config:/opt/docker/loginid/config` to: `{your-path}/.loginid/config:/opt/docker/loginid/config`
-  - the *...-dev.yml* file runs the *usermgmt* container with remote debugging enabled on port 8000
-  - the *usermgmt* container uses the BASE url to retrieve the public signing cert of LoginID
 - `./web/index.html`
-  - update the BASE_URL and client_id within the constructor of the SDK (e.g.: `const dw = new web.default\("https://directweb.usw1.loginid.io", "pW2GlAFMYRgHRa0CGMT....)`
-  - use the values of the *Web App*
+  - replace `{web-sdk-client_id}` with your Web App client_id
 - `./docker-build/add-ons/kong/kong.yml`
-  - update **login_id_base_url**, **login_id_client_id**, **login_id_public_key_url** and **audience** of the plugin
-  - usually *audience* will match the client_id
-  - use the client_id of your *Web App* configuration
+  - replace `{web-sdk-client_id}` with your Web App client_id (two locations)
+  - update other values if needed
 
 ## Building the demo
 
@@ -61,10 +48,10 @@ The whole system is docker based. To build it these tools are needed:
 
 If all those are available, do this:
 
-- `make build`  // this compiles code and build the docker images
+- `make build`  // this compiles code and builds the docker images
 - `docker-compose up`  // this launches the system, use `docker-compose -f docker-compose-dev.yml up` to use the debugging enabled user management container
 - `http://localhost`  // open a browser at that location and enjoy the app
-- when authenticating, choose a username of your choice (which is hopefully not taken)
+- when authenticating, choose a username of your choice
 
 The application uses the LoginID issued JWT as its session token and when authenticating users against the user management API. 
 For this demo the JWT is stored in the session store of the browser.
