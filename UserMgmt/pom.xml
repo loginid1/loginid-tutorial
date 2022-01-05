@@ -99,8 +99,6 @@
             <groupId>io.loginid</groupId>
             <artifactId>java-client</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/java-client-1.0-SNAPSHOT-jar-with-dependencies.jar</systemPath>
         </dependency>
         <!-- Evaluation -->
         <dependency>
