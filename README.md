@@ -18,6 +18,22 @@ The visual version of the setup looks like this:
 
 ![alt overview](web/images/managecreds.png)
 
+## Cloning this project
+
+This project uses the LoginID-Java-SDK which is used as a git submodule. When cloning this project, use these commands:
+
+- `git clone --recurse-submodules https://gitlab.com/sascha17/kong-demo.git`
+
+If you ran git clone without `--recurse-submodules` or if you are not working in the main branch, run the following now:
+
+- `cd kong-demo`
+- `git submodule init`
+- `git submodule update`
+
+Your project now includes the submodule that contains the java SDK but only as a *read* version, so to say.
+
+**Tip:** More information on git submodules can be found [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+
 ## Preparing the demo
 
 To make it work you have to register a **Web App** and **Backend/API** credential at LoginIDs dashboard.
@@ -51,14 +67,28 @@ If all those are available, do this:
 - `make build`  // this compiles code and builds the docker images
 - `docker-compose up`  // this launches the system, use `docker-compose -f docker-compose-dev.yml up` to use the debugging enabled user management container
 - `http://localhost`  // open a browser at that location and enjoy the app
-- when authenticating, choose a username of your choice
 
 The application uses the LoginID issued JWT as its session token and when authenticating users against the user management API. 
 For this demo the JWT is stored in the session store of the browser.
 
+Once you are done, terminate docker using this command:
+
+- `docker-compose down`
+
+**Tip:** if you run into trouble when launching docker because it complains about conflicting containers is already running, use this command to stop and remove them:
+
+- `docker stop $(docker ps -aq)`
+- `docker rm $(docker ps -aq)`
+
 ## Info: Kong Plugin configuration
 
-For your convenience, these values may be configured for the Kong plugin:
+The Kong plugin configuration can be updated in this file:
+ 
+- `./docker-build/add-ons/kong/kong.yml`
+
+Find the section called: **plugins - loginid**
+
+The following values may be configured:
 
 |Parameter|Description|Type|Required|
 |---------|-----------|----|--------|
