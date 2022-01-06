@@ -1,16 +1,34 @@
 version: "3.4"
 
+# LoginID Demo
+#
+# The default compose file for the demo
+# To debug java code or do 'live' changes in the web UI use 'docker-compose-dev.yml'
+#
 services:
 
+  # contains the website
+  #
   nginx:
     container_name: demo_app
     image: local/kongclient
     restart: always
     ports:
       - "80:80"
-    volumes:
-      - ./web:/usr/share/nginx/html:ro
 
+  # contains the backend (UserMgmt)
+  #
+  usermgmt:
+    container_name: user_mgmt_api
+    image: local/usermgmt
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - .env:/opt/docker/loginid/config
+
+  # contains the kong docker gateway including the LoginID plugin
+  #
   kong:
     container_name: api_gateway
     image: local/kong
@@ -26,12 +44,3 @@ services:
       - "KONG_PROXY_ERROR_LOG=/dev/stderr"
       - "KONG_ADMIN_ERROR_LOG=/dev/stderr"
       - "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl"
-
-  usermgmt:
-    container_name: user_mgmt_api
-    image: local/usermgmt
-    restart: always
-    ports:
-      - "8080:8080"
-    volumes:
-      - .env:/opt/docker/loginid/config

@@ -1,3 +1,6 @@
+#
+# This image runs the local docker based Kong gateway (no database)
+#
 FROM kong
 COPY docker-build/add-ons/kong/kong.conf /etc/kong/kong.conf
 COPY docker-build/add-ons/kong/kong.yml /etc/kong/kong.yml

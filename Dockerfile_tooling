@@ -8,7 +8,6 @@ RUN apt install curl
 RUN apt install tar
 RUN apt install bash
 RUN apt install procps
-RUN #apk add --no-cache curl tar bash procps
 
 # Downloading and installing Maven
 # 1- Define a constant with the version of maven you want to install
@@ -42,5 +41,10 @@ RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
 ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
+# Build and install the java SDK
+COPY java-server-side-sdk/src/ /tmp/src
+COPY java-server-side-sdk/pom.xml /tmp/pom.xml
+
+RUN mvn -f "/tmp/pom.xml" clean install
 
 CMD [""]

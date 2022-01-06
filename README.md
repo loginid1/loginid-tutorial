@@ -20,13 +20,14 @@ The visual version of the setup looks like this:
 
 ## Cloning this project
 
-This project uses the LoginID-Java-SDK which is used as a git submodule. When cloning this project, use these commands:
+This project uses the LoginID-Java-SDK which is used as a git submodule. When cloning this project, use this command:
 
 - `git clone --recurse-submodules https://gitlab.com/sascha17/kong-demo.git`
 
+To continue, cd into `./kong-demo`.
+
 If you ran git clone without `--recurse-submodules` or if you are not working in the main branch, run the following now:
 
-- `cd kong-demo`
 - `git submodule init`
 - `git submodule update`
 
@@ -40,9 +41,9 @@ To make it work you have to register a **Web App** and **Backend/API** credentia
 
 **NOTE:** Do NOT attach an API credential to the Web App but to the Backend/API configuration! 
 
-To include the backend api credentials in this setup, copy the file `.env_template` and paste it as `.env`. Afterwards, configure it!
+To include the backend api credentials in this setup, copy the file `.env_template` and paste it as `.env`.
 
-Please look inside that file for instructions!
+Configure `.env` now, please look inside that file for instructions!
 
 Once that is done, update the following files:
 
@@ -54,24 +55,38 @@ Once that is done, update the following files:
 
 ## Building the demo
 
+### Prepare the build
+
 The whole system is docker based. To build it these tools are needed:
+
+- docker
+- docker-compose
+- Make  // if you do not have Make, run the commands found within `Makefile` manually in your terminal
+
+The build process uses a dedicated container that includes java and maven.
+
+If you plan to update java code or build the project locally, these tools are also required:
 
 - maven
 - java
-- Make  // if you do not have Make, run the commands found within `Makefile` manually
-- docker
-- docker-compose
+
+### Build the containers
 
 If all those are available, do this:
 
-- `make build`  // this compiles code and builds the docker images
-- `docker-compose up`  // this launches the system, use `docker-compose -f docker-compose-dev.yml up` to use the debugging enabled user management container
+- once:
+  - `make build_tooling`  // this will build a java container that includes maven and the compiled java SDK. This only needs to be executed for the first time or after an update of the java SDK!
+- always:
+  - `make build`  // this compiles code and builds the docker images
+
+## Running the demo
+
+After running the `make` commands you are ready to launch the system:
+
+- `docker-compose up`  // this launches the system. Use `docker-compose -f docker-compose-dev.yml up` to use debugging enabled containers 
 - `http://localhost`  // open a browser at that location and enjoy the app
 
-The application uses the LoginID issued JWT as its session token and when authenticating users against the user management API. 
-For this demo the JWT is stored in the session store of the browser.
-
-Once you are done, terminate docker using this command:
+Once you are done, terminate the containers by running:
 
 - `docker-compose down`
 
@@ -80,7 +95,14 @@ Once you are done, terminate docker using this command:
 - `docker stop $(docker ps -aq)`
 - `docker rm $(docker ps -aq)`
 
-## Info: Kong Plugin configuration
+## Demo details
+
+The application uses the LoginID issued JWT as its session token and when authenticating users against the user management API. 
+For this demo the JWT is stored in the session store of the browser.
+
+Try out the different menus to learn more about LoginID features!
+
+## Kong Plugin configuration
 
 The Kong plugin configuration can be updated in this file:
  
