@@ -6,6 +6,12 @@ build:
 	docker run -v `pwd`:/tmp dev/tooling mvn -f "/tmp/UserMgmt/pom.xml" clean package
 	docker build --tag local/usermgmt --no-cache ./UserMgmt
 
+build_win:
+	docker build --tag local/kongclient --no-cache .
+	docker build --tag local/kong --no-cache -f Dockerfile_kong .
+	docker run -v ${PWD}:/tmp dev/tooling mvn -f "/tmp/UserMgmt/pom.xml" clean package
+	docker build --tag local/usermgmt --no-cache ./UserMgmt
+
 # Run this only if 1. the java SDK has changed or 2. it has not been built yet
 #
 build_tooling:

@@ -77,7 +77,8 @@ If all those are available, do this:
 - once:
   - `make build_tooling`  // this will build a java container that includes maven and the compiled java SDK. This only needs to be executed for the first time or after an update of the java SDK!
 - always:
-  - `make build`  // this compiles code and builds the docker images
+  - for Mac: `make build`  // this compiles code and builds the docker images
+  - for Windows: `make build_win` // run this file if you are on a Windows machine
 
 ## Running the demo
 
