@@ -7,7 +7,7 @@
 <p>This demo shows off how Kong fails any request if the current user has not authenticated beforehand.</p>
 <hr/>
 <p><strong>https://catfact.ninja/fact</strong>: the public API which is called directly.</p>
-<p><strong>http://localhost:8090/fact</strong>: the same public API but hosted on Kong as a protected API which requires
+<p><strong>http://local-kong-service:8090/fact</strong>: the same public API but hosted on Kong as a protected API which requires
     a
     valid FIDO2 credential, issued by <strong>LoginID</strong>.
 </p>
@@ -30,7 +30,7 @@
             </td>
             <td>
                 <button id="btnProtected" type="button" class="btn btn-primary btn-sm"
-                        onclick="return protectedCall('http://localhost:8090/fact');">http://localhost:8090/fact
+                        onclick="return protectedCallKong('/fact');">http://localhost:8090/fact
                 </button>
             </td>
             <td>(client --> Kong --> cat-fact-API)</td>

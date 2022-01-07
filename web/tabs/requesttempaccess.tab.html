@@ -20,7 +20,7 @@
             </td>
             <td>
                 <input id="idReqAuthCodeUsername" type="text" class="input-sm" placeholder="your existing username" size="25">
-                <button id="btnReqAuthCode" type="button" class="btn btn-primary btn-sm" onclick="return requestAuthCode('http://localhost:8080/users/reqtemporary', false);">
+                <button id="btnReqAuthCode" type="button" class="btn btn-primary btn-sm" onclick="return requestAuthCode('/users/reqtemporary', false);">
                     Generate Code
                 </button>
             </td>
@@ -31,7 +31,7 @@
             </td>
             <td>
                 <input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code" size="25" readonly
-                       onclick="return waiForTemporaryAccess('http://localhost:8080/users/waittemporary', false);">
+                       onclick="return waiForTemporaryAccess('/users/waittemporary', false);">
             </td>
         </tr>
     </table>

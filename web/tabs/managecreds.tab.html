@@ -32,7 +32,7 @@
             </td>
             <td>
                 <button id="btnCredentials" type="button" class="btn btn-primary btn-sm"
-                        onclick="return protectedCall('http://localhost:8080/users/credentials');">List Credentials
+                        onclick="return protectedCall('/users/credentials');">List Credentials
                 </button>
             </td>
         </tr>
@@ -45,7 +45,7 @@
                 <input id="idNewCredentialName" type="text" class="input-sm" placeholder="new name for the credential"
                        size="25">
                 <button id="btnUpdateCredential" type="button" class="btn btn-primary btn-sm"
-                        onclick="return updateCredentialName('http://localhost:8080/users/credentials');">Update
+                        onclick="return updateCredentialName('/users/credentials');">Update
                 </button>
             </td>
         </tr>
@@ -57,7 +57,7 @@
                 <input id="idCredentialIdDelete" type="text" class="input-sm" placeholder="id of the credential"
                        size="25">
                 <button id="btnDeleteCredential" type="button" class="btn btn-primary btn-sm"
-                        onclick="return deleteCredentialName('http://localhost:8080/users/credentials');">Revoke
+                        onclick="return deleteCredentialName('/users/credentials');">Revoke
                     (Disable)
                 </button>
             </td>

@@ -49,8 +49,10 @@ Once that is done, update the following files:
 
 - `./web/index.html`
   - replace `{web-sdk-client_id}` with your Web App client_id
+  - i.e.: from **{web-sdk-client_id}** to **pW2Gl...pGI_Q**
 - `./docker-build/add-ons/kong/kong.yml`
   - replace `{web-sdk-client_id}` with your Web App client_id (two locations)
+  - i.e.: from **{web-sdk-client_id}** to **pW2Gl...pGI_Q**
   - update other values if needed
 
 ## Building the demo
@@ -61,37 +63,32 @@ The whole system is docker based. To build it these tools are needed:
 
 - docker
 - docker-compose
-- Make  // if you do not have Make, run the commands found within `Makefile` manually in your terminal
-
-The build process uses a dedicated container that includes java and maven.
-
-If you plan to update java code or build the project locally, these tools are also required:
-
-- maven
-- java
+- Make // if Make is not available, run the commands found within `Makefile` manually in your terminal
 
 ### Build the containers
 
 If all those are available, do this:
 
 - once:
-  - `make build_tooling`  // this will build a java container that includes maven and the compiled java SDK. This only needs to be executed for the first time or after an update of the java SDK!
+  - `make build_tooling`  // this will build a container that includes java jdk11, maven and the compiled LoginID java SDK. This only needs to be executed for the first time or after an update of the java SDK!
 - always:
   - for Mac: `make build`  // this compiles code and builds the docker images
-  - for Windows: `make build_win` // run this file if you are on a Windows machine
+  - for Windows: `make build_win` // run this if you are on a Windows machine
+    - please look into **Makefile** for details if you do not want to use Make or if failures occur
 
 ## Running the demo
 
-After running the `make` commands you are ready to launch the system:
+After building the project you are ready to launch the system:
 
 - `docker-compose up`  // this launches the system. Use `docker-compose -f docker-compose-dev.yml up` to use debugging enabled containers 
 - `http://localhost`  // open a browser at that location and enjoy the app
+  - these ports will be used: **80, 8001, 8080, 8090, 8444**
 
 Once you are done, terminate the containers by running:
 
 - `docker-compose down`
 
-**Tip:** if you run into trouble when launching docker because it complains about conflicting containers is already running, use this command to stop and remove them:
+**Tip:** if you run into trouble when launching docker because it complains about conflicting containers already running, use this command to stop and remove them:
 
 - `docker stop $(docker ps -aq)`
 - `docker rm $(docker ps -aq)`

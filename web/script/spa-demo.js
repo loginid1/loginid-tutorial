@@ -10,8 +10,12 @@
  * LoginID, January 2022
  */
 
+const SERVICE='http://localhost:8080';
+const SERVICE_KONG='http://localhost:8090';
+
 /********************************************/
 /* Functions that leverage LoginIDs Web SDK */
+
 /********************************************/
 
 /**
@@ -27,7 +31,7 @@ async function registerUser(dw) {
         let result = await dw.registerWithFido2(user, {roaming_authenticator: true});
 
         updateSession(result.jwt, user);
-        getMsg("http://localhost:8080/users/session", result.jwt);
+        getMsg(SERVICE + "/users/session", result.jwt);
     } catch (err) {
         document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
     }
@@ -47,7 +51,7 @@ async function signInUser(dw) {
         result = await dw.authenticateWithFido2(user, {roaming_authenticator: true});
 
         updateSession(result.jwt, user);
-        getMsg("http://localhost:8080/users/session", result.jwt);
+        getMsg(SERVICE + "/users/session", result.jwt);
     } catch (err) {
 
         // err occurs if the user has not yet registered the username or the device
@@ -74,7 +78,7 @@ async function addAuthenticator(dw) {
         result = await dw.addFido2CredentialWithCode(user, code);
 
         updateSession(result.jwt, user);
-        getMsg("http://localhost:8080/users/session", result.jwt);
+        getMsg(SERVICE + "/users/session", result.jwt);
     } catch (err) {
         document.getElementById('divResponse').innerHTML = "<strong>" + err.message + "</strong>"
     }
@@ -107,19 +111,20 @@ async function confirmTransaction(dw) {
 
 /*************************************/
 /* Functions that leverage a backend */
+
 /*************************************/
 
 /**
  * Awaits the authorization of an authorization code to access an account temporarily.
  * @param targetUrl Points to the simulated backend which calls LoginID
  */
-async function waiForTemporaryAccess(targetUrl) {
+async function waiForTemporaryAccess(path) {
     let user = document.getElementById('idReqAuthCodeUsername').value;
     let code = document.getElementById('idAuthCodeConfirm').value;
     let msg = 'username=' + encodeURI(user) + '&code=' + encodeURI(code);
     $.ajax({
         type: 'POST',
-        url: targetUrl,
+        url: SERVICE + path,
         data: msg,
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
@@ -127,7 +132,7 @@ async function waiForTemporaryAccess(targetUrl) {
         statusCode: {
             200: function (data) {
                 updateSession(data.jwt, user);
-                getMsg("http://localhost:8080/users/session", data.jwt);
+                getMsg(SERVICE + "/users/session", data.jwt);
             }
         },
         error: function (data) {
@@ -142,11 +147,11 @@ async function waiForTemporaryAccess(targetUrl) {
  * Initiates a transaction confirmation by requesting a transactionId via the clients backend.
  * @param targetUrl Points to the simulated backend which calls LoginID
  */
-function initiateTransaction(targetUrl) {
+function initiateTransaction(path) {
     let msg = document.getElementById('txtPayload').value;
     $.ajax({
         type: 'POST',
-        url: targetUrl,
+        url: SERVICE + path,
         data: msg,
         dataType: 'json',
         contentType: 'text/plain',
@@ -174,12 +179,12 @@ function initiateTransaction(targetUrl) {
  * @param targetUrl Points to the simulated backend which calls LoginID
  * @param confirmUsername 'true' for Add Authenticator. Simply places the username into a second text field
  */
-function requestAuthCode(targetUrl, confirmUsername) {
+function requestAuthCode(path, confirmUsername) {
     let username = document.getElementById('idReqAuthCodeUsername').value;
     let msg = 'username=' + encodeURI(username);
     $.ajax({
         type: 'POST',
-        url: targetUrl,
+        url: SERVICE + path,
         data: msg,
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
@@ -206,13 +211,13 @@ function requestAuthCode(targetUrl, confirmUsername) {
  * Sets a new name for an existing credential.
  * @param targetUrl Points to the simulated backend which calls LoginID
  */
-function updateCredentialName(targetUrl) {
+function updateCredentialName(path) {
     let credentialId = encodeURI(document.getElementById('idCredentialId').value);
     let credentialName = encodeURI(document.getElementById('idNewCredentialName').value);
     let msg = 'credentialId=' + credentialId + '&credentialName=' + credentialName;
     $.ajax({
         type: 'POST',
-        url: targetUrl,
+        url: SERVICE + path,
         data: msg,
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
@@ -233,11 +238,11 @@ function updateCredentialName(targetUrl) {
  * Named 'delete' but actually 'revokes' an existing credential.
  * @param targetUrl Points to the simulated backend which calls LoginID
  */
-function deleteCredentialName(targetUrl) {
+function deleteCredentialName(path) {
     let credentialId = encodeURI(document.getElementById('idCredentialIdDelete').value);
     $.ajax({
         type: 'DELETE',
-        url: targetUrl + '?credentialId=' + credentialId,
+        url: SERVICE + path + '?credentialId=' + credentialId,
         dataType: 'json',
         async: true,
         headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")},
@@ -256,12 +261,12 @@ function deleteCredentialName(targetUrl) {
  * Granting an authorization code. Either for adding a device or for granting temporary access
  * @param targetUrl Points to the simulated backend which calls LoginID
  */
-function grantAuthCode(targetUrl) {
+function grantAuthCode(path) {
     let code = document.getElementById('idAuthCode').value;
     let msg = 'code=' + encodeURI(code);
     $.ajax({
         type: 'POST',
-        url: targetUrl,
+        url: SERVICE + path,
         data: msg,
         dataType: 'json',
         contentType: 'application/x-www-form-urlencoded',
@@ -285,14 +290,19 @@ function grantAuthCode(targetUrl) {
 
 /************************************/
 /* Helper functions to cal backends */
+
 /************************************/
 
 function directCall(targetUrl) {
     getMsg(targetUrl, null);
 }
 
-function protectedCall(targetUrl) {
-    getMsg(targetUrl, sessionStorage.getItem("token"));
+function protectedCall(path) {
+    getMsg(SERVICE + path, sessionStorage.getItem("token"));
+}
+
+function protectedCallKong(path) {
+    getMsg(SERVICE_KONG + path, sessionStorage.getItem("token"));
 }
 
 function getMsg(targetUrl, credential) {
@@ -331,6 +341,7 @@ function getMsg(targetUrl, credential) {
 
 /********************/
 /* Helper functions */
+
 /********************/
 
 function getTabContent(pageName, targetId) {
