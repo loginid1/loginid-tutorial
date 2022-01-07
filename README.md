@@ -49,9 +49,11 @@ Once that is done, update the following files:
 
 - `./web/index.html`
   - replace `{web-sdk-client_id}` with your Web App client_id
+  - replace `{base_url}` with your base_url (use **https://directweb.usw1.loginid.io** if unsure)
   - i.e.: from **{web-sdk-client_id}** to **pW2Gl...pGI_Q**
 - `./docker-build/add-ons/kong/kong.yml`
   - replace `{web-sdk-client_id}` with your Web App client_id (two locations)
+  - replace `{base_url}` with your base_url (use **https://directweb.usw1.loginid.io** if unsure) (two locations)
   - i.e.: from **{web-sdk-client_id}** to **pW2Gl...pGI_Q**
   - update other values if needed
 

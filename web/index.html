@@ -20,9 +20,8 @@
 
     <script type="module">
         import * as WebSDK from '../js/loginid.web.min.js';
-
         const dw = new web.default(
-            "https://directweb.usw1.loginid.io", "{web-sdk-client_id}"
+            "{base_url}", "{web-sdk-client_id}"
         );
         window.dw = dw;
     </script>
@@ -42,7 +41,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#tabOverview" data-toggle="tab" onclick="getTabContent('tabs/overview.tab.html', 'tabOverview');">LoginID Demo</a>
+            <a class="navbar-brand" href="#tabOverview" data-toggle="tab">LoginID Demo</a>
         </div>
         <div class="collapse navbar-collapse" id="navBar">
             <ul class="nav navbar-nav">
@@ -82,8 +81,8 @@
             <p>Here is a brief overview of the different features that are found behind each menu:</p>
             <table class="table-condensed table-striped">
                 <tr>
-                    <th text-align="center">Menu</th>
-                    <th text-algin="center">Feature</th>
+                    <th text-align="center">Feature</th>
+                    <th text-algin="center">Description</th>
                 </tr>
                 <tr>
                     <td><strong>Authentication</strong></td>

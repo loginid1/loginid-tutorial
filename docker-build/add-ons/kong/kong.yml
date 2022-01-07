@@ -36,9 +36,9 @@ plugins:
   - name: loginid
     service: cat-fact
     config:
-      login_id_base_url: https://directweb.usw1.loginid.io
+      login_id_base_url: {base_url}
       login_id_client_id: {web-sdk-client_id}
-      login_id_public_key_url: https://directweb.usw1.loginid.io/certs
+      login_id_public_key_url: {base_url}/certs
       issuer: loginid.io
       audience: {web-sdk-client_id}
   - name: cors
@@ -46,8 +46,6 @@ plugins:
     config:
       origins:
         - http://localhost
-        - http://localhost:8080
-        - http://localhost:8090
       methods:
         - GET
         - POST
