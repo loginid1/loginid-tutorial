@@ -13,7 +13,7 @@
     <div class="form-group">
         <label for="txtPayload">Payload to be signed</label>
         <textarea class="form-control" id="txtPayload" rows="3"></textarea><br/>
-        <button id="btnTxId" type="button" class="btn btn-primary btn-sm"
+        <button id="btnTxId" type="button"
                 onclick="return initiateTransaction('/users/trx');">Initiate Transaction
         </button>
     </div>
@@ -26,7 +26,7 @@
             <td><label for="transactionId">TransactionID</label></td>
             <td><input type="text" class="form-control" id="transactionId" size="50" readonly/></td>
             <td>
-                <button id="btnTxIdConfirm" type="button" class="btn btn-primary btn-sm"
+                <button id="btnTxIdConfirm" type="button"
                         onclick="return confirmTransaction(dw);">Confirm Transaction
                 </button>
             </td>

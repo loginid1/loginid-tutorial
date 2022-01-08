@@ -9,6 +9,13 @@
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- LoginID -->
+    <link href="assets/css/fonts.css" rel="stylesheet">
+    <link href="style/style.css" rel="stylesheet">
+
+    <link href="static/favicon.ico" rel="icon" type="image/x-icon"/>
+    <link href="static/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -33,7 +40,7 @@
 
 </head>
 <body onload="checkSession();">
-<nav class="navbar navbar-inverse">
+<nav>
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navBar">
@@ -141,7 +148,7 @@
     </div>
     <hr/>
     <h3>API Responses</h3>
-    <button type="button" class="btn btn-primary btn-sm" onclick="return clearApiResponses();">clear</button>
+    <button type="button" onclick="return clearApiResponses();">clear</button>
     <div id="divResponse">Nothing to show</div>
     <hr/>
 </div>

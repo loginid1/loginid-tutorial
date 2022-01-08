@@ -21,7 +21,7 @@
             </td>
             <td>
                 <input id="idReqAuthCodeUsername" type="text" class="input-sm" placeholder="your existing username" size="25">
-                <button id="btnReqAuthCode" type="button" class="btn btn-primary btn-sm" onclick="return requestAuthCode('/users/reqauthenticator', true);">
+                <button id="btnReqAuthCode" type="button" onclick="return requestAuthCode('/users/reqauthenticator', true);">
                     Generate Code
                 </button>
             </td>
@@ -33,7 +33,7 @@
             <td>
                 <input id="idReqAuthCodeUsernameConfirm" type="text" class="input-sm" placeholder="your existing username" size="25" readonly>
                 <input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code" size="25" readonly>
-                <button id="btnAddAuthenticator" type="button" class="btn btn-primary btn-sm"
+                <button id="btnAddAuthenticator" type="button"
                         onclick="return addAuthenticator(dw);">Add Authenticator
                 </button>
             </td>

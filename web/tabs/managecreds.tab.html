@@ -4,7 +4,7 @@
     an interface that enables users to get an overview of authenticators, name them, revoke them.</p>
 <p>This page is simple but fully functional.</p>
 <p>This page leverages a backend for its implementation:
-    <button id="btnArchitecture" class="btn btn-primary btn-sm" type="button" data-toggle="collapse"
+    <button id="btnArchitecture" type="button" data-toggle="collapse"
             data-target="#idArch" aria-expanded="false" aria-controls="idArch">show/hide architecture
     </button>
 </p>
@@ -31,7 +31,7 @@
                 <label for="btnCredentials">List all credentials: </label>
             </td>
             <td>
-                <button id="btnCredentials" type="button" class="btn btn-primary btn-sm"
+                <button id="btnCredentials" type="button"
                         onclick="return protectedCall('/users/credentials');">List Credentials
                 </button>
             </td>
@@ -44,7 +44,7 @@
                 <input id="idCredentialId" type="text" class="input-sm" placeholder="id of the credential" size="25">
                 <input id="idNewCredentialName" type="text" class="input-sm" placeholder="new name for the credential"
                        size="25">
-                <button id="btnUpdateCredential" type="button" class="btn btn-primary btn-sm"
+                <button id="btnUpdateCredential" type="button"
                         onclick="return updateCredentialName('/users/credentials');">Update
                 </button>
             </td>
@@ -56,7 +56,7 @@
             <td>
                 <input id="idCredentialIdDelete" type="text" class="input-sm" placeholder="id of the credential"
                        size="25">
-                <button id="btnDeleteCredential" type="button" class="btn btn-primary btn-sm"
+                <button id="btnDeleteCredential" type="button"
                         onclick="return deleteCredentialName('/users/credentials');">Revoke
                     (Disable)
                 </button>
