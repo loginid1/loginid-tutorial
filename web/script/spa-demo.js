@@ -44,6 +44,10 @@ async function registerUser(dw) {
 async function signInUser(dw) {
     let result;
     let user = document.getElementById('idSignInName').value;
+    if(!user) {
+        alert('Please provide a username');
+        return;
+    }
     try {
 
         // the call prompts a user to authenticate using a FIDO2 authenticator
@@ -71,6 +75,10 @@ async function addAuthenticator(dw) {
     let result;
     let user = document.getElementById('idReqAuthCodeUsernameConfirm').value;
     let code = document.getElementById('idAuthCodeConfirm').value;
+    if( !(user && code)) {
+        alert('Please make sure a username and an authorization code are displayed!');
+        return;
+    }
     try {
 
         // authenticates a user based on the username and the authorized code
@@ -92,6 +100,11 @@ async function confirmTransaction(dw) {
     try {
         let transactionId = document.getElementById('transactionId').value;
         let username = document.getElementById('idCurrentUser').innerText
+
+        if( !(transactionId && username) ) {
+            alert('Please make sure that you are logged in and that a transactionId is displayed!');
+            return;
+        }
 
         // the call prompts a user to authenticate using a FIDO2 authenticator. This is when the transaction gets signed
         // the result contains a JSON message which includes a 'jwt' which represents the confirmed transaction
@@ -149,6 +162,10 @@ async function waiForTemporaryAccess(path) {
  */
 function initiateTransaction(path) {
     let msg = document.getElementById('txtPayload').value;
+    if(!msg) {
+        alert('Please provide a payload!');
+        return;
+    }
     $.ajax({
         type: 'POST',
         url: SERVICE + path,
@@ -181,6 +198,10 @@ function initiateTransaction(path) {
  */
 function requestAuthCode(path, confirmUsername) {
     let username = document.getElementById('idReqAuthCodeUsername').value;
+    if(!username) {
+        alert('Please provide a username!');
+        return;
+    }
     let msg = 'username=' + encodeURI(username);
     $.ajax({
         type: 'POST',
@@ -214,6 +235,10 @@ function requestAuthCode(path, confirmUsername) {
 function updateCredentialName(path) {
     let credentialId = encodeURI(document.getElementById('idCredentialId').value);
     let credentialName = encodeURI(document.getElementById('idNewCredentialName').value);
+    if(!credentialId || !credentialName) {
+        alert('Please provide an ID and a name!');
+        return;
+    }
     let msg = 'credentialId=' + credentialId + '&credentialName=' + credentialName;
     $.ajax({
         type: 'POST',
@@ -240,6 +265,10 @@ function updateCredentialName(path) {
  */
 function deleteCredentialName(path) {
     let credentialId = encodeURI(document.getElementById('idCredentialIdDelete').value);
+    if(!credentialId) {
+        alert('Please provide an ID!');
+        return;
+    }
     $.ajax({
         type: 'DELETE',
         url: SERVICE + path + '?credentialId=' + credentialId,
@@ -263,6 +292,10 @@ function deleteCredentialName(path) {
  */
 function grantAuthCode(path) {
     let code = document.getElementById('idAuthCode').value;
+    if(!code) {
+        alert('Please provide an authorization code!');
+        return;
+    }
     let msg = 'code=' + encodeURI(code);
     $.ajax({
         type: 'POST',

@@ -119,7 +119,7 @@ public class UserMgmt extends HttpServlet {
                 String payload = readMessageBody(request.getReader());
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.getTransactionId(payload, udata, txClientId));
+                response.getWriter().printf(util.getTransactionId(payload, txClientId));
             }
         } catch (Exception e) {
             e.printStackTrace();

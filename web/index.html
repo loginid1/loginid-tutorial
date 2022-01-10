@@ -76,7 +76,7 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" onclick="return deleteSession();" data-toggle="tab">Logged in as: <span id="idCurrentUser"></span> (click to logout)</a></li>
+                <li><a href="#" onclick="return deleteSession();" data-toggle="tab">Logged in as:<br/><span id="idCurrentUser"></span><br/>(click to logout)</a></li>
             </ul>
         </div>
     </div>
@@ -96,10 +96,6 @@
                     <td>This menu allows users to register and login to you application</td>
                 </tr>
                 <tr>
-                    <td><strong>Grant Request</strong></td>
-                    <td>This menu allows the user to authorize an authorization code that was generated on another device</td>
-                </tr>
-                <tr>
                     <td><strong>Manage Authenticators</strong></td>
                     <td>This menu provides a user with a simple interface to manage registered authenticators (devices)</td>
                 </tr>
@@ -108,12 +104,16 @@
                     <td>This menu displays the <strong>Transaction Confirmation</strong> feature which represents a digital receipt for any given transaction</td>
                 </tr>
                 <tr>
-                    <td><strong>Request Temporary Access</strong></td>
-                    <td>The menu enables a user to request <strong>temporary access</strong> to his account from a device that may not be owned by the user or which does not support FIDO2</td>
+                    <td><strong>Grant Request</strong></td>
+                    <td>This menu allows the user to authorize an authorization code that was generated on another device</td>
                 </tr>
                 <tr>
                     <td><strong>Request Adding Authenticator</strong></td>
                     <td>The menu enables a user to <strong>add additional authenticators</strong> (devices) to his account</td>
+                </tr>
+                <tr>
+                    <td><strong>Request Temporary Access</strong></td>
+                    <td>The menu enables a user to request <strong>temporary access</strong> to his account from a device that may not be owned by the user or which does not support FIDO2</td>
                 </tr>
                 <tr>
                     <td><strong>Kong Plugin</strong></td>

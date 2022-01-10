@@ -1,50 +1,50 @@
 body {
     color: #19214A;
-    font-family: Montserrat;
+    font-family: 'Montserrat', sans-serif;
 }
 
 p {
-    font-size: 22px;
-}
-
-li {
     font-size: 18px;
 }
 
+li {
+    font-size: 16px;
+}
+
 h1 {
-    font-size: 90px;
+    font-size: 48px;
     color: #1E2898;
-    line-height: 88px;
-    font-family: "Work Sans";
-    letter-spacing: -1px;
+    font-family: "Work Sans", sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    line-height: 1.25em;
+    margin: 0.6em 0 0.8em;
 }
 
 h2 {
-    font-size: 48px;
+    font-size: 32px;
     color: #1E2898;
-    line-height: 60px;
-    font-family: "Work Sans";
-    letter-spacing: -1px;
+    font-family: "Work Sans", sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    line-height: 1.25em;
 }
 
 h3 {
-    font-size: 32px;
+    font-size: 22px;
     color: #1E2898;
-    line-height: 42px;
-    font-family: "Work Sans";
-    letter-spacing: -1px;
-}
-
-h4 {
-    font-size: 24px;
-    color: #1E2898;
-    line-height: 24px;
-    font-family: "Work Sans";
-    letter-spacing: -1px;
+    font-family: "Work Sans", sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    line-height: 1.25em;
 }
 
 a {
-    color: #5B1CCE;
+    color: #2870FA;
+}
+
+a.light {
+    color: #62CEFC;
 }
 
 button {
@@ -52,7 +52,12 @@ button {
     border-radius: 37px;
     color: white;
     padding: 5px 10px;
-    font-size: 16px;
+    font-size: 12px;
+}
+
+#btnSignInName {
+    border:0;
+    background: #F0F2F3;
 }
 
 nav {
