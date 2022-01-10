@@ -4,7 +4,7 @@
     the process of signing a message using the users FIDO2 key.</p>
 <p>This client takes a given payload and sends it to its backend which requests a <strong>transactionId</strong> from
     LoginID. Once that is
-    received, it is passed back to this client. This client then prompts the user to confirm the transaction.</p>
+    received, it is passed back to this client. The client then prompts the user to confirm this transaction using their biometric as a digital signature. This creates a digital receipt for the transaction.</p>
 <p><strong>Important:</strong><br/>The relationship between <strong>Payload, TransactionId</strong> and <strong>Transaction Confirmation</strong> has to be managed
     by the client!</p>
 <p>This also means that the client is responsible for maintaining the payload as long as verifications are supported!</p>
@@ -41,4 +41,7 @@
     <li>Verifying the jwt-signature</li>
 </ul>
 
-<p><strong>NOTE: </strong><br/>The Transaction Confirmation returns a token (JWT) and a success indicator. However, the below API response attaches the base64url decoded jwt_header and jwt_payload for convenience!</small></p>
+<p>
+    <strong>NOTE: </strong><br/>
+    The Transaction Confirmation returns a token (JWT) and a success indicator. However, the below API response attaches the base64url decoded jwt_header and jwt_payload for convenience!
+</p>
