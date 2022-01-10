@@ -64,3 +64,7 @@ nav {
     color: #19214A;
     background-color: #ADC0CC;
 }
+
+small {
+    color: darkgray;
+}
