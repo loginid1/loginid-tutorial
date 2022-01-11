@@ -45,18 +45,6 @@ To include the backend api credentials in this setup, copy the file `.env_templa
 
 Configure `.env` now, please look inside that file for instructions!
 
-Once that is done, update the following files:
-
-- `./web/index.html`
-  - replace `{web-sdk-client_id}` with your Web App client_id
-  - replace `{base_url}` with your base_url (use **https://directweb.usw1.loginid.io** if unsure)
-  - i.e.: from **{web-sdk-client_id}** to **pW2Gl...pGI_Q**
-- `./docker-build/add-ons/kong/kong.yml`
-  - replace `{web-sdk-client_id}` with your Web App client_id (two locations)
-  - replace `{base_url}` with your base_url (use **https://directweb.usw1.loginid.io** if unsure) (two locations)
-  - i.e.: from **{web-sdk-client_id}** to **pW2Gl...pGI_Q**
-  - update other values if needed
-
 ## Building the demo
 
 ### Prepare the build
@@ -69,7 +57,7 @@ The whole system is docker based. To build it these tools are needed:
 
 ### Build the containers
 
-If all those are available, do this:
+After completing the previous step, do this:
 
 - once:
   - `make build_tooling`  // this will build a container that includes java jdk11, maven and the compiled LoginID java SDK. This only needs to be executed for the first time or after an update of the java SDK!
@@ -106,9 +94,7 @@ Try out the different menus to learn more about LoginID features!
 
 The Kong plugin configuration can be updated in this file:
  
-- `./docker-build/add-ons/kong/kong.yml`
-
-Find the section called: **plugins - loginid**
+- `./docker-build/add-ons/kong/kong.yml`  // find the section called: **plugins - loginid**
 
 The following values may be configured:
 

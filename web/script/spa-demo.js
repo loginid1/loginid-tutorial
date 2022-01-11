@@ -15,7 +15,6 @@ const SERVICE_KONG='http://localhost:8090';
 
 /********************************************/
 /* Functions that leverage LoginIDs Web SDK */
-
 /********************************************/
 
 /**
@@ -124,7 +123,6 @@ async function confirmTransaction(dw) {
 
 /*************************************/
 /* Functions that leverage a backend */
-
 /*************************************/
 
 /**
@@ -323,7 +321,6 @@ function grantAuthCode(path) {
 
 /************************************/
 /* Helper functions to cal backends */
-
 /************************************/
 
 function directCall(targetUrl) {
@@ -374,7 +371,6 @@ function getMsg(targetUrl, credential) {
 
 /********************/
 /* Helper functions */
-
 /********************/
 
 function getTabContent(pageName, targetId) {

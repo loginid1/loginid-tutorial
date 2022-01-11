@@ -52,9 +52,9 @@ public class LoginIDUtil {
             props.load(new FileReader("/opt/docker/loginid/config"));
 
             mgmt = new LoginIdManagement(
-                    props.getProperty("client_id_backend"),
+                    props.getProperty("CLIENT_ID_BACKEND"),
                     props.getProperty("API_PRIVATE_KEY"),
-                    props.getProperty("base_url")
+                    props.getProperty("BASE_URL")
             );
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +62,7 @@ public class LoginIDUtil {
     }
 
     public String getBaseUrl() {
-        return props.getProperty("base_url");
+        return props.getProperty("BASE_URL");
     }
 
     public List<CredentialForUI> getCredentials(String username) throws Exception {

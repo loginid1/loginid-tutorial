@@ -18,6 +18,10 @@ services:
       - "80:80"
     volumes:
       - ./web:/usr/share/nginx/html:ro
+    environment:
+      - "HOSTNAME=${HOSTNAME}"
+      - "BASEURL=${BASE_URL}"
+      - "WEBCLIENTID=${CLIENT_ID_WEB}"
 
   # contains the backend (UserMgmt)
   # this container is enabled for remote debugging on port 8000
@@ -31,6 +35,7 @@ services:
       - "8000:8000"
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000"
+      - "HOSTNAME=${HOSTNAME}"
     volumes:
       - .env:/opt/docker/loginid/config
 
@@ -51,3 +56,6 @@ services:
       - "KONG_PROXY_ERROR_LOG=/dev/stderr"
       - "KONG_ADMIN_ERROR_LOG=/dev/stderr"
       - "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl"
+      - "HOSTNAME=${HOSTNAME}"
+      - "BASEURL=${BASE_URL}"
+      - "WEBCLIENTID=${CLIENT_ID_WEB}"

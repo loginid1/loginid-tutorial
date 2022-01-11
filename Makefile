@@ -8,7 +8,7 @@ build:
 	docker build --tag local/kongclient --no-cache .
 	docker build --tag local/kong --no-cache -f Dockerfile_kong .
 	docker run -v `pwd`:/tmp dev/tooling mvn -f "/tmp/UserMgmt/pom.xml" clean package
-	docker build --tag local/usermgmt --no-cache ./UserMgmt
+	docker build --tag local/usermgmt --no-cache -f Dockerfile_userMgmt .
 
 # The third line is specific to windows, the rest is the same as for 'build'.
 # If this fails, please try one of these options:
@@ -19,7 +19,7 @@ build_win:
 	docker build --tag local/kongclient --no-cache .
 	docker build --tag local/kong --no-cache -f Dockerfile_kong .
 	docker run -v ${PWD}:/tmp dev/tooling mvn -f "/tmp/UserMgmt/pom.xml" clean package
-	docker build --tag local/usermgmt --no-cache ./UserMgmt
+	docker build --tag local/usermgmt --no-cache -f Dockerfile_userMgmt .
 
 # This builds an image that contains java 11 and Maven.
 # It enables users that do not have java and maven installed locally.
@@ -38,4 +38,4 @@ build_local:
 	docker build --tag local/kong --no-cache -f Dockerfile_kong .
 	mvn -f ./java-server-side-sdk/pom.xml clean install
 	mvn -f ./UserMgmt/pom.xml clean package
-	docker build --tag local/usermgmt --no-cache ./UserMgmt
+	docker build --tag local/usermgmt --no-cache -f Dockerfile_userMgmt .
