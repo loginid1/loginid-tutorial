@@ -11,15 +11,22 @@
 <hr/>
 <form>
     <div class="form-group">
-        <label for="txtPayload">Payload to be signed</label>
-        <textarea class="form-control" id="txtPayload" rows="3"></textarea><br/>
+        <label for="txtPayload">Payload to be signed <small>(replace the example content if desired)</small></label>
+        <textarea class="form-control" id="txtPayload" rows="6">
+{
+	"currency": "USD",
+	"amount": "10.00",
+	"fee": "0.01",
+	"to": "recipient"
+}
+        </textarea><br/>
         <button id="btnTxId" type="button"
                 onclick="return initiateTransaction('/users/trx');">Initiate Transaction
         </button>
     </div>
 </form>
 <hr/>
-<p>Confirm the transaction once the transactionId has been received!</p>
+<p>Confirm the transaction once the TransactionID has been received!</p>
 <form>
     <table class="table-condensed">
         <tr>

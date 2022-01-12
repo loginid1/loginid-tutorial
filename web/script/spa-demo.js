@@ -443,5 +443,4 @@ async function isFidoSupported(toBeDisabledItem, displayInfoItem) {
         item1.disabled = false;
         item2.innerHTML = '';
     }
-    // return 'Sorry, but this browser or device does not support FIDO2!\nIf you have already created an account on a FIDO2 enabled device, use the [Additional Devices - Request Temporary Access] feature!';
 }

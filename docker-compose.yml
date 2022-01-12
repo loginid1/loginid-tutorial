@@ -10,8 +10,8 @@ services:
   # contains the website
   #
   nginx:
-    container_name: demo_app
-    image: local/kongclient
+    container_name: tutorial_web
+    image: local/tutorial_web:latest
     restart: always
     ports:
       - "80:80"
@@ -23,8 +23,8 @@ services:
   # contains the backend (UserMgmt)
   #
   usermgmt:
-    container_name: user_mgmt_api
-    image: local/usermgmt
+    container_name: tutorial_backend
+    image: local/tutorial_backend:latest
     restart: always
     ports:
       - "8080:8080"
@@ -36,8 +36,8 @@ services:
   # contains the kong docker gateway including the LoginID plugin
   #
   kong:
-    container_name: api_gateway
-    image: local/kong
+    container_name: tutorial_kong_gw
+    image: local/tutorial_kong_gw:latest
     restart: always
     ports:
       - "8090:8000"
