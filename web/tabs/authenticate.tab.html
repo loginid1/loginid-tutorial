@@ -11,10 +11,11 @@
 <p>The <strong>Sign-In</strong> feature will figure out if the user is already known and will prompt for registration if
     needed!</p>
 <hr/>
-<p><strong>Sign-In: </strong><input type="email" id="idSignInName" name="signInName" size="35"
-                                    placeholder="Your username">
+<p><strong>Sign-In: </strong><input type="email" id="idSignInName" name="signInName" size="35" placeholder="Your username">
     <button type="button" value="check" id="btnSignInName" name="btnSignInName" onclick="return signInUser(dw);">
-        <img src="../images/button_loginid.png" alt="sign-in" width="70px"/></button>
+        <img src="../images/button_loginid.png" alt="sign-in" width="70px" onload="return isFidoSupported('btnSignInName', 'idIsFidoSupported');"/>
+    </button>
+    <span id="idIsFidoSupported"></span>
 </p>
 <hr/>
 <p>

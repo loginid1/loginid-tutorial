@@ -44,13 +44,6 @@ async function registerUser(dw) {
  */
 async function signInUser(dw) {
 
-    // check, if FIDO2 is supported on this device (browser)
-    let result = await dw.isFido2Supported();
-    if(!result) {
-        alert(getFidoNotSupportedMsg());
-        return;
-    }
-
     let user = document.getElementById('idSignInName').value;
     if(!user) {
         alert('Please provide a username');
@@ -60,7 +53,7 @@ async function signInUser(dw) {
 
         // the call prompts a user to authenticate using a FIDO2 authenticator
         // the result contains a JSON message which includes a 'jwt' which represents the authenticated user
-        result = await dw.authenticateWithFido2(user, {roaming_authenticator: true});
+        let result = await dw.authenticateWithFido2(user, {roaming_authenticator: true});
 
         updateSession(result.jwt, user);
         getMsg(SERVICE + "/users/session", result.jwt);
@@ -82,13 +75,6 @@ async function signInUser(dw) {
  */
 async function addAuthenticator(dw) {
 
-    // check, if FIDO2 is supported on this device (browser)
-    let result = await dw.isFido2Supported();
-    if(!result) {
-        alert(getFidoNotSupportedMsg());
-        return;
-    }
-
     let user = document.getElementById('idReqAuthCodeUsernameConfirm').value;
     let code = document.getElementById('idAuthCodeConfirm').value;
     if( !(user && code)) {
@@ -99,7 +85,7 @@ async function addAuthenticator(dw) {
 
         // authenticates a user based on the username and the authorized code
         // the result contains a JSON message which includes a 'jwt' which represents the authenticated user
-        result = await dw.addFido2CredentialWithCode(user, code);
+        let result = await dw.addFido2CredentialWithCode(user, code);
 
         updateSession(result.jwt, user);
         getMsg(SERVICE + "/users/session", result.jwt);
@@ -117,13 +103,6 @@ async function confirmTransaction(dw) {
 
     try {
 
-        // check, if FIDO2 is supported on this device (browser)
-        let result = await dw.isFido2Supported();
-        if(!result) {
-            alert(getFidoNotSupportedMsg());
-            return;
-        }
-
         let transactionId = document.getElementById('transactionId').value;
         let username = document.getElementById('idCurrentUser').innerText
 
@@ -134,7 +113,7 @@ async function confirmTransaction(dw) {
 
         // the call prompts a user to authenticate using a FIDO2 authenticator. This is when the transaction gets signed
         // the result contains a JSON message which includes a 'jwt' which represents the confirmed transaction
-        result = await dw.confirmTransaction(username, transactionId);
+        let result = await dw.confirmTransaction(username, transactionId);
 
         let jwtHeader = JSON.parse(atob(result.jwt.split(".")[0]));
         let jwtPayload = JSON.parse(atob(result.jwt.split(".")[1]));
@@ -451,6 +430,18 @@ function printFlowResponse(output) {
     Prism.highlightAll(false, null);
 }
 
-function getFidoNotSupportedMsg() {
-    return 'Sorry, but this browser or device does not support FIDO2!\nIf you have already created an account on a FIDO2 enabled device, use the [Additional Devices - Request Temporary Access] feature!';
+async function isFidoSupported(toBeDisabledItem, displayInfoItem) {
+
+    // check, if FIDO2 is supported on this device (browser)
+    let isFidoSupported = await dw.isFido2Supported();
+    let item1 = document.getElementById(toBeDisabledItem);
+    let item2 = document.getElementById(displayInfoItem);
+    if(!isFidoSupported) {
+        item1.disabled = true;
+        item2.innerHTML = '<small>(FIDO2 is not supported on this device - browser!)</small>';
+    } else {
+        item1.disabled = false;
+        item2.innerHTML = '';
+    }
+    // return 'Sorry, but this browser or device does not support FIDO2!\nIf you have already created an account on a FIDO2 enabled device, use the [Additional Devices - Request Temporary Access] feature!';
 }
