@@ -14,9 +14,11 @@ This demo simulates a small setup that includes these components:
   - simulates a simple user management API. It receives a LoginID issued JWT and ... returns the username
   - connects to LoginID to call LoginID APIs that require so called *service token*
 
-The visual version of the setup looks like this:
+The demo setup looks like this:
 
-![alt overview](web/images/managecreds.png)
+![alt overview](web/images/setup.png)
+
+FrontEnd, BackEnd and Gateway are implemented as Docker images!
 
 ## Cloning this project
 
@@ -70,7 +72,7 @@ After completing the previous step, do this:
 
 After building the project you are ready to launch the system:
 
-- `docker-compose up`  // this launches the system. Use `docker-compose -f docker-compose-dev.yml up` to use debugging enabled containers 
+- `docker-compose up`  // this launches the system
 - `http://localhost`  // open a browser at that location and enjoy the app
   - these ports will be used: **80, 8001, 8080, 8090, 8444**
 
@@ -82,6 +84,17 @@ Once you are done, terminate the containers by running:
 
 - `docker stop $(docker ps -aq)`
 - `docker rm $(docker ps -aq)`
+
+### Debugging code
+
+To debug java code or make live changes to the web UI do the following:
+
+- open `.web/index.html` and  replace `{base_url}` `{web-sdk-client_id}` with values of your app
+- run `docker-compose -f docker-compose-dev.yml up`  // use this instead of `docker-compose up`
+- use java remote debugging on port 8000 (for more details see **JAVA_OPTS** in the compose file)
+
+You can now update the web content and see changes (most of the time) after refreshing the page. You can also set breakpoints 
+in the code of the UserMgmt module.
 
 ## Demo details
 

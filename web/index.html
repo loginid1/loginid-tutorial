@@ -48,48 +48,50 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#tabOverview" data-toggle="tab">LoginID Demo</a>
+            <a class="navbar-brand loginid-nav" href="#tabOverview" data-toggle="tab">
+                <img src="images/logo.svg" alt="LoginID" width="146px"/>
+            </a>
         </div>
         <div class="collapse navbar-collapse" id="navBar">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Features <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Features <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#tabAuthenticate" data-toggle="tab" onclick="getTabContent('tabs/authenticate.tab.html', 'tabAuthenticate');">Authentication</a></li>
-                        <li><a href="#tabManageCreds" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html', 'tabManageCreds');">Manage Authenticators (Devices)</a></li>
-                        <li><a href="#tabCreateTx" data-toggle="tab" onclick="getTabContent('tabs/createTrx.tab.html', 'tabCreateTx');">Create Transaction Confirmation</a></li>
-                        <li><a href="#tabGrantRequest" data-toggle="tab" onclick="getTabContent('tabs/grantRequest.tab.html', 'tabGrantRequest');">Grant Request</a></li>
+                        <li><a class="loginid-nav" href="#tabAuthenticate" data-toggle="tab" onclick="getTabContent('tabs/authenticate.tab.html', 'tabAuthenticate');">Authentication</a></li>
+                        <li><a class="loginid-nav" href="#tabManageCreds" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html', 'tabManageCreds');">Manage Authenticators (Devices)</a></li>
+                        <li><a class="loginid-nav" href="#tabCreateTx" data-toggle="tab" onclick="getTabContent('tabs/createTrx.tab.html', 'tabCreateTx');">Create Transaction Confirmation</a></li>
+                        <li><a class="loginid-nav" href="#tabGrantRequest" data-toggle="tab" onclick="getTabContent('tabs/grantRequest.tab.html', 'tabGrantRequest');">Grant Request</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Simulated Second Device <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Simulated Second Device <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#tabReqAddCred" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html', 'tabReqAddCred');">Request Adding Authenticator</a></li>
-                        <li><a href="#tabReqTempCred" data-toggle="tab" onclick="getTabContent('tabs/requesttempaccess.tab.html', 'tabReqTempCred');">Request Temporary Access</a></li>
+                        <li><a class="loginid-nav" href="#tabReqAddCred" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html', 'tabReqAddCred');">Request Adding Authenticator</a></li>
+                        <li><a class="loginid-nav" href="#tabReqTempCred" data-toggle="tab" onclick="getTabContent('tabs/requesttempaccess.tab.html', 'tabReqTempCred');">Request Temporary Access</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plugins <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#tabKong" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html', 'tabKong');">Kong Plugin</a></li>
+                        <li><a class="loginid-nav" href="#tabKong" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html', 'tabKong');">Kong Plugin</a></li>
                     </ul>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" onclick="return deleteSession();" data-toggle="tab">Logged in as:<br/><span id="idCurrentUser"></span><br/>(click to logout)</a></li>
+                <li><a class="loginid-nav" href="#" onclick="return deleteSession();" data-toggle="tab">Logged in as:<br/><span id="idCurrentUser"></span><br/>(click to logout)</a></li>
             </ul>
         </div>
     </div>
 </nav>
 <div class="container" id="content">
     <div class="tab-content">
-        <div id="tabOverview" class="tab-pane active">
+        <div id="tabOverview" class="tab-pane active" role="tabpanel">
             <h2>Overview</h2>
             <p>Here is a brief overview of the different features that are found behind each menu:</p>
             <table class="table-condensed table-striped">
                 <tr>
-                    <th text-align="center">Feature</th>
-                    <th text-algin="center">Description</th>
+                    <th>Feature</th>
+                    <th>Description</th>
                 </tr>
                 <tr>
                     <td><strong>Authentication</strong></td>
@@ -121,28 +123,51 @@
                 </tr>
             </table>
             <hr/>
+            <p>View the setup of the demo here:
+                <button id="btnArchitecture" type="button" data-toggle="collapse"
+                        data-target="#idArch" aria-expanded="false" aria-controls="idArch">show/hide
+                </button>
+            </p>
+            <div id="idArch" class="collapse">
+                <img src="images/setup.png" alt="Demo-Setup" width="1000px"/>
+                <ul>
+                    <li>The FrontEnd, BackEnd and Gateway are docker images</li>
+                    <li>The cloud services are public and are accessed via the demo</li>
+                    <li>The FrontEnd displays the web UI which is accessed via a browser</li>
+                    <li>The FrontEnd is configured with a <strong>Web App ClientID</strong> which it uses when
+                        registering/authenticating users
+                    </li>
+                    <li>The BackEnd exposes a simple management API and requires an authenticated user (valid JWT)</li>
+                    <li>The BackEnd is configured with a <strong>Backend / API Credential</strong> and is able to generate
+                        serviceToken
+                        that are required to access LoginID management APIs
+                    </li>
+                    <li>The Kong Gateway is configured with LoginIDs plugin to accept requests only if a valid LoginID issued JWT is included</li>
+                </ul>
+            </div>
+            <hr/>
             <p>To learn more about LoginID please visit <a href="https://loginid.io" target="_blank">https://loginid.io</a></p>
             <p>More examples can be found on GitHub: <a href="https://github.com/loginid1" target="_blank">LoginID @ GitHub</a></p>
         </div>
-        <div id="tabAuthenticate" class="tab-pane">
+        <div id="tabAuthenticate" class="tab-pane" role="tabpanel" aria-labelledby="tabAuthenticateButton">
             <p>tabAuthenticate</p>
         </div>
-        <div id="tabGrantRequest" class="tab-pane">
+        <div id="tabGrantRequest" class="tab-pane" role="tabpanel">
             <p>tabGrantRequest</p>
         </div>
-        <div id="tabCreateTx" class="tab-pane">
+        <div id="tabCreateTx" class="tab-pane" role="tabpanel">
             <p>tabCreateTx</p>
         </div>
-        <div id="tabManageCreds" class="tab-pane">
+        <div id="tabManageCreds" class="tab-pane" role="tabpanel">
             <p>tabManageCreds</p>
         </div>
-        <div id="tabReqTempCred" class="tab-pane">
+        <div id="tabReqTempCred" class="tab-pane" role="tabpanel">
             <p>tabReqTempCred</p>
         </div>
-        <div id="tabReqAddCred" class="tab-pane">
+        <div id="tabReqAddCred" class="tab-pane" role="tabpanel">
             <p>tabReqAddCred</p>
         </div>
-        <div id="tabKong" class="tab-pane">
+        <div id="tabKong" class="tab-pane" role="tabpanel">
             <p>tabKong</p>
         </div>
     </div>

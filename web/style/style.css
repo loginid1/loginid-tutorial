@@ -27,7 +27,7 @@ h2 {
     font-family: "Work Sans", sans-serif;
     letter-spacing: -0.02em;
     font-weight: 700;
-    line-height: 1.25em;
+    line-height: 2em;
 }
 
 h3 {
@@ -36,7 +36,7 @@ h3 {
     font-family: "Work Sans", sans-serif;
     letter-spacing: -0.02em;
     font-weight: 700;
-    line-height: 1.25em;
+    line-height: 1.8em;
 }
 
 a {
@@ -47,12 +47,16 @@ a.light {
     color: #62CEFC;
 }
 
+a.loginid-nav {
+    color: #19214A;
+}
+
 button {
-    background-color: #1733D4;
-    border-radius: 37px;
+    background-color: #2870fA;
+    border-radius: 20px;
     color: white;
-    padding: 5px 10px;
-    font-size: 12px;
+    padding: 5px 40px;
+    font-size: 16px;
 }
 
 #btnSignInName {
@@ -62,7 +66,7 @@ button {
 
 nav {
     color: #19214A;
-    background-color: #ADC0CC;
+    background-color: #E2EAF9;
 }
 
 small {

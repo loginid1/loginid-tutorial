@@ -3,12 +3,13 @@ version: "3.4"
 # LoginID Demo
 #
 # The default compose file for the demo
-# To debug java code or do 'live' changes in the web UI use 'docker-compose-dev.yml'
+# To debug java code or do 'live' changes in the web UI use 'docker-compose-dev.yml' (this file)
 #
 services:
 
   # contains the website
   # changes in ./web will be displayed in the UI after a refresh (most of the times)
+  # To use this docker image, follow the instructions in the README in the section "Debugging code"
   #
   nginx:
     container_name: demo_app
@@ -18,10 +19,6 @@ services:
       - "80:80"
     volumes:
       - ./web:/usr/share/nginx/html:ro
-    environment:
-      - "HOSTNAME=${HOSTNAME}"
-      - "BASEURL=${BASE_URL}"
-      - "WEBCLIENTID=${CLIENT_ID_WEB}"
 
   # contains the backend (UserMgmt)
   # this container is enabled for remote debugging on port 8000

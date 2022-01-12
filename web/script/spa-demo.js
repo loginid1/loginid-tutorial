@@ -214,8 +214,9 @@ function requestAuthCode(path, confirmUsername) {
                 field.value = data.code;
                 if (confirmUsername) {  // add authenticator
                     document.getElementById('idReqAuthCodeUsernameConfirm').value = data.username;
-                } else {  // grant temporary, click the field so that we wait for the  granted authorization code
-                    field.click();
+                } else {
+                    // start waiting for the code authorization on the other device
+                    waiForTemporaryAccess('/users/waittemporary', false);
                 }
                 printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
             },
