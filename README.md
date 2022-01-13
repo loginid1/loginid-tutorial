@@ -62,7 +62,7 @@ The following values need to be updated in `.env`:
 - `API_PRIVATE_KEY`: use the Api Credential (you do not need to maintain the **\n** characters, but it needs to be one single line)
 - `CLIENT_ID_WEB`: use the client ID of the Web application
 
-Please find more details with that file!
+Please find more details within that file!
 
 ## Building the tutorial
 
@@ -85,6 +85,8 @@ After completing the previous step, do this:
   - for Mac: `make build`  // this compiles code and builds the docker images
   - for Windows: `make build_win` // run this if you are on a Windows machine
     - please look into **Makefile** for details if you do not want to use Make or if failures occur
+
+**Tip:** for Windows related issues, please check the repositories **[WIKI](https://github.com/loginid1/loginid-tutorial/wiki)** pages!
 
 ## Running the tutorial
 
@@ -147,6 +149,10 @@ iat** value in JWT payload need to be below this max age|Number|-|
 |acr|Expected acr value. This value will be validated if the acr value is configured in the plugin. If not, this value will not be validated|String|-|
 |algorithm|Expected signing algorithm. Default value is ES256. This value will be validated against **alg** value in JWT header|String|-|
 |namespace_id|Expected namespace ID. This value will be validated against nid value in JWT payload|String|-|
+
+### Learn more
+
+To learn more about this tutorial, please check the repositories **[WIKI](https://github.com/loginid1/loginid-tutorial/wiki)** pages!
 
 ## Links
 
