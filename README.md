@@ -1,6 +1,6 @@
-# LoginID-Demo
+# LoginID-Tutorial
 
-This demo simulates a small setup that includes these components:
+This tutorial simulates a small setup that includes these components:
 
 - **Demo App**:
   - a simple web application that leverages our javascript libraries for FIDO2 based user registration and authentication
@@ -9,12 +9,12 @@ This demo simulates a small setup that includes these components:
 - **Kong**:
   - a Docker version of the Kong API Gateway
   - Kong is configured to validate a LoginID issued JWT and return an error if not provided or invalid
-  - the demo connects to the public service Cat-Fact, once as an open API call, once protected by Kong
+  - the tutorial connects to the public service Cat-Fact, once as an open API call, once protected by Kong
 - **User Management**:
   - simulates a simple user management API. It receives a LoginID issued JWT and ... returns the username
   - connects to LoginID to call LoginID APIs that require so called *service token*
 
-The demo setup looks like this:
+The tutorial setup looks like this:
 
 ![alt overview](web/images/setup.png)
 
@@ -24,9 +24,9 @@ FrontEnd, BackEnd and Gateway are implemented as Docker images!
 
 This project uses the LoginID-Java-SDK which is used as a git submodule. When cloning this project, use this command:
 
-- `git clone --recurse-submodules https://gitlab.com/sascha17/kong-demo.git`
+- `git clone --recurse-submodules https://github.com/loginid1/loginid-tutorial.git`
 
-To continue, cd into `./kong-demo`.
+To continue, cd into `./loginid-tutorial`.
 
 If you ran git clone without `--recurse-submodules` or if you are not working in the main branch, run the following now:
 
@@ -37,17 +37,34 @@ Your project now includes the submodule that contains the java SDK but only as a
 
 **Tip:** More information on git submodules can be found [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
-## Preparing the demo
+## Preparing the tutorial
 
-To make it work you have to register a **Web App** and **Backend/API** credential at LoginIDs dashboard.
+### Create client credentials
 
-**NOTE:** Do NOT attach an API credential to the Web App but to the Backend/API configuration! 
+To use this tutorial locally visit [LoginIDs dashboard](https://usw1.loginid.io/en/login/get-started-a) and register.
 
-To include the backend api credentials in this setup, copy the file `.env_template` and paste it as `.env`.
+In the dashboard create two applications:
 
-Configure `.env` now, please look inside that file for instructions!
+- `Web App` // register an **Application Name** and a **Website URL**
+  - use **http://localhost** for the URL
+  - do **NOT** attach an API Credential
+- `Backend/API` // register an **Application Name** and a **Website URL**
+  - use **http://localhost** for the URL
+  - attach an API Credential
 
-## Building the demo
+### Configure the tutorial
+
+Copy the file `.env_template` and paste it as `.env`.
+
+The following values need to be updated in `.env`:
+
+- `CLIENT_ID_BACKEND`: use the client ID of the Backend application
+- `API_PRIVATE_KEY`: use the Api Credential (you do not need to maintain the **\n** characters, but it needs to be one single line)
+- `CLIENT_ID_WEB`: use the client ID of the Web application
+
+Please find more details with that file!
+
+## Building the tutorial
 
 ### Prepare the build
 
@@ -63,12 +80,13 @@ After completing the previous step, do this:
 
 - once:
   - `make build_tooling`  // this will build a container that includes java jdk11, maven and the compiled LoginID java SDK. This only needs to be executed for the first time or after an update of the java SDK!
+  - **Tip**: if this fails, verify that you followed the instructions above at **Cloning this project**!
 - always:
   - for Mac: `make build`  // this compiles code and builds the docker images
   - for Windows: `make build_win` // run this if you are on a Windows machine
     - please look into **Makefile** for details if you do not want to use Make or if failures occur
 
-## Running the demo
+## Running the tutorial
 
 After building the project you are ready to launch the system:
 
@@ -89,21 +107,27 @@ Once you are done, terminate the containers by running:
 
 To debug java code or make live changes to the web UI do the following:
 
-- open `.web/index.html` and  replace `{base_url}` `{web-sdk-client_id}` with values of your app
+- open `.web/index.html` and  replace `{base_url}` `{web-sdk-client_id}` with values as configured in `.env`
 - run `docker-compose -f docker-compose-dev.yml up`  // use this instead of `docker-compose up`
 - use java remote debugging on port 8000 (for more details see **JAVA_OPTS** in the compose file)
 
 You can now update the web content and see changes (most of the time) after refreshing the page. You can also set breakpoints 
 in the code of the UserMgmt module.
 
-## Demo details
+## Additional Info
 
-The application uses the LoginID issued JWT as its session token and when authenticating users against the user management API. 
-For this demo the JWT is stored in the session store of the browser.
+Whenever you register and use a username when authenticating, you can find that name in the user management UI of the LoginID dashboard.
+
+Users are only visible within the namespace of your LoginID account.
+
+### Tutorial details
+
+The application uses the LoginID issued JWT as its session token and when authenticating users against the user management API.
+For this tutorial the JWT is stored in the session store of the browser.
 
 Try out the different menus to learn more about LoginID features!
 
-## Kong Plugin configuration
+### Kong Plugin configuration
 
 The Kong plugin configuration can be updated in this file:
  
@@ -123,3 +147,9 @@ iat** value in JWT payload need to be below this max age|Number|-|
 |acr|Expected acr value. This value will be validated if the acr value is configured in the plugin. If not, this value will not be validated|String|-|
 |algorithm|Expected signing algorithm. Default value is ES256. This value will be validated against **alg** value in JWT header|String|-|
 |namespace_id|Expected namespace ID. This value will be validated against nid value in JWT payload|String|-|
+
+## Links
+
+- To learn more about LoginID please visit: [https://loginid.io](https://loginid.io)
+- To view the developer documentation start here: [Dev @ LoginID](https://docs.loginid.io)
+- More examples can be found here on GitHub: [LoginID @ GitHub](https://github.com/loginid1)
