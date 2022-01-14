@@ -54,10 +54,12 @@ To use this tutorial locally visit [LoginIDs dashboard](https://usw1.loginid.io/
 
 In the dashboard create two applications:
 
-- `Web App` // register an **Application Name** and a **Website URL**
+- `Web App`
+  - register an **Application Name** and a **Website URL**
   - use **http://localhost** for the URL
   - do **NOT** attach an API Credential
-- `Backend/API` // register an **Application Name** and a **Website URL**
+- `Backend/API`
+  - register an **Application Name** and a **Website URL**
   - use **http://localhost** for the URL
   - attach an API Credential
 
@@ -81,18 +83,22 @@ The whole system is docker based. To build it these tools are needed:
 
 - docker
 - docker-compose
-- Make // if Make is not available, run the commands found within `Makefile` manually in your terminal
+- Make
+  - if Make is not available, run the commands found within `Makefile` manually in your terminal
 
 ### Build the containers
 
 After completing the previous step, do this:
 
 - once:
-  - `make build_tooling`  // this will build a container that includes java jdk11, maven and the compiled LoginID java SDK. This only needs to be executed for the first time or after an update of the java SDK!
+  - `make build_tooling`
+  - this will build a container that includes java jdk11, maven and the compiled LoginID java SDK. This only needs to be executed for the first time or after an update of the java SDK!
   - **Tip**: if this fails, verify that you followed the instructions above at **Cloning this project**!
 - always:
-  - for Mac: `make build`  // this compiles code and builds the docker images
-  - for Windows: `make build_win` // run this if you are on a Windows machine
+  - for Mac: `make build`
+    - this compiles code and builds the docker images
+  - for Windows: `make build_win`
+    - run this if you are on a Windows machine
     - please look into **Makefile** for details if you do not want to use Make or if failures occur
 
 **Tip:** for Windows related issues, please check the repositories **[WIKI](https://github.com/loginid1/loginid-tutorial/wiki)** pages!
@@ -160,7 +166,8 @@ Try out the different menus to learn more about LoginID features!
 
 The Kong plugin configuration can be updated in this file:
  
-- `./docker-build/add-ons/kong/kong.yml`  // find the section called: **plugins - loginid**
+- `./docker-build/add-ons/kong/kong.yml`
+  - find the section called: **plugins - loginid**
 
 The following values may be configured:
 
