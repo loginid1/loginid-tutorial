@@ -104,19 +104,20 @@ After completing the previous step, do this:
 - copy and paste the above file `docker-compose-hub.yml`
   - make sure it is in the same directory as `.env` that was created at **Preparing the tutorial**
   - just like this: ![alt overview](web/images/filelocation.png)
-- in a terminal, run: `docker-compose -f docker-compose-hub.yml up`  // this launches the system by pulling the images from hub.docker.io
+- in a terminal, run: `docker-compose -f docker-compose-hub.yml up`
+  - this launches the system by pulling the images from hub.docker.io
 
 #### Launch the locally built tutorial
 
 After building the project you are ready to launch the system:
 
-- `docker-compose up`  // this launches the system
-- `http://localhost`  // open a browser at that location and enjoy the app
-  - these ports will be used: **80, 8001, 8080, 8090, 8444**
+- `docker-compose up`
+  - this launches the system
 
 ### Access the tutorial
 
-- `http://localhost`  // open a browser at that location and enjoy the app
+- `http://localhost`
+  - open a browser at that location and enjoy the app
   - these ports will be used: **80, 8001, 8080, 8090, 8444**
 
 ### Stopping the tutorial
@@ -124,7 +125,7 @@ After building the project you are ready to launch the system:
 Once you are done, terminate the containers by running:
 
 - `docker-compose down`
-- `docker-compose -f docker-compose-hub.ym down`  // for the pre-built tutorial 
+- `docker-compose -f docker-compose-hub.ym down` // for the pre-built tutorial 
 
 **Tip:** if you run into trouble when launching docker because it complains about conflicting containers already running, use this command to stop and remove them:
 
