@@ -20,6 +20,15 @@ The tutorial setup looks like this:
 
 FrontEnd, BackEnd and Gateway are implemented as Docker images!
 
+## Options for using this tutorial
+
+There are multiple options for using this tutorial:
+
+- **preferred for non-developers**, follow these steps:
+  - *Preparing the tutorial*
+  - *Running the tutorial*
+- **preferred for developers**, follow all steps below
+
 ## Cloning this project
 
 This project uses the LoginID-Java-SDK which is used as a git submodule. When cloning this project, use this command:
@@ -54,7 +63,7 @@ In the dashboard create two applications:
 
 ### Configure the tutorial
 
-Copy the file `.env_template` and paste it as `.env`.
+Copy the above file `.env_template` and paste it as `.env`.
 
 The following values need to be updated in `.env`:
 
@@ -90,22 +99,39 @@ After completing the previous step, do this:
 
 ## Running the tutorial
 
+#### Launch pre-built tutorial
+
+- copy and paste the above file `docker-compose-hub.yml`
+  - make sure it is in the same directory as `.env` that was created at **Preparing the tutorial**
+  - just like this: ![alt overview](web/images/filelocation.png)
+- in a terminal, run: `docker-compose -f docker-compose-hub.yml up`  // this launches the system by pulling the images from hub.docker.io
+
+#### Launch the locally built tutorial
+
 After building the project you are ready to launch the system:
 
 - `docker-compose up`  // this launches the system
 - `http://localhost`  // open a browser at that location and enjoy the app
   - these ports will be used: **80, 8001, 8080, 8090, 8444**
 
+### Access the tutorial
+
+- `http://localhost`  // open a browser at that location and enjoy the app
+  - these ports will be used: **80, 8001, 8080, 8090, 8444**
+
+### Stopping the tutorial
+
 Once you are done, terminate the containers by running:
 
 - `docker-compose down`
+- `docker-compose -f docker-compose-hub.ym down`  // for the pre-built tutorial 
 
 **Tip:** if you run into trouble when launching docker because it complains about conflicting containers already running, use this command to stop and remove them:
 
 - `docker stop $(docker ps -aq)`
 - `docker rm $(docker ps -aq)`
 
-### Debugging code
+### For developers: Debugging code
 
 To debug java code or make live changes to the web UI do the following:
 
