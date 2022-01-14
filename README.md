@@ -27,6 +27,7 @@ There are multiple options for using this tutorial:
 - **preferred for non-developers**, follow these steps:
   - *Preparing the tutorial*
   - *Running the tutorial*
+  - Only **Docker** needs to be installed!
 - **preferred for developers**, follow all steps below
 
 ## Cloning this project
