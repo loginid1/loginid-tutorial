@@ -76,12 +76,6 @@
                         <li><a class="loginid-nav" href="#tabKong" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html', 'tabKong');">Kong Plugin</a></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Use Cases <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a class="loginid-nav" href="#tabUseCases" data-toggle="tab" onclick="getTabContent('tabs/uc_finance.tab.html', 'tabUseCases');">Finance</a></li>
-                    </ul>
-                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a class="loginid-nav" href="#" onclick="return deleteSession();" data-toggle="tab">Logged in as:<br/><span id="idCurrentUser"></span><br/>(click to logout)</a></li>
@@ -126,10 +120,6 @@
                 <tr>
                     <td><strong>Kong Plugin</strong></td>
                     <td>The menu shows how LoginIDs <strong>plugin for Kong</strong> may be used to protect APIs by requiring a LoginID issued FIDO2 credential</td>
-                </tr>
-                <tr>
-                    <td><strong>Use Cases</strong></td>
-                    <td>The menu contains a list of uses cases that are served by LoginIDs solutions, e.g.: finance</td>
                 </tr>
             </table>
             <hr/>
@@ -182,9 +172,6 @@
         </div>
         <div id="tabKong" class="tab-pane" role="tabpanel">
             <p>tabKong</p>
-        </div>
-        <div id="tabUseCases" class="tab-pane" role="tabpanel">
-            <p>tabUseCases</p>
         </div>
     </div>
     <hr/>
