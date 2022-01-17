@@ -34,6 +34,8 @@ build_tooling:
 # This is slightly faster that using 'build_tooling' and 'build/ build_win'
 #
 build_local:
+	npm install --prefix ./authenticate-demo
+	npm run build:publicurl --prefix ./authenticate-demo
 	docker build --tag local/tutorial_web:latest --no-cache .
 	docker build --tag local/tutorial_kong_gw:latest --no-cache -f Dockerfile_kong .
 	mvn -f ./java-server-side-sdk/pom.xml clean install

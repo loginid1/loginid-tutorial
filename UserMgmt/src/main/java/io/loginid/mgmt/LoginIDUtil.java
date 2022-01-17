@@ -13,6 +13,7 @@ package io.loginid.mgmt;
 
 import io.loginid.mgmt.model.CredentialForUI;
 import io.loginid.sdk.java.LoginIdManagement;
+import io.loginid.sdk.java.api.AuthenticateApi;
 import io.loginid.sdk.java.api.TransactionsApi;
 import io.loginid.sdk.java.invokers.ApiClient;
 import io.loginid.sdk.java.model.*;
@@ -43,6 +44,7 @@ public class LoginIDUtil {
         }
     }
 
+    private String webClientId;
     private LoginIdManagement mgmt;
     private Properties props;
 
@@ -56,6 +58,9 @@ public class LoginIDUtil {
                     props.getProperty("API_PRIVATE_KEY"),
                     props.getProperty("BASE_URL")
             );
+
+            webClientId = props.getProperty("CLIENT_ID_WEB");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,6 +68,10 @@ public class LoginIDUtil {
 
     public String getBaseUrl() {
         return props.getProperty("BASE_URL");
+    }
+
+    public String getWebClientId() {
+        return props.getProperty("CLIENT_ID_WEB");
     }
 
     public List<CredentialForUI> getCredentials(String username) throws Exception {
@@ -140,7 +149,18 @@ public class LoginIDUtil {
     public String waitForAuthorizeAuthCode(String username, String code) throws Exception {
         if(checkParam(username) && checkParam(code)) {
             String jwt = "";
-            AuthenticationResponse authenticationResponse = mgmt.waitCode(username, code, "short");
+            AuthenticateApi authenticateApi = new AuthenticateApi();
+            ApiClient apiClient = authenticateApi.getApiClient();
+            apiClient.setReadTimeout(30000);
+            apiClient.setBasePath(getBaseUrl());
+            AuthenticateCodeWaitBody authenticateCodeWaitBody = new AuthenticateCodeWaitBody();
+            authenticateCodeWaitBody.setClientId(getWebClientId());
+            authenticateCodeWaitBody.setUsername(username);
+            AuthenticatecodewaitAuthenticationCode authenticatecodewaitAuthenticationCode = new AuthenticatecodewaitAuthenticationCode();
+            authenticatecodewaitAuthenticationCode.setCode(code);
+            authenticatecodewaitAuthenticationCode.setType(AuthenticatecodewaitAuthenticationCode.TypeEnum.fromValue("short"));
+            authenticateCodeWaitBody.setAuthenticationCode(authenticatecodewaitAuthenticationCode);
+            AuthenticationResponse authenticationResponse = authenticateApi.authenticateCodeWaitPost(authenticateCodeWaitBody, (UUID)null);
             boolean granted = authenticationResponse.isIsAuthenticated();
             if (granted) {
                 jwt = authenticationResponse.getJwt();

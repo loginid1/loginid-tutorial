@@ -19,6 +19,8 @@ services:
       - "HOSTNAME=${HOSTNAME}"
       - "BASEURL=${BASE_URL}"
       - "WEBCLIENTID=${CLIENT_ID_WEB}"
+      - "REACT_APP_BASE_URL=${BASE_URL}"
+      - "REACT_APP_API_KEY=${CLIENT_ID_WEB}"
 
   # contains the backend (UserMgmt)
   #
