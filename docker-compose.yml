@@ -3,31 +3,18 @@ version: "3.4"
 # LoginID Demo
 #
 # The default compose file for the demo
-# To debug java code or do 'live' changes in the web UI use 'docker-compose-dev.yml'
+# To debug java code use 'docker-compose-dev.yml'
 #
 services:
 
-  # contains the website
-  #
-  nginx:
-    container_name: tutorial_web
-    image: local/tutorial_web:latest
-    restart: always
-    ports:
-      - "80:80"
-    environment:
-      - "HOSTNAME=${HOSTNAME}"
-      - "BASEURL=${BASE_URL}"
-      - "WEBCLIENTID=${CLIENT_ID_WEB}"
-
-  # contains the backend (UserMgmt)
+  # contains the website and backend (UserMgmt)
   #
   usermgmt:
     container_name: tutorial_backend
     image: local/tutorial_backend:latest
     restart: always
     ports:
-      - "8080:8080"
+      - "80:8080"
     environment:
       - "HOSTNAME=${HOSTNAME}"
       - "BASEURL=${BASE_URL}"
@@ -45,15 +32,12 @@ services:
     restart: always
     ports:
       - "8090:8000"
-      - "8001:8001"
-      - "8444:8444"
     environment:
       - "KONG_DATABASE=off"
       - "KONG_PROXY_ACCESS_LOG=/dev/stdout"
       - "KONG_ADMIN_ACCESS_LOG=/dev/stdout"
       - "KONG_PROXY_ERROR_LOG=/dev/stderr"
       - "KONG_ADMIN_ERROR_LOG=/dev/stderr"
-      - "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl"
       - "HOSTNAME=${HOSTNAME}"
       - "BASEURL=${BASE_URL}"
       - "WEBCLIENTID=${CLIENT_ID_WEB}"

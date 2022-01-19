@@ -16,7 +16,7 @@ This tutorial simulates a small setup that includes these components:
 
 The tutorial setup looks like this:
 
-![alt overview](web/images/setup.png)
+![alt overview](UserMgmt/web/images/setup.png)
 
 FrontEnd, BackEnd and Gateway are implemented as Docker images!
 
@@ -73,6 +73,9 @@ The following values need to be updated in `.env`:
 - `CLIENT_ID_BACKEND`: use the client ID of the Backend application
 - `API_PRIVATE_KEY`: use the Api Credential (you do not need to maintain the **\n** characters, but it needs to be one single line)
 - `CLIENT_ID_WEB`: use the client ID of the Web application
+- `HOSTNAME`: update this variable if the tutorial is not running at *http://localhost*
+  - i.e.: from *http://localhost* to *https://mydomain.com*
+- `BASE_URL`: verify the value. It most likely does not need to be updated
 
 Please find more details within that file!
 
@@ -110,7 +113,7 @@ After completing the previous step, do this:
 
 - copy and paste the above file `docker-compose-hub.yml`
   - make sure it is in the same directory as `.env` that was created at **Preparing the tutorial**
-  - just like this: ![alt overview](web/images/filelocation.png)
+  - just like this: ![alt overview](UserMgmt/web/images/filelocation.png)
 - in a terminal, run: `docker-compose -f docker-compose-hub.yml up`
   - this launches the system by pulling the images from hub.docker.io
 
@@ -125,7 +128,7 @@ After building the project you are ready to launch the system:
 
 - `http://localhost`
   - open a browser at that location and enjoy the app
-  - these ports will be used: **80, 8001, 8080, 8090, 8444**
+  - these ports will be used: **80, 8090**
 
 ### Stopping the tutorial
 
@@ -141,14 +144,12 @@ Once you are done, terminate the containers by running:
 
 ### For developers: Debugging code
 
-To debug java code or make live changes to the web UI do the following:
+To debug java code do the following:
 
-- open `.web/index.html` and  replace `{base_url}` `{web-sdk-client_id}` with values as configured in `.env`
 - run `docker-compose -f docker-compose-dev.yml up`  // use this instead of `docker-compose up`
 - use java remote debugging on port 8000 (for more details see **JAVA_OPTS** in the compose file)
 
-You can now update the web content and see changes (most of the time) after refreshing the page. You can also set breakpoints 
-in the code of the UserMgmt module.
+You can now set breakpoints in the code of the UserMgmt module.
 
 ## Additional Info
 

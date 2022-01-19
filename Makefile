@@ -5,10 +5,9 @@
 # Run this if 1. it has not been run or 2. the UserMgmt has changed or 3. the web site has changed
 #
 build:
-	docker build --tag local/tutorial_web:latest --no-cache .
-	docker build --tag local/tutorial_kong_gw:latest --no-cache -f Dockerfile_kong .
 	docker run -v `pwd`:/tmp local/tutorial_tooling:latest mvn -f "/tmp/UserMgmt/pom.xml" clean package
-	docker build --tag local/tutorial_backend:latest --no-cache -f Dockerfile_userMgmt .
+	docker build --tag local/tutorial_backend:latest --no-cache .
+	docker build --tag local/tutorial_kong_gw:latest --no-cache -f Dockerfile_kong .
 
 # The third line is specific to windows, the rest is the same as for 'build'.
 # If this fails, please try one of these options:
@@ -16,10 +15,9 @@ build:
 # - use %cd% instead of ${PWD}
 #
 build_win:
-	docker build --tag local/tutorial_web:latest --no-cache .
-	docker build --tag local/tutorial_kong_gw:latest --no-cache -f Dockerfile_kong .
 	docker run -v ${PWD}:/tmp local/tutorial_tooling:latest mvn -f "/tmp/UserMgmt/pom.xml" clean package
-	docker build --tag local/tutorial_backend:latest --no-cache -f Dockerfile_userMgmt .
+	docker build --tag local/tutorial_backend:latest --no-cache .
+	docker build --tag local/tutorial_kong_gw:latest --no-cache -f Dockerfile_kong .
 
 # This builds an image that contains java 11 and Maven.
 # It enables users that do not have java and maven installed locally.
@@ -34,8 +32,7 @@ build_tooling:
 # This is slightly faster that using 'build_tooling' and 'build/ build_win'
 #
 build_local:
-	docker build --tag local/tutorial_web:latest --no-cache .
-	docker build --tag local/tutorial_kong_gw:latest --no-cache -f Dockerfile_kong .
 	mvn -f ./java-server-side-sdk/pom.xml clean install
 	mvn -f ./UserMgmt/pom.xml clean package
-	docker build --tag local/tutorial_backend:latest --no-cache -f Dockerfile_userMgmt .
+	docker build --tag local/tutorial_backend:latest --no-cache .
+	docker build --tag local/tutorial_kong_gw:latest --no-cache -f Dockerfile_kong .

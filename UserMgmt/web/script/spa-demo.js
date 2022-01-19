@@ -10,7 +10,7 @@
  * LoginID, January 2022
  */
 
-const SERVICE='http://localhost:8080';
+const SERVICE='http://localhost';
 const SERVICE_KONG='http://localhost:8090';
 
 /********************************************/
