@@ -23,8 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class LoginIDUtil {
+
+    private final Logger LOGGER = Logger.getLogger(String.valueOf(LoginIDUtil.class));
 
     public enum CODE_TYPE {
 
@@ -44,14 +47,24 @@ public class LoginIDUtil {
         }
     }
 
-    private String webClientId;
     private LoginIdManagement mgmt;
     private Properties props;
 
     public LoginIDUtil() {
         try {
             props = new Properties();
+
+            // read from a config file, support early images
             props.load(new FileReader("/opt/docker/loginid/config"));
+
+            // in this case find environment variables, support newer images
+            if (props.size() == 0) {
+                LOGGER.info("No configuration file found. Trying environment variables now!");
+                props.put("CLIENT_ID_BACKEND", System.getenv("BACKENDCLIENTID"));
+                props.put("API_PRIVATE_KEY", System.getenv("APIPRIVATEKEY").replaceAll("[\\\\]n", ""));
+                props.put("BASE_URL", System.getenv("BASEURL"));
+                props.put("CLIENT_ID_WEB", System.getenv("WEBCLIENTID"));
+            }
 
             mgmt = new LoginIdManagement(
                     props.getProperty("CLIENT_ID_BACKEND"),
@@ -59,10 +72,9 @@ public class LoginIDUtil {
                     props.getProperty("BASE_URL")
             );
 
-            webClientId = props.getProperty("CLIENT_ID_WEB");
-
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.severe(e.getMessage());
+            LOGGER.severe("None or missing environment variables found. Please configure expected environment variables!");
         }
     }
 

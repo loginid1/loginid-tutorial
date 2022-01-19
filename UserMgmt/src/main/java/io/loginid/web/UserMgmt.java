@@ -38,8 +38,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.logging.Logger;
 
 public class UserMgmt extends HttpServlet {
+
+    private final Logger LOGGER = Logger.getLogger(String.valueOf(UserMgmt.class));
 
     private LoginIDUtil util;
 
@@ -76,7 +79,7 @@ public class UserMgmt extends HttpServlet {
                 return;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(400);
             response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
@@ -91,6 +94,7 @@ public class UserMgmt extends HttpServlet {
         try {
             jws = requireJwt(request);
         } catch (Exception e) {
+            LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(401);
             return;
@@ -122,7 +126,7 @@ public class UserMgmt extends HttpServlet {
                 response.getWriter().printf(util.getTransactionId(payload, txClientId));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(400);
             response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
@@ -138,6 +142,7 @@ public class UserMgmt extends HttpServlet {
         try {
             jws = requireJwt(request);
         } catch (Exception e) {
+            LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(401);
             return;
@@ -158,7 +163,7 @@ public class UserMgmt extends HttpServlet {
                 response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\": \"you are looking for something that does not exist\"}");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(400);
             response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
@@ -174,6 +179,7 @@ public class UserMgmt extends HttpServlet {
         try {
             jws = requireJwt(request);
         } catch (Exception e) {
+            LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(401);
             return;
@@ -191,7 +197,7 @@ public class UserMgmt extends HttpServlet {
                 response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\": \"you are looking for something that does not exist\"}");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warning(e.getMessage());
             String error = e.getMessage();
             if(e instanceof ApiException) {
                 error = ((ApiException) e).getResponseBody();
@@ -219,7 +225,6 @@ public class UserMgmt extends HttpServlet {
                         .build()
                         .parseClaimsJws(authJwt);
             } catch (Exception e) {
-                e.printStackTrace();
                 throw e;
             }
         } else {
@@ -271,7 +276,7 @@ public class UserMgmt extends HttpServlet {
             return txHash.equals(new String(Base64.getUrlEncoder().encode(encodedhash)).replace("=", ""));
         } catch (NoSuchAlgorithmException e) {
             // this should never ever happen!
-            e.printStackTrace();
+            LOGGER.warning(e.getMessage());
         }
         return false;
     }

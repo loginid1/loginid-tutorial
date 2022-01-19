@@ -33,8 +33,12 @@ services:
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000"
       - "HOSTNAME=${HOSTNAME}"
-    volumes:
-      - .env:/opt/docker/loginid/config
+      - "BASEURL=${BASE_URL}"
+      - "WEBCLIENTID=${CLIENT_ID_WEB}"
+      - "BACKENDCLIENTID=${CLIENT_ID_BACKEND}"
+      - "APIPRIVATEKEY=${API_PRIVATE_KEY}"
+#    volumes:
+#      - .env:/opt/docker/loginid/config
 
   # contains the kong docker gateway including the LoginID plugin
   #
