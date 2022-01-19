@@ -18,7 +18,6 @@ import io.loginid.sdk.java.api.TransactionsApi;
 import io.loginid.sdk.java.invokers.ApiClient;
 import io.loginid.sdk.java.model.*;
 
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -54,17 +53,10 @@ public class LoginIDUtil {
         try {
             props = new Properties();
 
-            // read from a config file, support early images
-            props.load(new FileReader("/opt/docker/loginid/config"));
-
-            // in this case find environment variables, support newer images
-            if (props.size() == 0) {
-                LOGGER.info("No configuration file found. Trying environment variables now!");
-                props.put("CLIENT_ID_BACKEND", System.getenv("BACKENDCLIENTID"));
-                props.put("API_PRIVATE_KEY", System.getenv("APIPRIVATEKEY").replaceAll("[\\\\]n", ""));
-                props.put("BASE_URL", System.getenv("BASEURL"));
-                props.put("CLIENT_ID_WEB", System.getenv("WEBCLIENTID"));
-            }
+            props.put("CLIENT_ID_BACKEND", System.getenv("BACKENDCLIENTID"));
+            props.put("API_PRIVATE_KEY", System.getenv("APIPRIVATEKEY").replaceAll("[\\\\]n", ""));
+            props.put("BASE_URL", System.getenv("BASEURL"));
+            props.put("CLIENT_ID_WEB", System.getenv("WEBCLIENTID"));
 
             mgmt = new LoginIdManagement(
                     props.getProperty("CLIENT_ID_BACKEND"),
@@ -137,7 +129,7 @@ public class LoginIDUtil {
     }
 
     public String requestAuthCodeAuthenticator(String username, LoginIDUtil.CODE_TYPE type) throws Exception {
-        if(checkParam(username)) {
+        if (checkParam(username)) {
             UUID userId = mgmt.getUserId(username);
             CodesCodeTypeGenerateResponse generateResponse = mgmt.generateCode(userId.toString(), "short", type.toString(), false);
             String code = generateResponse.getCode();
@@ -148,7 +140,7 @@ public class LoginIDUtil {
     }
 
     public String authorizeAuthCode(String username, String code, LoginIDUtil.CODE_TYPE type) throws Exception {
-        if(checkParam(username) && checkParam(code)) {
+        if (checkParam(username) && checkParam(code)) {
             UUID userId = mgmt.getUserId(username);
             CodesCodeTypeAuthorizeResponse authorizeResponse = mgmt.authorizeCode(userId.toString(), code, "short", type.toString());
             boolean granted = authorizeResponse.isIsAuthorized();
@@ -159,7 +151,7 @@ public class LoginIDUtil {
     }
 
     public String waitForAuthorizeAuthCode(String username, String code) throws Exception {
-        if(checkParam(username) && checkParam(code)) {
+        if (checkParam(username) && checkParam(code)) {
             String jwt = "";
             AuthenticateApi authenticateApi = new AuthenticateApi();
             ApiClient apiClient = authenticateApi.getApiClient();
@@ -172,7 +164,7 @@ public class LoginIDUtil {
             authenticatecodewaitAuthenticationCode.setCode(code);
             authenticatecodewaitAuthenticationCode.setType(AuthenticatecodewaitAuthenticationCode.TypeEnum.fromValue("short"));
             authenticateCodeWaitBody.setAuthenticationCode(authenticatecodewaitAuthenticationCode);
-            AuthenticationResponse authenticationResponse = authenticateApi.authenticateCodeWaitPost(authenticateCodeWaitBody, (UUID)null);
+            AuthenticationResponse authenticationResponse = authenticateApi.authenticateCodeWaitPost(authenticateCodeWaitBody, (UUID) null);
             boolean granted = authenticationResponse.isIsAuthenticated();
             if (granted) {
                 jwt = authenticationResponse.getJwt();
@@ -184,7 +176,7 @@ public class LoginIDUtil {
     }
 
     public String getTransactionId(String payload, String txClientId) throws Exception {
-        if(checkParam(payload, 1024) && checkParam(txClientId)) {
+        if (checkParam(payload, 1024) && checkParam(txClientId)) {
             TransactionsApi transactionsApi = new TransactionsApi();
 
             ApiClient apiClient = transactionsApi.getApiClient();
@@ -199,7 +191,7 @@ public class LoginIDUtil {
 
             TxResponse result = transactionsApi.txPost(txBody);
             return String.format("{\"transactionId\":\"%s\", \"nonce\":\"%s\"}", result.getTxId(), nonce);
-        }  else {
+        } else {
             throw new IllegalArgumentException("Missing or invalid payload or client ID");
         }
     }

@@ -24,8 +24,6 @@ services:
       - "WEBCLIENTID=${CLIENT_ID_WEB}"
       - "BACKENDCLIENTID=${CLIENT_ID_BACKEND}"
       - "APIPRIVATEKEY=${API_PRIVATE_KEY}"
-#    volumes:
-#      - .env:/opt/docker/loginid/config
 
   # contains the kong docker gateway including the LoginID plugin
   #
