@@ -11,6 +11,7 @@
   <version>1.0.0</version>
 
   <modules>
+    <module>java-server-side-sdk</module>
     <module>UserMgmt</module>
   </modules>
 
