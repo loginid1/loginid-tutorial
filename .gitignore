@@ -8,3 +8,4 @@ local
 package-lock.json
 .env*
 !.env_template
+target
