@@ -28,7 +28,8 @@ async function registerUser(dw) {
 
         // the call prompts a user to authenticate using a FIDO2 authenticator
         // the result contains a JSON message which includes a 'jwt' which represents the registered user
-        let result = await dw.registerWithFido2(user, {roaming_authenticator: true});
+        let useRoaming = document.getElementById('idUseRoaming').checked;
+        let result = await dw.registerWithFido2(user, {roaming_authenticator: useRoaming});
 
         updateSession(result.jwt, user);
         getMsg(SERVICE + "/users/session", result.jwt);
@@ -53,7 +54,8 @@ async function signInUser(dw) {
 
         // the call prompts a user to authenticate using a FIDO2 authenticator
         // the result contains a JSON message which includes a 'jwt' which represents the authenticated user
-        let result = await dw.authenticateWithFido2(user, {roaming_authenticator: true});
+        let useRoaming = document.getElementById('idUseRoaming').checked;
+        let result = await dw.authenticateWithFido2(user, {roaming_authenticator: useRoaming});
 
         updateSession(result.jwt, user);
         getMsg(SERVICE + "/users/session", result.jwt);
@@ -430,17 +432,14 @@ function printFlowResponse(output) {
     Prism.highlightAll(false, null);
 }
 
-async function isFidoSupported(toBeDisabledItem, displayInfoItem) {
+async function isFidoSupported(displayInfoItem) {
 
     // check, if FIDO2 is supported on this device (browser)
     let isFidoSupported = await dw.isFido2Supported();
-    let item1 = document.getElementById(toBeDisabledItem);
-    let item2 = document.getElementById(displayInfoItem);
+    let item = document.getElementById(displayInfoItem);
     if(!isFidoSupported) {
-        item1.disabled = true;
-        item2.innerHTML = '<small>(FIDO2 is not supported on this device - browser!)</small>';
+        item.innerHTML = '<small>This device (browser) has no built-in support for FIDO! Try a roaming key if available!</small><br/>';
     } else {
-        item1.disabled = false;
-        item2.innerHTML = '';
+        item.innerHTML = '';
     }
 }

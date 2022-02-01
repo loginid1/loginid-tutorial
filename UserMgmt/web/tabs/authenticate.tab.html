@@ -1,7 +1,7 @@
 <h2>Authentication</h2>
 <p>With FIDO2 <strong>passwordless authentication</strong> users do not only register a username but also the used authenticator (i.e.: TouchID). After registering,
     a user can login to the website by using the registered authenticator, no password required.</p>
-<p>Please note that <strong>device</strong> and <strong>authenticator</strong> are often user interchangeably in FIDO2!
+<p>Please note that <strong>device</strong> and <strong>authenticator</strong> are often used interchangeably in FIDO2!
 </p>
 <p>This screen supports both features:</p>
 <ol>
@@ -13,9 +13,13 @@
 <hr/>
 <p><strong>Sign-In: </strong><input type="email" id="idSignInName" name="signInName" size="35" placeholder="Your username">
     <button type="button" value="check" id="btnSignInName" name="btnSignInName" onclick="return signInUser(dw);">
-        <img src="../images/button_loginid.png" alt="sign-in" width="90px" onload="return isFidoSupported('btnSignInName', 'idIsFidoSupported');"/>
+        <img src="../images/button_loginid.png" alt="sign-in" width="90px" onload="return isFidoSupported('idIsFidoSupported');"/>
     </button>
+</p>
+<p>
     <span id="idIsFidoSupported"></span>
+    <label class="form-check-label" for="idUseRoaming"><small>Enable a roaming key (i.e.: YubiKey) that takes advantage of a PIN: </small></label>
+    <input type="checkbox" class="form-check-input" id="idUseRoaming">
 </p>
 <hr/>
 <p>
