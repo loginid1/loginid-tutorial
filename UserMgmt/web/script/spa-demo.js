@@ -10,8 +10,8 @@
  * LoginID, January 2022
  */
 
-const SERVICE='http://localhost';
-const SERVICE_KONG='http://localhost:8090';
+const SERVICE='@@service_location@@';
+const SERVICE_KONG='@@kong_location@@';
 
 /********************************************/
 /* Functions that leverage LoginIDs Web SDK */

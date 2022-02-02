@@ -2,8 +2,8 @@ version: "3.4"
 
 # LoginID Demo
 #
-# The default compose file for the demo
-# To debug java code use 'docker-compose-dev.yml' (this file)
+# The default compose file for the tutorial
+# To debug java code use 'docker-compose-dev.yml'
 #
 services:
 
@@ -15,7 +15,7 @@ services:
     image: local/tutorial_backend:latest
     restart: always
     ports:
-      - "80:8080"
+      - "80:${PORT_SERVICE}"
       - "8000:8000"
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000"
@@ -24,6 +24,8 @@ services:
       - "WEBCLIENTID=${CLIENT_ID_WEB}"
       - "BACKENDCLIENTID=${CLIENT_ID_BACKEND}"
       - "APIPRIVATEKEY=${API_PRIVATE_KEY}"
+      - "KONGLOCATION=${KONG_LOCATION}"
+      - "PORT=${PORT_SERVICE}"
 
   # contains the kong docker gateway including the LoginID plugin
   #
@@ -32,13 +34,14 @@ services:
     image: local/tutorial_kong_gw:latest
     restart: always
     ports:
-      - "8090:8000"
+      - "8090:${PORT_KONG}"
     environment:
-      - "KONG_DATABASE=off"
-      - "KONG_PROXY_ACCESS_LOG=/dev/stdout"
-      - "KONG_ADMIN_ACCESS_LOG=/dev/stdout"
-      - "KONG_PROXY_ERROR_LOG=/dev/stderr"
-      - "KONG_ADMIN_ERROR_LOG=/dev/stderr"
+      - "KONG_DATABASE=${KONG_DATABASE}"
+      - "KONG_PROXY_ACCESS_LOG=${KONG_PROXY_ACCESS_LOG}"
+      - "KONG_ADMIN_ACCESS_LOG=${KONG_ADMIN_ACCESS_LOG}"
+      - "KONG_PROXY_ERROR_LOG=${KONG_PROXY_ERROR_LOG}"
+      - "KONG_ADMIN_ERROR_LOG=${KONG_ADMIN_ERROR_LOG}"
       - "HOSTNAME=${HOSTNAME}"
       - "BASEURL=${BASE_URL}"
       - "WEBCLIENTID=${CLIENT_ID_WEB}"
+      - "PORT=${PORT_KONG}"

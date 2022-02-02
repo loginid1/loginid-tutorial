@@ -22,9 +22,8 @@
     <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
     <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener"/>
     <Service name="Catalina">
-        <Connector port="8080" protocol="HTTP/1.1"
-                   connectionTimeout="20000"
-                   redirectPort="8443"/>
+        <Connector port="@@port@@" protocol="HTTP/1.1"
+                   connectionTimeout="20000"/>
         <Engine name="Catalina" defaultHost="localhost">
             <Host name="localhost" appBase="webapps"
                   unpackWARs="true" autoDeploy="true">

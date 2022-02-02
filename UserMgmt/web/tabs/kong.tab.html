@@ -30,12 +30,15 @@
             </td>
             <td>
                 <button id="btnProtected" type="button"
-                        onclick="return protectedCallKong('/fact');">http://localhost:8090/fact
+                        onclick="return protectedCallKong('/fact');">@@kong_location@@/fact
                 </button>
             </td>
             <td>(client --> Kong --> cat-fact-API)</td>
         </tr>
     </table>
 </form>
-<p><strong>NOTE: </strong>By default the Kong plugin is configured to accept no JWT older than 5 minutes.
-    Re-authenticate if requests fail!</p>
+<p><strong>NOTES: </strong></p>
+<ul>
+    <li>By default the Kong plugin is configured to accept no JWT older than 5 minutes. Re-authenticate if requests fail!</li>
+    <li>The call to Kong is currently only supported when running the tutorial locally!</li>
+</ul>
