@@ -26,6 +26,8 @@ services:
       - "APIPRIVATEKEY=${API_PRIVATE_KEY}"
       - "KONGLOCATION=${KONG_LOCATION}"
       - "PORT=${PORT_SERVICE}"
+      - "OIDCPUBLICCLIENTID=${CLIENT_ID_PUBLIC_OIDC}"
+      - "OIDCPUBLICLIENTREDIRECT=${REDIRECT_PUBLIC_OIDC}"
 
   # contains the kong docker gateway including the LoginID plugin
   #

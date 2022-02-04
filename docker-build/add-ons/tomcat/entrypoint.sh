@@ -33,6 +33,21 @@ else
   sed -i "s+@@kong_location@@+http://localhost:8090+g" /usr/local/tomcat/webapps/ROOT/tabs/kong.tab.html
   sed -i "s+@@kong_location@@+http://localhost:8090+g" /usr/local/tomcat/webapps/ROOT/script/spa-demo.js
 fi
+if [ "$OIDCPUBLICCLIENTID" ]
+then
+  printf 'setting the public OIDC client_id'
+  sed -i "s+@@oidc_public_client_id@@+$OIDCPUBLICCLIENTID+g" /usr/local/tomcat/webapps/ROOT/script/oidc-client.js
+else
+  printf 'the public OIDC client_id has not been configured'
+fi
+if [ "$OIDCPUBLICLIENTREDIRECT" ]
+then
+  printf 'setting the public OIDC client_id'
+  sed -i "s+@@oidc_public_client_redirect@@+$OIDCPUBLICLIENTREDIRECT+g" /usr/local/tomcat/webapps/ROOT/script/oidc-client.js
+else
+  printf 'the public OIDC client_id has not been configured, setting default'
+  sed -i "s+@@oidc_public_client_redirect@@+$OIDCPUBLICLIENTREDIRECT+g" /usr/local/tomcat/webapps/ROOT/script/oidc-client.js
+fi
 
 # configures the listen port for tomcat
 #
