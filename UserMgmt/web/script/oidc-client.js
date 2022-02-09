@@ -37,9 +37,53 @@ document.write('<body>' +
     '    <hr/><div id="divOidcResponse"></div>' +
     '</div></body>');
 
+/**
+ * The configuration for our client
+ */
+class ClientConfiguration {
+
+    constructor() {
+        this.client_id = '@@oidc_public_client_id@@';
+        this.authorization_endpoint = 'https://oauth2.qa.loginid.io/oauth2/auth';
+        this.token_endpoint = 'https://oauth2.qa.loginid.io/oauth2/token';
+        this.scope = 'openid';
+        this.responseType = 'code';
+        this.grant_type = 'authorization_code';
+        this.redirect_uri = '@@oidc_public_client_redirect@@';
+    }
+
+    getClientId() {
+        return this.client_id;
+    }
+
+    getRedirectUri() {
+        return this.redirect_uri;
+    }
+
+    getScope() {
+        return this.scope;
+    }
+
+    getResponseType() {
+        return this.responseType;
+    }
+
+    getGrantType() {
+        return this.grant_type;
+    }
+
+    getAuthorizationEndpoint() {
+        return this.authorization_endpoint;
+    }
+
+    getTokenEndpoint() {
+        return this.token_endpoint;
+    }
+}
+
 // Check if this client has been enabled
 let config = new ClientConfiguration();
-if(config.getClientId() === '@@oidc_public_client_id@@') {
+if (config.getClientId().includes('@')) {
     printMissingConfig();
 } else if (window.location.search.length > 0) {
     // assumption:
@@ -58,11 +102,11 @@ if(config.getClientId() === '@@oidc_public_client_id@@') {
         let value = decodeURI(params[i].split('=')[1]);
         output = output + '<strong>' + key + '</strong>: ' + value + '</br>';
         console.log('key: ' + key);
-        if(!hasError) {
+        if (!hasError) {
             hasError = key === 'error';
             console.log('hasError');
         }
-        if(!hasCode) {
+        if (!hasCode) {
             hasCode = key === 'code';
             console.log('hasCode');
         }
@@ -74,7 +118,7 @@ if(config.getClientId() === '@@oidc_public_client_id@@') {
     console.log('hasError: ' + hasError + ', hasCode: ' + hasCode);
     if (hasError) { // error: (state & error & error_description)
         title = 'Error!';
-    }  else if (hasCode) { // success: code response (state & code & iss)
+    } else if (hasCode) { // success: code response (state & code & iss)
         title = 'Success!<br/>An authorization_code was received!<br/><small>(shown only for demo purposes!)</small>';
         output = output + '<button type="submit" class="btn btn-primary" onclick="return exchangeCode(\'' + params[0] + '\',\'' + params[1] + '\');">Exchange code for token response</button>';
     } else {
@@ -217,50 +261,6 @@ function postMsg(targetUrl, expectedNonce, msg) {
             printFlowResponse('Error!<br/>Something went wrong!:', getPostMsgResponse(data));
         }
     });
-}
-
-/**
- * The configuration for our client
- */
-class ClientConfiguration {
-
-    constructor() {
-        this.client_id = '@@oidc_public_client_id@@';
-        this.authorization_endpoint = 'https://oauth2.qa.loginid.io/oauth2/auth';
-        this.token_endpoint = 'https://oauth2.qa.loginid.io/oauth2/token';
-        this.scope = 'openid';
-        this.responseType = 'code';
-        this.grant_type = 'authorization_code';
-        this.redirect_uri = '@@oidc_public_client_redirect@@';
-    }
-
-    getClientId() {
-        return this.client_id;
-    }
-
-    getRedirectUri() {
-        return this.redirect_uri;
-    }
-
-    getScope() {
-        return this.scope;
-    }
-
-    getResponseType() {
-        return this.responseType;
-    }
-
-    getGrantType() {
-        return this.grant_type;
-    }
-
-    getAuthorizationEndpoint() {
-        return this.authorization_endpoint;
-    }
-
-    getTokenEndpoint() {
-        return this.token_endpoint;
-    }
 }
 
 /*
