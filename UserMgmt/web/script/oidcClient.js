@@ -1,41 +1,7 @@
-/**
- * This is a very simple javascript based oauth client (public client). The main idea is to show steps that are executed between initiating an
- * authorization flow and receiving an issued access_token.
- *
- * Do not use this code for anything else than 'evaluation purposes'!
- *
- * We hope this helps understanding the basics of oauth flows (in this case, the authorization_code flow).
- *
- * LoginID, February 2022
- */
+/***********************************************************/
+/* Functions that leverage LoginIDs OpenID Connect support */
 
-/**
- * This client will handle four cases:
- *
- * 1. Initialization, the first time this scripts loads
- * 2. Handling a redirect response. The authorization server has responded either with an error or with an authorization code
- * 3. Exchanging the code for a token response
- * 4. Receiving the token response, clearing the current state
- *
- * The state object is a JSON object having this structure:
- *
- * key = null or a UUID
- * value = {"state":"...", "nonce":"...", "next":"...", "code_verifier": "..."}
- *
- * - state = empty string or a UUID
- * - nonce = empty string or a UUID, created with the authorization request
- * - next = empty string or /token, the next endpoint to call
- * - code_verifier = empty string or PKCE code_verifier
- */
-
-// always write the top part of the UI
-// add any other content into the div 'divOidcResponse'
-document.write('<body>' +
-    '<div class="container" id="content"><h2>LoginID OpenID Connect Democlient!</h2>\n' +
-    '    <p>This is a demo client which connects to <strong>LoginID</strong>s OpenID Connect service</a>.</p>\n' +
-    '    <p>This client represents a <strong>Single Page App (SPA)</strong> that a developer may build.</p>' +
-    '    <hr/><div id="divOidcResponse"></div>' +
-    '</div></body>');
+/***********************************************************/
 
 /**
  * The configuration for our client
@@ -43,13 +9,11 @@ document.write('<body>' +
 class ClientConfiguration {
 
     constructor() {
-        this.client_id = '@@oidc_public_client_id@@';
-        this.authorization_endpoint = 'https://oauth2.qa.loginid.io/oauth2/auth';
-        this.token_endpoint = 'https://oauth2.qa.loginid.io/oauth2/token';
-        this.scope = 'openid';
+        this.client_id = OIDC_CLIENT_ID;
+        this.scope = OIDC_SCOPE;
+        this.redirect_uri = OIDC_REDIRECT_URI;
         this.responseType = 'code';
         this.grant_type = 'authorization_code';
-        this.redirect_uri = '@@oidc_public_client_redirect@@';
     }
 
     getClientId() {
@@ -73,13 +37,36 @@ class ClientConfiguration {
     }
 
     getAuthorizationEndpoint() {
-        return this.authorization_endpoint;
+        return 'https://oauth2.qa.loginid.io/oauth2/auth';
+        // let authorizationEndpoint = sessionStorage.getItem('authorization_endpoint');
+        // if (authorizationEndpoint === null) {
+        //     let config = await $.get(OIDC_CONFIG_ENDPOINT);
+        //     sessionStorage.setItem('authorization_endpoint', config.authorization_endpoint);
+        //     sessionStorage.setItem('token_endpoint', config.token_endpoint);
+        // } else {
+        //     return authorizationEndpoint;
+        // }
     }
 
     getTokenEndpoint() {
-        return this.token_endpoint;
+        return 'https://oauth2.qa.loginid.io/oauth2/token';
+        // let tokenEndpoint = sessionStorage.getItem('token_endpoint');
+        // if (tokenEndpoint === null) {
+        //     let config = await $.get(OIDC_CONFIG_ENDPOINT);
+        //     sessionStorage.setItem('authorization_endpoint', config.authorization_endpoint);
+        //     sessionStorage.setItem('token_endpoint', config.token_endpoint);
+        // } else {
+        //     return tokenEndpoint;
+        // }
     }
 }
+
+document.write('<body><div class="container" id="content"><h1>OpenID Connect Demo Client!</h1>\n' +
+    '    <p>This is a demo client of the open source project <a href="https://github.com/SaschaZeGerman/loginbuddy" target="_blank"><strong>Loginbuddy</strong></a>.</p>\n' +
+    '    <p>This client simulates a <strong>Single Page App (SPA)</strong> that a developer may build.</p>' +
+    '    <p>Please note that this client is pretty simple. Check the comments in <strong>script/spa-demo.js</strong> to learn more about it. However, hopefully it does help to understand how an OAuth flow in a SPA works!</p>' +
+    '    <hr/><div id="divOidcResponse"></div>' +
+    '</div></body>');
 
 // Check if this client has been enabled
 let config = new ClientConfiguration();
@@ -97,11 +84,15 @@ if (config.getClientId().includes('@')) {
     let hasError = false;
     let hasCode = false;
 
+    let counter = 0;
     for (let i = 0; i < params.length; i++) {
+        // let's not accept too many parameters. There is no reason to expect more than three or four
+        if (counter >= 10) {
+            break;
+        }
         let key = params[i].split('=')[0];
         let value = decodeURI(params[i].split('=')[1]);
         output = output + '<strong>' + key + '</strong>: ' + value + '</br>';
-        console.log('key: ' + key);
         if (!hasError) {
             hasError = key === 'error';
             console.log('hasError');
@@ -110,17 +101,13 @@ if (config.getClientId().includes('@')) {
             hasCode = key === 'code';
             console.log('hasCode');
         }
+        counter++;
     }
 
-    /*
-    /* this section is very specific. Other servers may respond with more or less parameters
-     */
-    console.log('hasError: ' + hasError + ', hasCode: ' + hasCode);
     if (hasError) { // error: (state & error & error_description)
         title = 'Error!';
     } else if (hasCode) { // success: code response (state & code & iss)
-        title = 'Success!<br/>An authorization_code was received!<br/><small>(shown only for demo purposes!)</small>';
-        output = output + '<button type="submit" class="btn btn-primary" onclick="return exchangeCode(\'' + params[0] + '\',\'' + params[1] + '\');">Exchange code for token response</button>';
+        exchangeCode(params[0], params[1]);
     } else {
         // unknown: no valid parameter combination found
         title = 'Hmmm ... something unexpected: an unknown parameter combination:'
@@ -154,8 +141,8 @@ async function authorize() {
     let code_challenge
     let isHttp = true;
     if (isHttp) {
-        // Instead of generating values, the demo for 'http' uses hardcoded values
-        // Browsers do not generate a sha256 value outside of https
+        // Instead of generating sha256 values, the demo for 'http' uses hardcoded values.
+        // Browsers do not generate a sha256 value outside of https.
         code_verifier = 'abcdefghijklmnopqrstuvwxyz123456';
         code_challenge = '9tUn5tAYZUgRNPKXiL4q_n_DxwLhpV186vrF81GZ6Nw';
     } else {
@@ -163,19 +150,20 @@ async function authorize() {
         code_challenge = await pkceChallengeFromVerifier(code_verifier);
     }
 
-    let config = new ClientConfiguration();
-    let authorizeUrl = config.getAuthorizationEndpoint() + '?'
-        + 'client_id=' + encodeURI(config.getClientId())
-        + '&redirect_uri=' + encodeURI(config.getRedirectUri())
-        + '&scope=' + encodeURI(config.getScope())
-        + '&response_type=' + encodeURI(config.getResponseType())
+    let client = new ClientConfiguration();
+    let authorizationEndpoint = client.getAuthorizationEndpoint();
+    let authorizeUrl = authorizationEndpoint + '?'
+        + 'client_id=' + encodeURI(client.getClientId())
+        + '&redirect_uri=' + encodeURI(client.getRedirectUri())
+        + '&scope=' + encodeURI(client.getScope())
+        + '&response_type=' + encodeURI(client.getResponseType())
         + '&nonce=' + encodeURI(nonce)
         + '&code_challenge=' + encodeURI(code_challenge)
         + '&code_challenge_method=S256'
         + '&state=' + encodeURI(state)
         + loginHint;
 
-    setSpaState(state, '{"state":"' + state + '", "nonce":"' + nonce + '", "next":"' + config.getTokenEndpoint() + '", "code_verifier":"' + code_verifier + '"}');
+    setSpaState(state, '{"state":"' + state + '", "nonce":"' + nonce + '", "next":"' + client.getTokenEndpoint() + '", "code_verifier":"' + code_verifier + '"}');
 
     window.location = authorizeUrl;
 }
@@ -183,12 +171,7 @@ async function authorize() {
 /**
  * OAuth
  *
- * This is called after the authorization server has issued an authorization code.
- *
- * This is only successful if CORS is enabled for the /token endpoint
- *
- * @param one, either "state=value" or "code=codeValue"
- * @param two, either "state=value" or "code=codeValue"
+ * Exchange the received authorization code for a token response
  */
 function exchangeCode(one, two) {
 
@@ -218,8 +201,8 @@ function exchangeCode(one, two) {
             clearSpaState();
             printFlowResponse('Error!', 'The given session is invalid!');
         } else {
-            // Later, we need to check if this is found within the token response (id_token).
-            // If not, the given response was not meant for us
+            // Later, we need to check if this is found within the token response (id_token or provider, Loginbuddys response).
+            // If not, the riven response was not meant for us
             let nonce = stateInStorage['nonce'];
 
             // Grab the next endpoint
@@ -234,17 +217,11 @@ function exchangeCode(one, two) {
                 + '&code_verifier=' + encodeURI(stateInStorage['code_verifier'])
                 + '&code=' + encodeURI(code);
 
-            postMsg(next, nonce, reqMsg);
+            postMsg(config.getTokenEndpoint(), nonce, reqMsg);
         }
     }
 }
 
-/**
- * Send a POST request
- * @param targetUrl In our case this is the /token endpoint
- * @param expectedNonce The nonce that should be found in the response. Finding this verifies that the response was made for our client and our session
- * @param msg The message to be send. All parameters need to be URLEncoded
- */
 function postMsg(targetUrl, expectedNonce, msg) {
     $.ajax({
         type: 'POST',
@@ -280,7 +257,7 @@ function clearSpaState() {
 }
 
 function getPostMsgResponse(data, expectedNonce) {
-    console.log('expectedNonce: ' + expectedNonce);
+    updateSession(data.id_token, '');
     return '<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>' + getMessageFooter();
 }
 
@@ -294,7 +271,7 @@ function printFlowResponse(title, output) {
 }
 
 function printFirstPage() {
-    let content = '<p>Selecting <strong>Submit</strong> initiates an OpenID Connect authorization code flow. It takes you to LoginID where you can log in.</p>\n' +
+    document.getElementById('divOidcResponse').innerHTML = '<p>Selecting <strong>Submit</strong> initiates an OpenID Connect authorization code flow. It takes you to LoginID where you can log in.</p>\n' +
         '    <p>The final result will be a LoginID issued id_token.</p>' +
         '    <form>\n' +
         '        <div class="form-group">\n' +
@@ -304,12 +281,11 @@ function printFirstPage() {
         '        <button type="button" class="btn btn-primary" onclick="return authorize();">Submit</button>\n' +
         '    </form>' +
         '    <hr/>';
-    document.getElementById('divOidcResponse').innerHTML = content;
 }
 
 function printMissingConfig() {
-    let content = '<p>This client has not been configured! Please register a public client_id and configure the client to enable it.</p>';
-    document.getElementById('divOidcResponse').innerHTML = content;
+    document.getElementById('divOidcResponse').innerHTML =
+        '<p>This OpenID Connect client has not been configured! Please register a public client_id and configure the client to enable it.</p>';
 }
 
 /**

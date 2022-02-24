@@ -1,16 +1,17 @@
 /**
  * LoginID-Demo
- *
+ * <p>
  * This code is meant for educational purposes. It is provided as-is and is not expected to be used in production systems.
  * - Use this code at your own risk!
  * - Use this code to get a better understanding for FIDO2 enabled authentication and authorization flows.
- *
+ * <p>
  * For more information, please visit http://loginid.io.
- *
+ * <p>
  * LoginID, January 2022
  */
 package io.loginid.web;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -29,6 +30,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
+import org.jose4j.keys.resolvers.VerificationKeyResolver;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -38,6 +48,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class UserMgmt extends HttpServlet {
@@ -45,11 +57,31 @@ public class UserMgmt extends HttpServlet {
     private final Logger LOGGER = Logger.getLogger(String.valueOf(UserMgmt.class));
 
     private LoginIDUtil util;
+    private JsonObject oidcConfig;
+    private String oidcClientId;
+    private String webClientId;
 
     @Override
     public void init() throws ServletException {
         super.init();
         util = new LoginIDUtil();
+        webClientId = System.getenv("WEBCLIENTID");
+        oidcClientId = System.getenv("OIDC_PUBLIC_CLIENT_ID");
+        if (oidcClientId != null) {
+            String oidcConfigEndpoint = System.getenv("OIDC_CONFIG_ENDPOINT");
+            if (oidcConfigEndpoint != null) {
+                try {
+                    oidcConfig = get(oidcConfigEndpoint);
+                } catch (Exception e) {
+                    LOGGER.warning(String.format("The OpenID configuration could not be retrieved: %s", e.getMessage()));
+                }
+            } else {
+                LOGGER.info("The OpenID configuration endpoint is no configured");
+            }
+        } else {
+            LOGGER.info("The OpenID clientId is no configured");
+        }
+
     }
 
     @Override
@@ -62,7 +94,7 @@ public class UserMgmt extends HttpServlet {
                 String username = request.getParameter("username");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.requestAuthCodeAuthenticator(username,  LoginIDUtil.CODE_TYPE.CREDENTIAL));
+                response.getWriter().printf(util.requestAuthCodeAuthenticator(username, LoginIDUtil.CODE_TYPE.CREDENTIAL));
                 return;
             } else if (request.getServletPath().endsWith("/users/reqtemporary")) {
                 String username = request.getParameter("username");
@@ -88,11 +120,11 @@ public class UserMgmt extends HttpServlet {
 
         // as of here require an authenticated user (JWT)
 
-        Jws<Claims> jws = null;
+        Map<String, String> jws = null;
         String udata = null;
 
         try {
-            jws = requireJwt(request);
+            jws = requireJwt(request.getHeader("authorization"));
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
@@ -101,8 +133,8 @@ public class UserMgmt extends HttpServlet {
         }
 
         try {
-            udata = (String) jws.getBody().get("udata");
-            String txClientId = (String) jws.getBody().get("aud");
+            udata = jws.get("user");
+            String txClientId = jws.get("aud");
             if (request.getServletPath().endsWith("/users/grantauthenticator")) {
                 String code = request.getParameter("code");
                 response.setContentType("application/json");
@@ -136,11 +168,11 @@ public class UserMgmt extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        Jws<Claims> jws = null;
+        Map<String, String> jws = null;
         String udata = null;
 
         try {
-            jws = requireJwt(request);
+            jws = requireJwt(request.getHeader("authorization"));
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
@@ -148,7 +180,7 @@ public class UserMgmt extends HttpServlet {
             return;
         }
         try {
-            udata = (String) jws.getBody().get("udata");
+            udata = jws.get("user");
             if (request.getServletPath().endsWith("/users/session")) {
                 response.setContentType("application/json");
                 response.setStatus(200);
@@ -173,11 +205,11 @@ public class UserMgmt extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        Jws<Claims> jws = null;
+        Map<String, String> jws = null;
         String udata = null;
 
         try {
-            jws = requireJwt(request);
+            jws = requireJwt(request.getHeader("authorization"));
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
@@ -185,7 +217,7 @@ public class UserMgmt extends HttpServlet {
             return;
         }
         try {
-            udata = (String) jws.getBody().get("udata");
+            udata = jws.get("user");
             if (request.getServletPath().endsWith("/users/credentials")) {
                 String credentialId = request.getParameter("credentialId");
                 response.setContentType("application/json");
@@ -199,7 +231,7 @@ public class UserMgmt extends HttpServlet {
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
             String error = e.getMessage();
-            if(e instanceof ApiException) {
+            if (e instanceof ApiException) {
                 error = ((ApiException) e).getResponseBody();
             }
             response.setContentType("application/json");
@@ -211,19 +243,58 @@ public class UserMgmt extends HttpServlet {
         }
     }
 
-    private Jws<Claims> requireJwt(HttpServletRequest request) throws Exception {
-        String authJwt = request.getHeader("authorization");
+    /**
+     * The request will either contain a jwt, issued via the native API interface, or via an OpenID Connect flow.
+     *
+     * @param authJwt
+     * @return
+     * @throws Exception
+     */
+    private Map<String, String> requireJwt(String authJwt) throws Exception {
         if (authJwt != null) {
+
             try {
+
+                // Throughout this tutorial we only care about 'udata' and 'aud' where 'udata' is the username as specified in the natively issued JWT
+                // Therefore, we will just return a map that only includes those two values
+                Map<String, String> result = new HashMap<>();
+
                 authJwt = authJwt.split("[ ]")[1].trim(); // this may end up in an error ... exception
+
                 JsonElement jwtHeader = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[0])));
-                return Jwts.parserBuilder()
-                        .setSigningKey(
-                                lookupVerificationKey(
-                                        jwtHeader.getAsJsonObject().get("kid").getAsString()))
-                        .requireIssuer("loginid.io")
-                        .build()
-                        .parseClaimsJws(authJwt);
+                JsonElement jwtPayload = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[1])));
+
+                // check if the issuer is 'loginid.io'. In that case the JWT was issued via the native interface
+                if("loginid.io".equals(jwtPayload.getAsJsonObject().get("iss").getAsString())) {
+                    Claims claims = Jwts.parserBuilder()
+                            .setSigningKey(
+                                    lookupVerificationKey(
+                                            jwtHeader.getAsJsonObject().get("kid").getAsString()))
+                            .requireIssuer("loginid.io").requireAudience(webClientId)
+                            .build()
+                            .parseClaimsJws(authJwt).getBody();
+                    result.put("user", (String)claims.get("udata"));
+                    result.put("aud", claims.getAudience());
+                } else {
+                    JsonObject jwks = get(oidcConfig.get("jwks_uri").getAsString());
+                    VerificationKeyResolver resolver = new JwksVerificationKeyResolver(new JsonWebKeySet(jwks.getAsString()).getJsonWebKeys());
+                    JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                            .setRequireExpirationTime()
+                            .setAllowedClockSkewInSeconds(0)
+                            .setRequireSubject()
+                            .setExpectedAudience(oidcClientId)
+                            .setExpectedIssuer(oidcConfig.get("iss").getAsString())
+                            .setVerificationKeyResolver(resolver)
+                            .setJwsAlgorithmConstraints(
+                                    AlgorithmConstraints.ConstraintType.PERMIT,
+                                    AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256
+                            )
+                            .build();
+                    JwtClaims claims = jwtConsumer.processToClaims(authJwt);
+                    result.put("user", claims.getStringClaimValue("sub"));
+                    result.put("aud", claims.getAudience().get(0));
+                }
+                return result;
             } catch (Exception e) {
                 throw e;
             }
@@ -251,10 +322,18 @@ public class UserMgmt extends HttpServlet {
 
     }
 
+    private JsonObject get(String url) throws IOException {
+        HttpGet req = new HttpGet(url);
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse response = httpClient.execute(req);
+        Gson gson = new Gson();
+        return (JsonObject) gson.toJsonTree(EntityUtils.toString(response.getEntity()));
+    }
+
     private String readMessageBody(BufferedReader reader) throws IOException {
         StringBuilder sb = new StringBuilder();
         String nextLine = "";
-        while((nextLine = reader.readLine()) != null) {
+        while ((nextLine = reader.readLine()) != null) {
             sb.append(nextLine);
         }
         return sb.toString().trim();
@@ -272,7 +351,7 @@ public class UserMgmt extends HttpServlet {
     private boolean verifyTxHash(String txHash, String payload, String nonce, String serverNonce) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] encodedhash = digest.digest((payload+nonce+serverNonce).getBytes(StandardCharsets.UTF_8));
+            byte[] encodedhash = digest.digest((payload + nonce + serverNonce).getBytes(StandardCharsets.UTF_8));
             return txHash.equals(new String(Base64.getUrlEncoder().encode(encodedhash)).replace("=", ""));
         } catch (NoSuchAlgorithmException e) {
             // this should never ever happen!
