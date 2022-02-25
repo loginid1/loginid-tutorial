@@ -1,5 +1,5 @@
 /**
- * LoginID-Demo
+ * LoginID-Tutorial
  * <p>
  * This code is meant for educational purposes. It is provided as-is and is not expected to be used in production systems.
  * - Use this code at your own risk!
@@ -7,23 +7,45 @@
  * <p>
  * For more information, please visit http://loginid.io.
  * <p>
- * LoginID, January 2022
+ * LoginID, February 2022
  */
 package io.loginid.mgmt;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.loginid.mgmt.model.CredentialForUI;
 import io.loginid.sdk.java.LoginIdManagement;
 import io.loginid.sdk.java.api.AuthenticateApi;
 import io.loginid.sdk.java.api.TransactionsApi;
 import io.loginid.sdk.java.invokers.ApiClient;
 import io.loginid.sdk.java.model.*;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
+import org.jose4j.keys.resolvers.VerificationKeyResolver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.io.IOException;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * A class using LoginIDs java SDK for several tasks.
+ */
 public class LoginIDUtil {
 
     private final Logger LOGGER = Logger.getLogger(String.valueOf(LoginIDUtil.class));
@@ -48,6 +70,8 @@ public class LoginIDUtil {
 
     private LoginIdManagement mgmt;
     private Properties props;
+    private JsonObject oidcConfig;
+    private String oidcClientId;
 
     public LoginIDUtil() {
         try {
@@ -64,6 +88,22 @@ public class LoginIDUtil {
                     props.getProperty("BASE_URL")
             );
 
+            oidcClientId = System.getenv("OIDC_PUBLIC_CLIENT_ID");
+            if (oidcClientId != null) {
+                String oidcConfigEndpoint = System.getenv("OIDC_CONFIG_ENDPOINT");
+                if (oidcConfigEndpoint != null) {
+                    try {
+                        oidcConfig = get(oidcConfigEndpoint);
+                    } catch (Exception e) {
+                        LOGGER.severe(String.format("The OpenID configuration could not be retrieved: %s", e.getMessage()));
+                    }
+                } else {
+                    LOGGER.info("The OpenID configuration endpoint is no configured");
+                }
+            } else {
+                LOGGER.info("The OpenID clientId is no configured");
+            }
+
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
             LOGGER.severe("None or missing environment variables found. Please configure expected environment variables!");
@@ -78,7 +118,14 @@ public class LoginIDUtil {
         return props.getProperty("CLIENT_ID_WEB");
     }
 
-    public List<CredentialForUI> getCredentials(String username) throws Exception {
+    /**
+     * Credentials refer to FIDO2 credentials that are used
+     * @param authorizationHeader The header that contains the JWT credential
+     * @return
+     * @throws Exception
+     */
+    public List<CredentialForUI> getCredentials(String authorizationHeader) throws Exception {
+        String username = getUsername(authorizationHeader);
         if (checkParam(username)) {
             UUID userId = mgmt.getUserId(username);
             CredentialsResponse credentials = mgmt.getCredentials(userId.toString());
@@ -98,7 +145,8 @@ public class LoginIDUtil {
 
     }
 
-    public CredentialForUI updateCredentialName(String username, String credentialId, String newCredentialName) throws Exception {
+    public CredentialForUI updateCredentialName(String authorizationHeader, String credentialId, String newCredentialName) throws Exception {
+        String username = getUsername(authorizationHeader);
         if (checkParam(username) && checkParam(credentialId) && checkParam(newCredentialName)) {
             UUID userId = mgmt.getUserId(username);
             CredentialsChangeResponse cred = mgmt.renameCredential(userId.toString(), credentialId, newCredentialName);
@@ -113,7 +161,8 @@ public class LoginIDUtil {
         }
     }
 
-    public CredentialForUI deleteCredential(String username, String credentialId) throws Exception {
+    public CredentialForUI deleteCredential(String authorizationHeader, String credentialId) throws Exception {
+        String username = getUsername(authorizationHeader);
         if (checkParam(username) && checkParam(credentialId)) {
             UUID userId = mgmt.getUserId(username);
             CredentialsChangeResponse cred = mgmt.revokeCredential(userId.toString(), credentialId);
@@ -128,7 +177,8 @@ public class LoginIDUtil {
         }
     }
 
-    public String requestAuthCodeAuthenticator(String username, LoginIDUtil.CODE_TYPE type) throws Exception {
+    public String requestAuthCodeAuthenticator(String authorizationHeader, LoginIDUtil.CODE_TYPE type) throws Exception {
+        String username = getUsername(authorizationHeader);
         if (checkParam(username)) {
             UUID userId = mgmt.getUserId(username);
             CodesCodeTypeGenerateResponse generateResponse = mgmt.generateCode(userId.toString(), "short", type.toString(), false);
@@ -139,7 +189,8 @@ public class LoginIDUtil {
         }
     }
 
-    public String authorizeAuthCode(String username, String code, LoginIDUtil.CODE_TYPE type) throws Exception {
+    public String authorizeAuthCode(String authorizationHeader, String code, LoginIDUtil.CODE_TYPE type) throws Exception {
+        String username = getUsername(authorizationHeader);
         if (checkParam(username) && checkParam(code)) {
             UUID userId = mgmt.getUserId(username);
             CodesCodeTypeAuthorizeResponse authorizeResponse = mgmt.authorizeCode(userId.toString(), code, "short", type.toString());
@@ -150,7 +201,8 @@ public class LoginIDUtil {
         }
     }
 
-    public String waitForAuthorizeAuthCode(String username, String code) throws Exception {
+    public String waitForAuthorizeAuthCode(String authorizationHeader, String code) throws Exception {
+        String username = getUsername(authorizationHeader);
         if (checkParam(username) && checkParam(code)) {
             String jwt = "";
             AuthenticateApi authenticateApi = new AuthenticateApi();
@@ -175,7 +227,8 @@ public class LoginIDUtil {
         }
     }
 
-    public String getTransactionId(String payload, String txClientId) throws Exception {
+    public String getTransactionId(String payload, String authorizationHeader) throws Exception {
+        String txClientId = getClaim(authorizationHeader, "aud");
         if (checkParam(payload, 1024) && checkParam(txClientId)) {
             TransactionsApi transactionsApi = new TransactionsApi();
 
@@ -196,11 +249,120 @@ public class LoginIDUtil {
         }
     }
 
+    public String getUsername(String authorizationHeader) throws Exception {
+        return getClaim(authorizationHeader, "user");
+    }
+
+    public String getClaim(String authorizationHeader, String claimName) throws Exception {
+        Map<String, String> claims = requireJwt(authorizationHeader);
+        return claims.get(claimName);
+    }
+
     private boolean checkParam(String param) {
         return checkParam(param, 256);
     }
 
     private boolean checkParam(String param, int maxLength) {
         return param != null && (param.trim().length() > 0) && (param.trim().length() <= maxLength);
+    }
+
+    /**
+     * The request will either contain a jwt, issued via the native LoginID API interface, or via a LoginID OpenID Connect flow.
+     *
+     * @param authJwt The issued JWT based credential
+     * @return A map of claims
+     * @throws Exception Whenever something goes wrong with validating the JWT
+     */
+    private Map<String, String> requireJwt(String authJwt) throws Exception {
+        if (authJwt != null) {
+
+            try {
+
+                Map<String, String> result = new HashMap<>();
+
+                authJwt = authJwt.split("[ ]")[1].trim(); // this may end up in an error ... exception
+
+                JsonElement jwtHeader = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[0])));
+                JsonElement jwtPayload = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[1])));
+
+                // check if the issuer is 'loginid.io'. In that case the JWT was issued via the native interface
+                if("loginid.io".equals(jwtPayload.getAsJsonObject().get("iss").getAsString())) {
+                    Claims claims = Jwts.parserBuilder()
+                            .setSigningKey(
+                                    lookupVerificationKey(
+                                            jwtHeader.getAsJsonObject().get("kid").getAsString()))
+                            .requireIssuer("loginid.io").requireAudience(getWebClientId())
+                            .build()
+                            .parseClaimsJws(authJwt).getBody();
+                    result.put("user", (String)claims.get("udata"));
+                    result.put("aud", claims.getAudience());
+                } else {
+                    // handle the id_token issued via the OpenID Connect flow
+                    // NOTE: although it is handled here, the id_token is currently not a valid credential for accessing LoginID management APIs
+                    JsonObject jwks = get(oidcConfig.get("jwks_uri").getAsString());
+                    VerificationKeyResolver resolver = new JwksVerificationKeyResolver(new JsonWebKeySet(jwks.getAsJsonObject().toString()).getJsonWebKeys());
+                    JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                            .setRequireExpirationTime()
+                            .setAllowedClockSkewInSeconds(0)
+                            .setRequireSubject()
+                            .setExpectedAudience(oidcClientId)
+                            .setExpectedIssuer(oidcConfig.get("issuer").getAsString())
+                            .setVerificationKeyResolver(resolver)
+                            .setJwsAlgorithmConstraints(
+                                    AlgorithmConstraints.ConstraintType.PERMIT,
+                                    AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256
+                            )
+                            .build();
+                    JwtClaims claims = jwtConsumer.processToClaims(authJwt);
+                    String email = claims.getStringClaimValue("email");
+                    result.put("user", email == null ? claims.getStringClaimValue("sub") : email);
+                    result.put("aud", claims.getAudience().get(0));
+                }
+                return result;
+            } catch (Exception e) {
+                LOGGER.warning(e.getMessage());
+                throw e;
+            }
+        } else {
+            throw new IllegalArgumentException("Missing or invalid authorization header");
+        }
+    }
+
+    /**
+     * Retrieves the public key needed to validate the native JWT
+     * @param keyId The keyId of the key that is needed for the signature validation
+     * @return The public key
+     * @throws Exception Whenever something goes wrong with the retrieving of the key
+     */
+    private Key lookupVerificationKey(String keyId) throws Exception {
+
+        HttpGet req = new HttpGet(String.format("%s/certs?kid=%s", getBaseUrl(), keyId));
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse response = httpClient.execute(req);
+
+        String publicKeyContent = EntityUtils.toString(response.getEntity());
+
+        publicKeyContent = publicKeyContent.replaceAll("\\n", "");
+        publicKeyContent = publicKeyContent.replaceAll("-----BEGIN PUBLIC KEY-----", "");
+        publicKeyContent = publicKeyContent.replaceAll("-----END PUBLIC KEY-----", "");
+
+        KeyFactory keyFactory = KeyFactory.getInstance("EC");
+
+        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
+        return keyFactory.generatePublic(keySpecX509);
+
+    }
+
+    /**
+     * A simple helper to GET content (openid configuration, JWKS)
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    private JsonObject get(String url) throws IOException {
+        HttpGet req = new HttpGet(url);
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse response = httpClient.execute(req);
+        return new JsonParser().parse(EntityUtils.toString(response.getEntity())).getAsJsonObject();
     }
 }

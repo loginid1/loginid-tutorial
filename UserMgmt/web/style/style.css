@@ -58,6 +58,10 @@ button {
     padding: 5px 40px;
     font-size: 16px;
 }
+.oidc {
+    background-color: #fcfbfb;
+    padding: 1px 1px;
+}
 
 #btnSignInName {
     border:0;

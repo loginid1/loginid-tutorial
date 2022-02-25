@@ -1,45 +1,31 @@
 /**
- * LoginID-Demo
- *
+ * LoginID-Tutorial
+ * <p>
  * This code is meant for educational purposes. It is provided as-is and is not expected to be used in production systems.
  * - Use this code at your own risk!
  * - Use this code to get a better understanding for FIDO2 enabled authentication and authorization flows.
- *
+ * <p>
  * For more information, please visit http://loginid.io.
- *
- * LoginID, January 2022
+ * <p>
+ * LoginID, February 2022
  */
 package io.loginid.web;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import io.loginid.mgmt.LoginIDUtil;
 import io.loginid.sdk.java.invokers.ApiException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 import java.util.logging.Logger;
 
+/**
+ * A class simulating a backend that receives web requests and communicates with LoginID APIs
+ */
 public class UserMgmt extends HttpServlet {
 
     private final Logger LOGGER = Logger.getLogger(String.valueOf(UserMgmt.class));
@@ -56,13 +42,12 @@ public class UserMgmt extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // To keep it simple, handle unauthenticated requests first, only to avoid multiple servlets
-
         try {
             if (request.getServletPath().endsWith("/users/reqauthenticator")) {
                 String username = request.getParameter("username");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.requestAuthCodeAuthenticator(username,  LoginIDUtil.CODE_TYPE.CREDENTIAL));
+                response.getWriter().printf(util.requestAuthCodeAuthenticator(username, LoginIDUtil.CODE_TYPE.CREDENTIAL));
                 return;
             } else if (request.getServletPath().endsWith("/users/reqtemporary")) {
                 String username = request.getParameter("username");
@@ -87,43 +72,28 @@ public class UserMgmt extends HttpServlet {
         }
 
         // as of here require an authenticated user (JWT)
-
-        Jws<Claims> jws = null;
-        String udata = null;
-
         try {
-            jws = requireJwt(request);
-        } catch (Exception e) {
-            LOGGER.warning(e.getMessage());
-            response.setContentType("application/json");
-            response.setStatus(401);
-            return;
-        }
-
-        try {
-            udata = (String) jws.getBody().get("udata");
-            String txClientId = (String) jws.getBody().get("aud");
             if (request.getServletPath().endsWith("/users/grantauthenticator")) {
                 String code = request.getParameter("code");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.authorizeAuthCode(udata, code, LoginIDUtil.CODE_TYPE.CREDENTIAL));
+                response.getWriter().printf(util.authorizeAuthCode(request.getHeader("authorization"), code, LoginIDUtil.CODE_TYPE.CREDENTIAL));
             } else if (request.getServletPath().endsWith("/users/granttempaccess")) {
                 String code = request.getParameter("code");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.authorizeAuthCode(udata, code, LoginIDUtil.CODE_TYPE.TEMPORARY));
+                response.getWriter().printf(util.authorizeAuthCode(request.getHeader("authorization"), code, LoginIDUtil.CODE_TYPE.TEMPORARY));
             } else if (request.getServletPath().endsWith("/users/credentials")) {
                 String credentialId = request.getParameter("credentialId");
                 String credentialName = request.getParameter("credentialName");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.updateCredentialName(udata, credentialId, credentialName).toString());
+                response.getWriter().printf(util.updateCredentialName(request.getHeader("authorization"), credentialId, credentialName).toString());
             } else if (request.getServletPath().endsWith("/users/trx")) {
                 String payload = readMessageBody(request.getReader());
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.getTransactionId(payload, txClientId));
+                response.getWriter().printf(util.getTransactionId(payload, request.getHeader("authorization")));
             }
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
@@ -135,28 +105,15 @@ public class UserMgmt extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        Jws<Claims> jws = null;
-        String udata = null;
-
         try {
-            jws = requireJwt(request);
-        } catch (Exception e) {
-            LOGGER.warning(e.getMessage());
-            response.setContentType("application/json");
-            response.setStatus(401);
-            return;
-        }
-        try {
-            udata = (String) jws.getBody().get("udata");
             if (request.getServletPath().endsWith("/users/session")) {
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf("{\"user\":\"%s\"}", udata);
+                response.getWriter().printf("{\"user\":\"%s\"}", util.getUsername(request.getHeader("authorization")));
             } else if (request.getServletPath().endsWith("/users/credentials")) {
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.getCredentials(udata).toString());
+                response.getWriter().printf(util.getCredentials(request.getHeader("authorization")).toString());
             } else {
                 response.setContentType("application/json");
                 response.setStatus(400);
@@ -172,25 +129,12 @@ public class UserMgmt extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        Jws<Claims> jws = null;
-        String udata = null;
-
         try {
-            jws = requireJwt(request);
-        } catch (Exception e) {
-            LOGGER.warning(e.getMessage());
-            response.setContentType("application/json");
-            response.setStatus(401);
-            return;
-        }
-        try {
-            udata = (String) jws.getBody().get("udata");
             if (request.getServletPath().endsWith("/users/credentials")) {
                 String credentialId = request.getParameter("credentialId");
                 response.setContentType("application/json");
                 response.setStatus(200);
-                response.getWriter().printf(util.deleteCredential(udata, credentialId).toString());
+                response.getWriter().printf(util.deleteCredential(request.getHeader("authorization"), credentialId).toString());
             } else {
                 response.setContentType("application/json");
                 response.setStatus(400);
@@ -199,7 +143,7 @@ public class UserMgmt extends HttpServlet {
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
             String error = e.getMessage();
-            if(e instanceof ApiException) {
+            if (e instanceof ApiException) {
                 error = ((ApiException) e).getResponseBody();
             }
             response.setContentType("application/json");
@@ -211,74 +155,18 @@ public class UserMgmt extends HttpServlet {
         }
     }
 
-    private Jws<Claims> requireJwt(HttpServletRequest request) throws Exception {
-        String authJwt = request.getHeader("authorization");
-        if (authJwt != null) {
-            try {
-                authJwt = authJwt.split("[ ]")[1].trim(); // this may end up in an error ... exception
-                JsonElement jwtHeader = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[0])));
-                return Jwts.parserBuilder()
-                        .setSigningKey(
-                                lookupVerificationKey(
-                                        jwtHeader.getAsJsonObject().get("kid").getAsString()))
-                        .requireIssuer("loginid.io")
-                        .build()
-                        .parseClaimsJws(authJwt);
-            } catch (Exception e) {
-                throw e;
-            }
-        } else {
-            throw new IllegalArgumentException("Missing or invalid authorization header");
-        }
-    }
-
-    private Key lookupVerificationKey(String keyId) throws Exception {
-
-        HttpGet req = new HttpGet(String.format("%s/certs?kid=%s", util.getBaseUrl(), keyId));
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse response = httpClient.execute(req);
-
-        String publicKeyContent = EntityUtils.toString(response.getEntity());
-
-        publicKeyContent = publicKeyContent.replaceAll("\\n", "");
-        publicKeyContent = publicKeyContent.replaceAll("-----BEGIN PUBLIC KEY-----", "");
-        publicKeyContent = publicKeyContent.replaceAll("-----END PUBLIC KEY-----", "");
-
-        KeyFactory keyFactory = KeyFactory.getInstance("EC");
-
-        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyContent));
-        return keyFactory.generatePublic(keySpecX509);
-
-    }
-
+    /**
+     * A simple helper to turn http bodies into a string
+     * @param reader
+     * @return
+     * @throws IOException
+     */
     private String readMessageBody(BufferedReader reader) throws IOException {
         StringBuilder sb = new StringBuilder();
         String nextLine = "";
-        while((nextLine = reader.readLine()) != null) {
+        while ((nextLine = reader.readLine()) != null) {
             sb.append(nextLine);
         }
         return sb.toString().trim();
     }
-
-    /**
-     * Not used in the demo, just here as an example
-     *
-     * @param txHash
-     * @param payload
-     * @param nonce
-     * @param serverNonce
-     * @return
-     */
-    private boolean verifyTxHash(String txHash, String payload, String nonce, String serverNonce) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] encodedhash = digest.digest((payload+nonce+serverNonce).getBytes(StandardCharsets.UTF_8));
-            return txHash.equals(new String(Base64.getUrlEncoder().encode(encodedhash)).replace("=", ""));
-        } catch (NoSuchAlgorithmException e) {
-            // this should never ever happen!
-            LOGGER.warning(e.getMessage());
-        }
-        return false;
-    }
-
 }
