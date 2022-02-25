@@ -36,88 +36,38 @@ class ClientConfiguration {
         return this.grant_type;
     }
 
-    getAuthorizationEndpoint() {
-        return 'https://oauth2.qa.loginid.io/oauth2/auth';
-        // let authorizationEndpoint = sessionStorage.getItem('authorization_endpoint');
-        // if (authorizationEndpoint === null) {
-        //     let config = await $.get(OIDC_CONFIG_ENDPOINT);
-        //     sessionStorage.setItem('authorization_endpoint', config.authorization_endpoint);
-        //     sessionStorage.setItem('token_endpoint', config.token_endpoint);
-        // } else {
-        //     return authorizationEndpoint;
-        // }
+    async getAuthorizationEndpoint() {
+        let authorizationEndpoint = sessionStorage.getItem('authorization_endpoint');
+        if (authorizationEndpoint === null) {
+            let config = await $.get(OIDC_CONFIG_ENDPOINT);
+            sessionStorage.setItem('authorization_endpoint', config.authorization_endpoint);
+            sessionStorage.setItem('token_endpoint', config.token_endpoint);
+            return config.authorization_endpoint;
+        } else {
+            return authorizationEndpoint;
+        }
     }
 
     getTokenEndpoint() {
-        return 'https://oauth2.qa.loginid.io/oauth2/token';
-        // let tokenEndpoint = sessionStorage.getItem('token_endpoint');
-        // if (tokenEndpoint === null) {
-        //     let config = await $.get(OIDC_CONFIG_ENDPOINT);
-        //     sessionStorage.setItem('authorization_endpoint', config.authorization_endpoint);
-        //     sessionStorage.setItem('token_endpoint', config.token_endpoint);
-        // } else {
-        //     return tokenEndpoint;
-        // }
+        return sessionStorage.getItem('token_endpoint');
     }
 }
-
-document.write('<body><div class="container" id="content"><h1>OpenID Connect Demo Client!</h1>\n' +
-    '    <p>This is a demo client of the open source project <a href="https://github.com/SaschaZeGerman/loginbuddy" target="_blank"><strong>Loginbuddy</strong></a>.</p>\n' +
-    '    <p>This client simulates a <strong>Single Page App (SPA)</strong> that a developer may build.</p>' +
-    '    <p>Please note that this client is pretty simple. Check the comments in <strong>script/spa-demo.js</strong> to learn more about it. However, hopefully it does help to understand how an OAuth flow in a SPA works!</p>' +
-    '    <hr/><div id="divOidcResponse"></div>' +
-    '</div></body>');
 
 // Check if this client has been enabled
 let config = new ClientConfiguration();
 if (config.getClientId().includes('@')) {
-    printMissingConfig();
+    printFlowResponse('This OpenID Connect client has not been configured! Please register a public client_id and configure the client to enable it.');
 } else if (window.location.search.length > 0) {
-    // assumption:
-    // - there is only a URL search component (query parameters) if an authorization flow is active
 
     let params = window.location.search.substr(1).split('&');
-
-    let title = '';
-    let output = '';
-
-    let hasError = false;
-    let hasCode = false;
-
-    let counter = 0;
-    for (let i = 0; i < params.length; i++) {
-        // let's not accept too many parameters. There is no reason to expect more than three or four
-        if (counter >= 10) {
-            break;
-        }
-        let key = params[i].split('=')[0];
-        let value = decodeURI(params[i].split('=')[1]);
-        output = output + '<strong>' + key + '</strong>: ' + value + '</br>';
-        if (!hasError) {
-            hasError = key === 'error';
-            console.log('hasError');
-        }
-        if (!hasCode) {
-            hasCode = key === 'code';
-            console.log('hasCode');
-        }
-        counter++;
-    }
-
-    if (hasError) { // error: (state & error & error_description)
-        title = 'Error!';
-    } else if (hasCode) { // success: code response (state & code & iss)
-        exchangeCode(params[0], params[1]);
+    let callbackResult = params[0].split('=')[1];
+    if('success' === callbackResult) {
+        exchangeCode(params[1].split('=')[1], params[2].split('=')[1]);
     } else {
-        // unknown: no valid parameter combination found
-        title = 'Hmmm ... something unexpected: an unknown parameter combination:'
-        output = window.location.href;
+        let error = {error: params[1].split('=')[1], error_description: decodeURIComponent(params[2].split('=')[1])};
+        sessionStorage.setItem('oidcresponse', JSON.stringify(error));
+        window.location = 'index.html';
     }
-    printFlowResponse(title, output);
-}
-// if not, simply print the 'get started' page
-else {
-    printFirstPage();
 }
 
 /**
@@ -151,7 +101,8 @@ async function authorize() {
     }
 
     let client = new ClientConfiguration();
-    let authorizationEndpoint = client.getAuthorizationEndpoint();
+    let authorizationEndpoint = await client.getAuthorizationEndpoint();
+    let tokenEndpoint = client.getTokenEndpoint();
     let authorizeUrl = authorizationEndpoint + '?'
         + 'client_id=' + encodeURI(client.getClientId())
         + '&redirect_uri=' + encodeURI(client.getRedirectUri())
@@ -163,7 +114,7 @@ async function authorize() {
         + '&state=' + encodeURI(state)
         + loginHint;
 
-    setSpaState(state, '{"state":"' + state + '", "nonce":"' + nonce + '", "next":"' + client.getTokenEndpoint() + '", "code_verifier":"' + code_verifier + '"}');
+    setSpaState(state, '{"state":"' + state + '", "nonce":"' + nonce + '", "next":"' + tokenEndpoint + '", "code_verifier":"' + code_verifier + '"}');
 
     window.location = authorizeUrl;
 }
@@ -173,31 +124,18 @@ async function authorize() {
  *
  * Exchange the received authorization code for a token response
  */
-function exchangeCode(one, two) {
+function exchangeCode(code, givenState) {
 
-    let code = '';
-    let givenStateParameter = '';
     let stateInStorage = '';
 
-    let keyValueOne = one.split('=');
-    let keyValueTwo = two.split('=');
-
-    if ('state' === keyValueOne[0]) {
-        code = keyValueTwo[1];
-        givenStateParameter = keyValueOne[1];
-    } else {
-        code = keyValueOne[1];
-        givenStateParameter = keyValueTwo[1];
-    }
-
     // compare the given state value to the one found as part of the session state in sessionStorage
-    stateInStorage = getSpaState(givenStateParameter);
+    stateInStorage = getSpaState(givenState);
     if (stateInStorage == null) {
         clearSpaState();
-        printFlowResponse('Error!', 'The given session is either expired or invalid!' + getMessageFooter());
+        printFlowResponse('Error!', 'The given session is either expired or invalid!');
     } else {
         stateInStorage = JSON.parse(stateInStorage);
-        if (stateInStorage['state'] !== givenStateParameter) {
+        if (stateInStorage['state'] !== givenState) {
             clearSpaState();
             printFlowResponse('Error!', 'The given session is invalid!');
         } else {
@@ -205,7 +143,7 @@ function exchangeCode(one, two) {
             // If not, the riven response was not meant for us
             let nonce = stateInStorage['nonce'];
 
-            // Grab the next endpoint
+            // Grab the next endpoint (/token in the case)
             let next = stateInStorage['next'];
 
             clearSpaState();
@@ -217,7 +155,7 @@ function exchangeCode(one, two) {
                 + '&code_verifier=' + encodeURI(stateInStorage['code_verifier'])
                 + '&code=' + encodeURI(code);
 
-            postMsg(config.getTokenEndpoint(), nonce, reqMsg);
+            postMsg(next, nonce, reqMsg);
         }
     }
 }
@@ -232,10 +170,13 @@ function postMsg(targetUrl, expectedNonce, msg) {
         async: false,
         success: function (data) {
             // validate that 'nonce' is found within the response. Ignoring that for now ...
-            printFlowResponse('Success!<br/>This is the token response:', getPostMsgResponse(data, expectedNonce));
+            updateSession(data.id_token, JSON.parse(atob(data.id_token.split(".")[1])).sub);
+            sessionStorage.setItem('oidcresponse', JSON.stringify(data));
+            window.location = 'index.html';
         },
         error: function (data) {
-            printFlowResponse('Error!<br/>Something went wrong!:', getPostMsgResponse(data));
+            deleteSession();
+            window.location = 'index.html';
         }
     });
 }
@@ -257,35 +198,7 @@ function clearSpaState() {
 }
 
 function getPostMsgResponse(data, expectedNonce) {
-    updateSession(data.id_token, '');
-    return '<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>' + getMessageFooter();
-}
-
-function getMessageFooter() {
-    return '<hr/><p>Try again! <a href="oidc.html"><strong>SPA!</strong></a></p>'
-}
-
-function printFlowResponse(title, output) {
-    document.getElementById('divOidcResponse').innerHTML = '<h3>' + title + '</h3><pre>' + output + '</pre>';
-    Prism.highlightAll(false, null);
-}
-
-function printFirstPage() {
-    document.getElementById('divOidcResponse').innerHTML = '<p>Selecting <strong>Submit</strong> initiates an OpenID Connect authorization code flow. It takes you to LoginID where you can log in.</p>\n' +
-        '    <p>The final result will be a LoginID issued id_token.</p>' +
-        '    <form>\n' +
-        '        <div class="form-group">\n' +
-        '            <label for="login_hint">login_hint (optional, forwarded to LoginID to show the support for {login_hint}. Any simulated email address will do)</label>\n' +
-        '            <input type="email" id="login_hint" name="login_hint" class="form-control" size="80">\n' +
-        '        </div>\n' +
-        '        <button type="button" class="btn btn-primary" onclick="return authorize();">Submit</button>\n' +
-        '    </form>' +
-        '    <hr/>';
-}
-
-function printMissingConfig() {
-    document.getElementById('divOidcResponse').innerHTML =
-        '<p>This OpenID Connect client has not been configured! Please register a public client_id and configure the client to enable it.</p>';
+    return '<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>';
 }
 
 /**

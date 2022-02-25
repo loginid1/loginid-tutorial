@@ -1,7 +1,6 @@
 <h2>OpenID Connect</h2>
 <p>LoginID provides FIDO2 based services also via OpenID Connect (OIDC).</p>
 <p>This means that any OIDC relying party may leverage the power of strong FIDO2 based authentication through the simplicity of an OIDC authorization code flow.</p>
-<p>Depending on the use case this may be an easier option than integrating directly with FIDO2 protocols or via LoginID provided client SDKs.</p>
 <p>The client in this demo uses the following configuration:</p>
 <ol>
     <li><strong>response_type: </strong>code</li>
@@ -11,4 +10,13 @@
     <li><strong>scope: </strong>openid</li>
     <li><strong>PKCE with S256: </strong>although the client supports PKCE, it is only simulated unless used with <strong>https (i.e. hosted version of this tutorial)</strong>. This is due to the fact that browsers do not generate sha256 values with <strong>http</strong>!</li>
 </ol>
-<p>This demo opens in a new tab and can be launched <a href="../oidc.html" target="_blank">here</a>!</p>
+<hr/>
+<p><strong>Initiate the authorization flow:</strong></p>
+<form class="form-inline">
+    <div class="form-group">
+        <label for="login_hint">login_hint (optional, forwarded to LoginID and used to pre-set the username)</label>
+        <input type="email" id="login_hint" name="login_hint" class="form-control" size="80">
+        <button type="button" class="btn btn-primary oidc" onclick="return authorize();"><img src="../images/button_loginid.png" alt="Sign In with LoginID"></button>
+    </div>
+</form>
+<p><small><strong>Note: </strong>Once the flow is completed, the username appears in the top right corner and the API response becomes visible!</small></p>

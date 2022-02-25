@@ -73,7 +73,7 @@ public class UserMgmt extends HttpServlet {
                 try {
                     oidcConfig = get(oidcConfigEndpoint);
                 } catch (Exception e) {
-                    LOGGER.warning(String.format("The OpenID configuration could not be retrieved: %s", e.getMessage()));
+                    LOGGER.severe(String.format("The OpenID configuration could not be retrieved: %s", e.getMessage()));
                 }
             } else {
                 LOGGER.info("The OpenID configuration endpoint is no configured");
@@ -277,13 +277,13 @@ public class UserMgmt extends HttpServlet {
                     result.put("aud", claims.getAudience());
                 } else {
                     JsonObject jwks = get(oidcConfig.get("jwks_uri").getAsString());
-                    VerificationKeyResolver resolver = new JwksVerificationKeyResolver(new JsonWebKeySet(jwks.getAsString()).getJsonWebKeys());
+                    VerificationKeyResolver resolver = new JwksVerificationKeyResolver(new JsonWebKeySet(jwks.getAsJsonObject().toString()).getJsonWebKeys());
                     JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                             .setRequireExpirationTime()
                             .setAllowedClockSkewInSeconds(0)
                             .setRequireSubject()
                             .setExpectedAudience(oidcClientId)
-                            .setExpectedIssuer(oidcConfig.get("iss").getAsString())
+                            .setExpectedIssuer(oidcConfig.get("issuer").getAsString())
                             .setVerificationKeyResolver(resolver)
                             .setJwsAlgorithmConstraints(
                                     AlgorithmConstraints.ConstraintType.PERMIT,
@@ -296,6 +296,7 @@ public class UserMgmt extends HttpServlet {
                 }
                 return result;
             } catch (Exception e) {
+                LOGGER.warning(e.getMessage());
                 throw e;
             }
         } else {
@@ -326,8 +327,7 @@ public class UserMgmt extends HttpServlet {
         HttpGet req = new HttpGet(url);
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponse response = httpClient.execute(req);
-        Gson gson = new Gson();
-        return (JsonObject) gson.toJsonTree(EntityUtils.toString(response.getEntity()));
+        return new JsonParser().parse(EntityUtils.toString(response.getEntity())).getAsJsonObject();
     }
 
     private String readMessageBody(BufferedReader reader) throws IOException {

@@ -52,17 +52,17 @@ function getMsg(targetUrl, credential) {
 /* Helper functions */
 /********************/
 
-function getTabContent(pageName, targetId) {
+function getTabContent(pageName) {
     $.ajax({
         type: 'GET',
         url: pageName,
         dataType: 'html',
         async: true,
         success: function (data) {
-            document.getElementById(targetId).innerHTML = data;
+            document.getElementById('tabContent').innerHTML = data;
         },
         error: function (data) {
-            document.getElementById(targetId).innerHTML = data;
+            document.getElementById('tabContent').innerHTML = data;
         }
     });
 }
@@ -75,6 +75,11 @@ function checkSession() {
         if(!username) {
             username = JSON.parse(atob(token.split(".")[1])).sub; // oidc id_token
         }
+    }
+    let oidcResponse = sessionStorage.getItem('oidcresponse');
+    if(oidcResponse) {
+        sessionStorage.removeItem('oidcresponse');
+        printFlowResponse('<code class="language-json">' + JSON.stringify(JSON.parse(oidcResponse), null, 2) + '</code>');
     }
     document.getElementById('idCurrentUser').innerText = username;
 }
