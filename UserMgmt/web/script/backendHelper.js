@@ -1,11 +1,11 @@
-/*************************************/
-/* Functions that leverage a backend */
-/*************************************/
+/*************************************************/
+/* Functions that leverage the tutorials backend */
+/*************************************************/
 
 /**
  * Awaits the authorization of an authorization code to access an account temporarily.
  * Used by menu: Additional Devices - Request Temporary Access
- * @param targetUrl Points to the simulated backend which calls LoginID
+ * @param path Points to the backend which calls LoginID
  */
 async function waiForTemporaryAccess(path) {
     let user = document.getElementById('idReqAuthCodeUsername').value;
@@ -35,7 +35,7 @@ async function waiForTemporaryAccess(path) {
 /**
  * Initiates a transaction confirmation by requesting a transactionId via the clients backend.
  * Used by menu: Features - Create Transaction Confirmation
- * @param targetUrl Points to the simulated backend which calls LoginID
+ * @param path Points to the backend which calls LoginID
  */
 function initiateTransaction(path) {
     let msg = document.getElementById('txtPayload').value;
@@ -71,7 +71,7 @@ function initiateTransaction(path) {
 /**
  * Requests an authorization code to either add an authenticator or ask for access on a non-FIDO2 supported device.
  * Used by menu: Additional Devices - Request Add Authenticator / Request Temporary Access
- * @param targetUrl Points to the simulated backend which calls LoginID
+ * @param path Points to the backend which calls LoginID
  * @param confirmUsername 'true' for Add Authenticator. Simply places the username into a second text field
  */
 function requestAuthCode(path, confirmUsername) {
@@ -110,7 +110,7 @@ function requestAuthCode(path, confirmUsername) {
 /**
  * Sets a new name for an existing credential.
  * Used by menu: Features - Manage Authenticators (Devices)
- * @param targetUrl Points to the simulated backend which calls LoginID
+ * @param path Points to the backend which calls LoginID
  */
 function updateCredentialName(path) {
     let credentialId = encodeURI(document.getElementById('idCredentialId').value);
@@ -142,7 +142,7 @@ function updateCredentialName(path) {
 /**
  * Named 'delete' but actually 'revokes' an existing credential.
  * Used by menu: Features - Manage Authenticators (Devices)
- * @param targetUrl Points to the simulated backend which calls LoginID
+ * @param path Points to the backend which calls LoginID
  */
 function deleteCredentialName(path) {
     let credentialId = encodeURI(document.getElementById('idCredentialIdDelete').value);
@@ -170,7 +170,7 @@ function deleteCredentialName(path) {
 /**
  * Granting an authorization code. Either for adding a device or for granting temporary access
  * Used by menu: Features - Grant Request
- * @param targetUrl Points to the simulated backend which calls LoginID
+ * @param path Points to the simulated backend which calls LoginID
  */
 function grantAuthCode(path) {
     let code = document.getElementById('idAuthCode').value;

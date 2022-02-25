@@ -71,9 +71,12 @@ function checkSession() {
     let token = sessionStorage.getItem('token');
     let username = 'logged out';
     if (token) {
-        username = JSON.parse(atob(token.split(".")[1])).udata;  // native JWT
+        // native JWT
+        username = JSON.parse(atob(token.split(".")[1])).udata;
         if(!username) {
-            username = JSON.parse(atob(token.split(".")[1])).sub; // oidc id_token
+            // OIDC id_token
+            let idTokenPayload = JSON.parse(atob(token.split(".")[1]));
+            username = idTokenPayload.email ? idTokenPayload.email : idTokenPayload.sub;
         }
     }
     let oidcResponse = sessionStorage.getItem('oidcresponse');

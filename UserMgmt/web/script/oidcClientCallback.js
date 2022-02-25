@@ -1,3 +1,6 @@
+/*
+ This is the redirect target after a user finished the authorization flows at LoginID OpenID Connect service.
+ */
 let params = window.location.search.substr(1).split('&');
 
 let code;

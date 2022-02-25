@@ -53,11 +53,7 @@ class ClientConfiguration {
     }
 }
 
-// Check if this client has been enabled
-let config = new ClientConfiguration();
-if (config.getClientId().includes('@')) {
-    printFlowResponse('This OpenID Connect client has not been configured! Please register a public client_id and configure the client to enable it.');
-} else if (window.location.search.length > 0) {
+if (window.location.search.length > 0) {
 
     let params = window.location.search.substr(1).split('&');
     let callbackResult = params[0].split('=')[1];
@@ -77,46 +73,51 @@ if (config.getClientId().includes('@')) {
  */
 async function authorize() {
 
-    let loginHint = document.getElementById('login_hint').value;
-    if (loginHint !== null && loginHint.length <= 24) {
-        loginHint = '&login_hint=' + encodeURI(loginHint);
+    if (OIDC_CLIENT_ID.includes('@')) {
+        alert("The OpenID Connect client is not enabled!");
     } else {
-        loginHint = '';
+
+        let loginHint = document.getElementById('login_hint').value;
+        if (loginHint !== null && loginHint.length <= 24) {
+            loginHint = '&login_hint=' + encodeURI(loginHint);
+        } else {
+            loginHint = '';
+        }
+
+        let state = generate_random_string(32);
+        let nonce = generate_random_string(32);  // this will appear within the id_token, issued by the provider
+
+        let code_verifier
+        let code_challenge
+        let isHttp = true;
+        if (isHttp) {
+            // Instead of generating sha256 values, the demo for 'http' uses hardcoded values.
+            // Browsers do not generate a sha256 value outside of https.
+            code_verifier = 'abcdefghijklmnopqrstuvwxyz123456';
+            code_challenge = '9tUn5tAYZUgRNPKXiL4q_n_DxwLhpV186vrF81GZ6Nw';
+        } else {
+            code_verifier = generate_random_string(32);
+            code_challenge = await pkceChallengeFromVerifier(code_verifier);
+        }
+
+        let client = new ClientConfiguration();
+        let authorizationEndpoint = await client.getAuthorizationEndpoint();
+        let tokenEndpoint = client.getTokenEndpoint();
+        let authorizeUrl = authorizationEndpoint + '?'
+            + 'client_id=' + encodeURI(client.getClientId())
+            + '&redirect_uri=' + encodeURI(client.getRedirectUri())
+            + '&scope=' + encodeURI(client.getScope())
+            + '&response_type=' + encodeURI(client.getResponseType())
+            + '&nonce=' + encodeURI(nonce)
+            + '&code_challenge=' + encodeURI(code_challenge)
+            + '&code_challenge_method=S256'
+            + '&state=' + encodeURI(state)
+            + loginHint;
+
+        setSpaState(state, '{"state":"' + state + '", "nonce":"' + nonce + '", "next":"' + tokenEndpoint + '", "code_verifier":"' + code_verifier + '"}');
+
+        window.location = authorizeUrl;
     }
-
-    let state = generate_random_string(32);
-    let nonce = generate_random_string(32);  // this will appear within the id_token, issued by the provider
-
-    let code_verifier
-    let code_challenge
-    let isHttp = true;
-    if (isHttp) {
-        // Instead of generating sha256 values, the demo for 'http' uses hardcoded values.
-        // Browsers do not generate a sha256 value outside of https.
-        code_verifier = 'abcdefghijklmnopqrstuvwxyz123456';
-        code_challenge = '9tUn5tAYZUgRNPKXiL4q_n_DxwLhpV186vrF81GZ6Nw';
-    } else {
-        code_verifier = generate_random_string(32);
-        code_challenge = await pkceChallengeFromVerifier(code_verifier);
-    }
-
-    let client = new ClientConfiguration();
-    let authorizationEndpoint = await client.getAuthorizationEndpoint();
-    let tokenEndpoint = client.getTokenEndpoint();
-    let authorizeUrl = authorizationEndpoint + '?'
-        + 'client_id=' + encodeURI(client.getClientId())
-        + '&redirect_uri=' + encodeURI(client.getRedirectUri())
-        + '&scope=' + encodeURI(client.getScope())
-        + '&response_type=' + encodeURI(client.getResponseType())
-        + '&nonce=' + encodeURI(nonce)
-        + '&code_challenge=' + encodeURI(code_challenge)
-        + '&code_challenge_method=S256'
-        + '&state=' + encodeURI(state)
-        + loginHint;
-
-    setSpaState(state, '{"state":"' + state + '", "nonce":"' + nonce + '", "next":"' + tokenEndpoint + '", "code_verifier":"' + code_verifier + '"}');
-
-    window.location = authorizeUrl;
 }
 
 /**
@@ -170,7 +171,10 @@ function postMsg(targetUrl, expectedNonce, msg) {
         async: false,
         success: function (data) {
             // validate that 'nonce' is found within the response. Ignoring that for now ...
-            updateSession(data.id_token, JSON.parse(atob(data.id_token.split(".")[1])).sub);
+            // OIDC id_token
+            let idTokenPayload = JSON.parse(atob(data.id_token.split(".")[1]));
+            let username = idTokenPayload.email ? idTokenPayload.email : idTokenPayload.sub;
+            updateSession(data.id_token, username);
             sessionStorage.setItem('oidcresponse', JSON.stringify(data));
             window.location = 'index.html';
         },
