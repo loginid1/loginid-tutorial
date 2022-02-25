@@ -3,16 +3,19 @@
 This tutorial simulates a small setup that includes these components:
 
 - **Demo App**:
-  - a simple web application that leverages our javascript libraries for FIDO2 based user registration and authentication
-  - the app demos several features and flows
-  - the app demos the usage of the LoginID provided Kong gateway plugin
+  - A simple web application that leverages our javascript libraries for FIDO2 based user registration and authentication
+  - The app demos several features and flows
+  - The app demos the usage of the LoginID provided Kong gateway plugin
 - **Kong**:
-  - a Docker version of the Kong API Gateway
+  - A Docker version of the Kong API Gateway
   - Kong is configured to validate a LoginID issued JWT and return an error if not provided or invalid
-  - the tutorial connects to the public service Cat-Fact, once as an open API call, once protected by Kong
+  - The tutorial connects to the public service Cat-Fact, once as an open API call, once protected by Kong
 - **User Management**:
-  - simulates a simple user management API. It receives a LoginID issued JWT and ... returns the username
-  - connects to LoginID to call LoginID APIs that require so called *service token*
+  - Simulates a simple user management API. It receives a LoginID issued JWT and ... returns the username
+  - Connects to LoginID to call LoginID APIs that require so called *service token*
+- **OpenID Connect**
+  - A simple Single-Page App client demonstrates the usage of LoginIDs OpenID Connect flow
+  - The guide for setting it up follows
 
 The tutorial setup looks like this:
 
