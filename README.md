@@ -67,6 +67,20 @@ In the dashboard create two applications:
   - use **http://localhost** for the URL
   - attach an API Credential
 
+### Create OpenID Connect client credentials
+
+To register an OpenID Connect client for this tutorial visit [LoginIDs OpenID Connect dashboard](https://oauth2.sandbox-usw1.api.loginid.io) and register.
+
+In the dashboard create an applications:
+
+- `Public Client`
+  - register an **Application Name**
+  - use **http://localhost/oidc.html** as redirect_uri
+  - configure the client to be *public*
+  - fill in other details as requested
+
+**Tip:** More details about this client type can be found [here](https://docs.loginid.io/coming-soon): 
+
 ### Configure the tutorial
 
 Copy the above file `.env_template` and paste it as `.env`.
@@ -79,6 +93,7 @@ The following values need to be updated in `.env`:
 - `HOSTNAME`: update this variable if the tutorial is not running at *http://localhost*
   - i.e.: from *http://localhost* to *https://mydomain.com*
 - `BASE_URL`: verify the value. It most likely does not need to be updated
+- `OIDC_PUBLIC_CLIENT_ID`: configure the OpenID Connect client_id
 
 Please find more details within that file!
 
