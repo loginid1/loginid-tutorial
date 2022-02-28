@@ -69,7 +69,7 @@ function getTabContent(pageName) {
 
 function checkSession() {
     let token = sessionStorage.getItem('token');
-    let username = 'logged out';
+    let username = 'Logged out';
     if (token) {
         // native JWT
         username = JSON.parse(atob(token.split(".")[1])).udata;
@@ -97,7 +97,7 @@ function updateSession(token, username) {
 
 function deleteSession() {
     sessionStorage.removeItem('token')
-    document.getElementById('idCurrentUser').innerText = 'logged out';
+    document.getElementById('idCurrentUser').innerText = 'Logged out';
 }
 
 function clearApiResponses() {

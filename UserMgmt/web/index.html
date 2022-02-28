@@ -46,57 +46,61 @@
     <script src="js/prism.js"></script>
 </head>
 <body onload="checkSession();">
-<nav>
+<nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navBar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand loginid-nav" href="#tabOverview" data-toggle="tab">
-                <img src="images/logo.svg" alt="LoginID" width="146px"/>
-            </a>
-        </div>
-        <div class="collapse navbar-collapse" id="navBar">
-            <ul class="nav navbar-nav flex-row">
+        <a class="navbar-brand" data-bs-toggle="tab" data-bs-target="#tabOverview" role="tab" aria-controls="tabOverview" aria-selected="true">
+            <img src="images/logo.svg" alt="LoginID" width="146px"/>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav me-auto mb-2 mb-lg-0 nav-tabs" role="tablist">
                 <li class="nav-item dropdown">
-                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button"
-                       aria-haspopup="true" aria-expanded="false">Features <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/authenticate.tab.html');">Authentication</a> </li>
-                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html');">Manage Authenticators (Devices)</a></li>
-                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/createTrx.tab.html');">Create Transaction Confirmation</a></li>
+                    <a class="nav-link dropdown-toggle loginid-nav" href="#" id="featuresDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Features</a>
+                    <ul class="dropdown-menu" aria-labelledby="featuresDropdown">
+                        <li><button class="dropdown-item loginid-nav" id="authenticate-tab" data-bs-toggle="tab" data-bs-target="#tabAuthenticate" role="tab" aria-controls="tabAuthenticate" aria-selected="false">Authentication</button></li>
+                        <li><button class="dropdown-item loginid-nav" id="manage-creds-tab" data-bs-toggle="tab" data-bs-target="#tabManageCreds" role="tab" aria-controls="tabManageCreds" aria-selected="false">Manage Authenticators (Devices)</button></li>
+                        <li><button class="dropdown-item loginid-nav" id="tx-tab" data-bs-toggle="tab" data-bs-target="#txTab" role="tab" aria-controls="txTab" aria-selected="false">Create Transaction Confirmation</button></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Additional Devices <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html');">Request Adding Authenticator</a></li>
-                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/requesttempaccess.tab.html');">Request Temporary Access</a></li>
-                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/grantRequest.tab.html');">Grant Request</a></li>
+                    <a class="nav-link dropdown-toggle loginid-nav" href="#" id="addDevicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Additional Devices</a>
+                    <ul class="dropdown-menu" aria-labelledby="addDevicesDropdown">
+                        <li><button class="dropdown-item loginid-nav" id="request-authenticator-tab" data-bs-toggle="tab" data-bs-target="#tabRequestAuthenticatorTab" role="tab" aria-controls="tabRequestAuthenticatorTab" aria-selected="false">Request Adding Authenticator</button></li>
+                        <li><button class="dropdown-item loginid-nav" id="request-temp-access-tab" data-bs-toggle="tab" data-bs-target="#tabRequestTempAccessTab" role="tab" aria-controls="tabRequestTempAccessTab" aria-selected="false">Request Temporary Access</button></li>
+                        <li><button class="dropdown-item loginid-nav" id="grant-request-tab" data-bs-toggle="tab" data-bs-target="#tabGrantRequestTab" role="tab" aria-controls="tabGrantRequestTab" aria-selected="false">Grant Request</button></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Integrations <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/oidc.tab.html');">OpenID Connect</a></li>
-                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html');">Kong Plugin</a></li>
+                    <a class="nav-link dropdown-toggle loginid-nav" href="#" id="integrationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Integrations</a>
+                    <ul class="dropdown-menu" aria-labelledby="addDevicesDropdown">
+                        <li><button class="dropdown-item loginid-nav" id="oidc-tab" data-bs-toggle="tab" data-bs-target="#tabOidc" role="tab" aria-controls="tabOidc" aria-selected="false">OpenID Connect</button></li>
+                        <li><button class="dropdown-item loginid-nav" id="kong-tab" data-bs-toggle="tab" data-bs-target="#tabKong" role="tab" aria-controls="tabKong" aria-selected="false">Kong Plugin</button></li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link loginid-nav" href="#tabAbout" data-toggle="tab" aria-controls="tabAbout" aria-selected="false">About</a>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link loginid-nav" id="about-tab" data-bs-toggle="tab" data-bs-target="#tabAbout" role="tab" aria-controls="tabAbout" aria-selected="false">About</button>
                 </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a class="loginid-nav" href="#" onclick="return deleteSession();" data-toggle="tab">Logged in as:<br/><span id="idCurrentUser"></span><br/>(click to log out)</a></li>
+            <ul class="navbar-nav mb-2 mb-lg-0 navbar-right">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle loginid-nav" href="#" id="idCurrentUser" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        Logged out
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="idCurrentUser">
+                        <li><a class="dropdown-item loginid-nav" href="#" onclick="return deleteSession();"
+                               data-toggle="tab">Logout</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
 <div class="container" id="content">
     <div class="tab-content">
-        <div id="tabOverview" class="tab-pane active" role="tabpanel">
+        <div class="tab-pane active" id="tabOverview" role="tabpanel" aria-labelledby="overview-tab">
             <h2>Tutorial</h2>
             <p>Here is a brief overview of the different features that are found behind each menu:</p>
             <table class="table-condensed table-striped">
@@ -145,7 +149,363 @@
                 </tr>
             </table>
         </div>
-        <div id="tabAbout" class="tab-pane" role="tabpanel">
+        <div class="tab-pane" id="tabAuthenticate" role="tabpanel" aria-labelledby="authenticate-tab">
+            <h2>Authentication</h2>
+            <p>With FIDO2 <strong>passwordless authentication</strong> users do not only register a username but also the used authenticator (i.e.: TouchID). After registering,
+                a user can login to the website by using the registered authenticator, no password required.</p>
+            <p>Please note that <strong>device</strong> and <strong>authenticator</strong> are often used interchangeably in FIDO2!
+            </p>
+            <p>This screen supports both features:</p>
+            <ol>
+                <li>Registering a username with an authenticator (device)</li>
+                <li>Login with a username using a registered authenticator (device)</li>
+            </ol>
+            <p>The <strong>Sign-In</strong> feature will figure out if the user is already known and will prompt for registration if
+                needed!</p>
+            <hr/>
+            <p><strong>Sign-In: </strong><input type="email" id="idSignInName" name="signInName" size="35" placeholder="Your username">
+                <button type="button" value="check" id="btnSignInName" name="btnSignInName" onclick="return signInUser(dw);">
+                    <img src="../images/button_loginid.png" alt="sign-in" width="90px" onload="return isFidoSupported('idIsFidoSupported');"/>
+                </button>
+            </p>
+            <p>
+                <span id="idIsFidoSupported"></span>
+                <label class="form-check-label" for="idUseRoaming"><small>Enable a roaming key (i.e.: YubiKey) that takes advantage of a PIN: </small></label>
+                <input type="checkbox" class="form-check-input" id="idUseRoaming">
+            </p>
+            <hr/>
+            <p>
+                <strong>NOTE:</strong><br/>
+                If <strong>Sign-In</strong> and <strong>Register</strong> fail, please be sure you are using a registered device!</strong><br/>
+                If this is a new device, follow the instructions found in the top menu <strong>Additional Devices</strong>.
+            </p>
+        </div>
+        <div class="tab-pane" id="tabManageCreds" role="tabpanel" aria-labelledby="manage-creds-tab">
+            <h2>Manage Authenticators</h2>
+            <p>In FIDO2 users may use more than one authenticator (device) to access an account. In those cases it is useful to
+                provide
+                an interface that enables users to get an overview of authenticators, name them, revoke them.</p>
+            <p>This page is simple but fully functional.</p>
+            <p><strong>Note: </strong>Credential management is available native FIDO2 logins!</p>
+            <hr/>
+            <p>Choose one of the tasks from the list below:</p>
+            <form>
+                <table class="table-condensed">
+                    <tr>
+                        <td>
+                            <label for="btnCredentials">List all credentials: </label>
+                        </td>
+                        <td>
+                            <button id="btnCredentials" type="button"
+                                    onclick="return protectedCall('/users/credentials');">List Credentials
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="btnUpdateCredential">Update a credentials name: </label>
+                        </td>
+                        <td>
+                            <input id="idCredentialId" type="text" class="input-sm" placeholder="id of the credential" size="25">
+                            <input id="idNewCredentialName" type="text" class="input-sm" placeholder="new name for the credential"
+                                   size="25">
+                            <button id="btnUpdateCredential" type="button"
+                                    onclick="return updateCredentialName('/users/credentials');">Update
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="btnUpdateCredential">Revoke a credential: </label>
+                        </td>
+                        <td>
+                            <input id="idCredentialIdDelete" type="text" class="input-sm" placeholder="id of the credential"
+                                   size="25">
+                            <button id="btnDeleteCredential" type="button"
+                                    onclick="return deleteCredentialName('/users/credentials');">Revoke
+                                (Disable)
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="tab-pane" id="txTab" role="tabpanel" aria-labelledby="tx-tab">
+            <h2>Create Transaction Confirmation</h2>
+            <p>LoginID provides a feature called <a href="https://docs.loginid.io/Guides/Flows/tx-conf-guide"
+                                                    target="_blank"><strong>Transaction Confirmation</strong></a> which is
+                the process of signing a message using the users FIDO2 key.</p>
+            <p>This client takes a given payload and sends it to its backend which requests a <strong>transactionId</strong> from
+                LoginID. Once that is
+                received, it is passed back to this client. The client then prompts the user to confirm this transaction using their biometric as a digital signature. This creates a digital receipt for the transaction.</p>
+            <p><strong>Important:</strong><br/>The relationship between <strong>Payload, TransactionId</strong> and <strong>Transaction Confirmation</strong> has to be managed
+                by the client!</p>
+            <p>This also means that the client is responsible for maintaining the payload as long as verifications are supported!</p>
+            <hr/>
+            <form>
+                <div class="form-group">
+                    <label for="txtPayload">Payload to be signed <small>(replace the example content if desired)</small></label>
+                    <textarea class="form-control" id="txtPayload" rows="6">
+{
+	"currency": "USD",
+	"amount": "10.00",
+	"fee": "0.01",
+	"to": "recipient"
+}
+        </textarea><br/>
+                    <button id="btnTxId" type="button"
+                            onclick="return initiateTransaction('/users/trx');">Initiate Transaction
+                    </button>
+                </div>
+            </form>
+            <hr/>
+            <p>Confirm the transaction once the TransactionID has been received!</p>
+            <form>
+                <table class="table-condensed">
+                    <tr>
+                        <td><label for="transactionId">TransactionID</label></td>
+                        <td><input type="text" class="form-control" id="transactionId" size="50" readonly/></td>
+                        <td>
+                            <button id="btnTxIdConfirm" type="button"
+                                    onclick="return confirmTransaction(dw);">Confirm Transaction
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <h3>Transaction Verifications</h3>
+            <p>There are two types of verifications a client can implement locally:</p>
+            <ul>
+                <li>Verifying the payload based hash against this value: <strong>tx_hash</strong><br/><code>tx_hash == base64url(SHA256(payload + nonce + server_nonce))</code></li>
+                <li>Verifying the jwt-signature</li>
+            </ul>
+
+            <p>
+                <strong>NOTE: </strong><br/>
+                The Transaction Confirmation returns a token (JWT) and a success indicator. However, the below API response attaches the base64url decoded jwt_header and jwt_payload for convenience!
+            </p>
+        </div>
+        <div class="tab-pane" id="tabRequestAuthenticatorTab" role="tabpanel" aria-labelledby="request-authenticator-tab">
+            <h2>Request Adding Authenticator</h2>
+            <p>Adding an authenticator (device) is the task of enabling an additional device to use with an user account.</p>
+            <p>It requires <strong>three steps</strong>:</p>
+            <ol>
+                <li>generate an authorization code on the <strong>new device</strong></li>
+                <li>grant the authorization code on the <strong>first device</strong></li>
+                <li>complete the process on the <strong>new device</strong></li>
+            </ol>
+            <p>To use this feature on a MacBook, two different browsers can be used. Follow these steps:</p>
+            <ol>
+                <li>Open <strong>this dialog in a different browser</strong> (and leave it open), provide the username, click
+                    <strong>Generate Code</strong> and copy the generated authorization code
+                </li>
+                <li>Open <strong>Additional Devices - Grant Request</strong> in this browser, assuming this one has been used to create an
+                    account earlier
+                </li>
+                <li><strong>Come back to this dialog</strong> and click <strong>Add Authenticator</strong></li>
+            </ol>
+            <hr/>
+            <form>
+                <table class="table-condensed">
+                    <tr>
+                        <td>
+                            <label for="idReqAuthCodeUsername">Provide your username as used with other devices: </label>
+                        </td>
+                        <td colspan="2">
+                            <input id="idReqAuthCodeUsername" type="text" class="input-sm" placeholder="your existing username"
+                                   size="25">
+                        </td>
+                        <td>
+                            <button id="btnReqAuthCode" type="button"
+                                    onclick="return requestAuthCode('/users/reqauthenticator', true);">
+                                Generate Code
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="idReqAuthCodeUsernameConfirm">Continue after granting the authorization code:<br/><small>(if no authorization code is displayed after clicking <strong>Generate</strong>, please refresh the page and try again)</small></label>
+                        </td>
+                        <td>
+                            <input id="idReqAuthCodeUsernameConfirm" type="text" class="input-sm"
+                                   placeholder="your existing username" size="25" readonly>
+                        </td>
+                        <td>
+                            <input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code" size="25"
+                                   readonly>
+                        </td>
+                        <td>
+                            <button id="btnAddAuthenticator" type="button"
+                                    onclick="return addAuthenticator(dw);">Add Authenticator
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="tab-pane" id="tabRequestTempAccessTab" role="tabpanel" aria-labelledby="request-temp-access-tab">
+            <h2>Request Temporary Access</h2>
+            <p>Adding one-time access to an account from a temporary device or one that does not support FIDO2.</p>
+            <p>It requires <strong>two steps</strong>:</p>
+            <ol>
+                <li>generate an authorization code on the <strong>new device</strong></li>
+                <li>grant the authorization code on the <strong>first device</strong></li>
+            </ol>
+            <p>To use this feature on a MacBook, two different browsers can be used. Follow these steps:</p>
+            <ol>
+                <li>Open <strong>this dialog in a different browser</strong> (and leave it open), provide the username, click <strong>Generate Code</strong> and copy the generated authorization code</li>
+                <li>Open <strong>Additional Devices - Grant Request</strong> in this browser, assuming this one has been used to create an account earlier</li>
+                <li><strong>Come back to this dialog</strong> and simply wait to be logged in!</li>
+            </ol>
+            <hr/>
+            <form>
+                <table class="table-condensed">
+                    <tr>
+                        <td>
+                            <label for="idReqAuthCodeUsername">Provide your username as used with other devices: </label>
+                        </td>
+                        <td>
+                            <input id="idReqAuthCodeUsername" type="text" class="input-sm" placeholder="your existing username" size="25">
+                            <button id="btnReqAuthCode" type="button" onclick="return requestAuthCode('/users/reqtemporary', false);">
+                                Generate Code
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="idAuthCodeConfirm">The generated authorization code: </label>
+                        </td>
+                        <td>
+                            <input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code" size="25" readonly>
+                        </td>
+                    </tr>
+                </table>
+                <p><small><strong>Info: </strong>The current timeout for authorizing the code is set to 30 seconds!</small></p>
+            </form>
+        </div>
+        <div class="tab-pane" id="tabGrantRequestTab" role="tabpanel" aria-labelledby="grant-request-tab">
+            <h2>Grant Request</h2>
+            <p>Adding an authenticator (device) or temporary access is the task of enabling a user to access an account from an
+                additional device. Either permanently or once only.</p>
+            <p>This screen allows a user to grant an authorization code that was requested at one of these screens:</p>
+            <ul>
+                <li><strong>Request Adding Authenticator</strong>: generates an authorization code to add an authenticator
+                    permanently
+                </li>
+                <li><strong>Request Temporary Access</strong>: generates an authorization code to get once only access to an account
+                </li>
+            </ul>
+            <hr/>
+            <p>Use the dialog below after generating an authorization code in the other browser.</p>
+            <form>
+                <table class="table-condensed">
+                    <tr>
+                        <td><label for="idAuthCode">Paste the authorization code: </label></td>
+                        <td><input id="idAuthCode" type="text" class="input-sm" placeholder="authorization-code" size="25"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="btnCredentials">Authorize a new authenticator: </label></td>
+                        <td>
+                            <button id="btnCredentials" type="button"
+                                    onclick="return grantAuthCode('/users/grantauthenticator');">
+                                Authorize Authenticator
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="btnTempAccess">Grant temporary access: </label></td>
+                        <td>
+                            <button id="btnTempAccess" type="button"
+                                    onclick="return grantAuthCode('/users/granttempaccess');">
+                                Grant Temporary Access
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="tab-pane" id="tabOidc" role="tabpanel" aria-labelledby="oidc-tab">
+            <h2>OpenID Connect</h2>
+            <p>LoginID provides FIDO2 based services also via OpenID Connect (OIDC).</p>
+            <p>This means that any OIDC relying party may leverage the power of strong FIDO2 based authentication through the
+                simplicity of an OIDC authorization code flow.</p>
+            <p>The client in this demo uses the following configuration:</p>
+            <ol>
+                <li><strong>response_type: </strong>code</li>
+                <li><strong>grant_type: </strong>authorization_code</li>
+                <li><strong>client_type: </strong>public</li>
+                <li><strong>nonce: </strong>generated per request</li>
+                <li><strong>scope: </strong>openid</li>
+                <li><strong>PKCE with S256: </strong>although the client supports PKCE, it is only simulated unless used with
+                    <strong>https (i.e. hosted version of this tutorial)</strong>. This is due to the fact that browsers do not
+                    generate sha256 values with <strong>http</strong>!
+                </li>
+            </ol>
+            <hr/>
+            <p><strong>Initiate the authorization flow:</strong></p>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="login_hint">login_hint (optional, forwarded to LoginID and used to pre-set the username)</label>
+                    <input type="email" id="login_hint" name="login_hint" class="form-control" size="80">
+                    <button type="button" class="btn btn-primary oidc" onclick="return authorize();"><img
+                            src="../images/button_loginid.png" alt="Sign In with LoginID"></button>
+                </div>
+            </form>
+            <small>
+                <strong>Notes:</strong>
+                <ul>
+                    <li><small>Once the flow is completed, the username appears in the top right corner and the API response becomes visible!</small></li>
+                    <li><small>This flow is not usable for managing data via LoginIDs APIs. For that a native FIDO2 login is required!</small></li>
+                </ul>
+            </small>
+        </div>
+        <div class="tab-pane" id="tabKong" role="tabpanel" aria-labelledby="kong-tab">
+            <h2>Kong Plugin</h2>
+            <p>LoginID provides a <a href="https://konghq.com" target="_blank"><strong>Kong</strong></a> plugin that enables
+                developers to require
+                FIDO2 based user authentication on any Kong protected API.</p>
+            <p>LoginID issues JSON Web Token (JWT) whenever users authenticate. These JWT have several claims which may be used for
+                validation purposes.</p>
+            <p>This demo shows off how Kong fails any request if the current user has not authenticated beforehand.</p>
+            <hr/>
+            <p><strong>https://catfact.ninja/fact</strong>: the public API which is called directly.</p>
+            <p><strong>http://local-kong-service:8090/fact</strong>: the same public API but hosted on Kong as a protected API which requires
+                a
+                valid FIDO2 credential, issued by <strong>LoginID</strong>.
+            </p>
+            <form>
+                <table>
+                    <tr>
+                        <td>
+                            <label for="btnDirect">Direct request: </label>
+                        </td>
+                        <td>
+                            <button id="btnDirect" type="button"
+                                    onclick="return directCall('https://catfact.ninja/fact');">https://catfact.ninja/fact
+                            </button>
+                        </td>
+                        <td>(client --> cat-fact-API)</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="btnProtected">Protected request: </label>
+                        </td>
+                        <td>
+                            <button id="btnProtected" type="button"
+                                    onclick="return protectedCallKong('/fact');">@@kong_location@@/fact
+                            </button>
+                        </td>
+                        <td>(client --> Kong --> cat-fact-API)</td>
+                    </tr>
+                </table>
+            </form>
+            <p><strong>NOTES: </strong></p>
+            <ul>
+                <li>By default the Kong plugin is configured to accept no JWT older than 5 minutes. Re-authenticate if requests fail!</li>
+                <li>The call to Kong is currently only supported when running the tutorial locally!</li>
+            </ul>
+        </div>
+        <div class="tab-pane" id="tabAbout" role="tabpanel" aria-labelledby="about-tab">
             <h2>About</h2>
             <p>This tutorial is provided as an overview of features and tools that LoginID provides. It consists of a
                 few docker images and used online services. It can be deployed on a local computer since it is available
@@ -187,9 +547,6 @@
             <p><strong>Disclaimer: </strong>The hosted - online version of this tutorial is a shared environment and
                 meant for
                 evaluation purposes only.</p>
-        </div>
-        <div id="tabContent" class="tab-pane" role="tabpanel">
-            <p>tabContent</p>
         </div>
     </div>
     <hr/>

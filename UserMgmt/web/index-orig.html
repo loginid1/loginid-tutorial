@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>LoginID - FIDO2 demo</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- LoginID -->
+    <link href="assets/css/fonts.css" rel="stylesheet">
+    <link href="style/style.css" rel="stylesheet">
+
+    <link href="static/favicon.ico" rel="icon" type="image/x-icon"/>
+    <link href="static/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.min.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script type="module">
+        import * as WebSDK from '../js/loginid.web.min.js';
+
+        const dw = new web.default(
+            "{base_url}", "{web-sdk-client_id}"
+        );
+        window.dw = dw;
+    </script>
+
+    <!-- more than one file to separate out different types of APis -->
+    <script src="script/spa-demo.js"></script>
+    <script src="script/helper.js"></script>
+    <script src="script/webSdkHelper.js"></script>
+    <script src="script/backendHelper.js"></script>
+    <script src="script/oidcClient.js"></script>
+
+    <link href="css/prism.css" rel="stylesheet"/>
+    <script src="js/prism.js"></script>
+</head>
+<body onload="checkSession();">
+<nav>
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand loginid-nav" href="#tabOverview" data-toggle="tab">
+                <img src="images/logo.svg" alt="LoginID" width="146px"/>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navBar">
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item dropdown">
+                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false">Features <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/authenticate.tab.html');">Authentication</a> </li>
+                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/managecreds.tab.html');">Manage Authenticators (Devices)</a></li>
+                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/createTrx.tab.html');">Create Transaction Confirmation</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Additional Devices <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/requestauthenticator.tab.html');">Request Adding Authenticator</a></li>
+                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/requesttempaccess.tab.html');">Request Temporary Access</a></li>
+                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/grantRequest.tab.html');">Grant Request</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="dropdown-toggle loginid-nav" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Integrations <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/oidc.tab.html');">OpenID Connect</a></li>
+                        <li><a class="loginid-nav" href="#tabContent" data-toggle="tab" onclick="getTabContent('tabs/kong.tab.html');">Kong Plugin</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link loginid-nav" href="#tabAbout" data-toggle="tab" aria-controls="tabAbout" aria-selected="false">About</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a class="loginid-nav" href="#" onclick="return deleteSession();" data-toggle="tab">Logged in as:<br/><span id="idCurrentUser"></span><br/>(click to log out)</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container" id="content">
+    <div class="tab-content">
+        <div id="tabOverview" class="tab-pane active" role="tabpanel">
+            <h2>Tutorial</h2>
+            <p>Here is a brief overview of the different features that are found behind each menu:</p>
+            <table class="table-condensed table-striped">
+                <tr>
+                    <th>Feature</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Authentication</strong></td>
+                    <td>This menu allows users to register and login to an application</td>
+                </tr>
+                <tr>
+                    <td><strong>Manage Authenticators</strong></td>
+                    <td>This menu provides a user with a simple interface to manage registered authenticators
+                        (devices)
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Create Transaction Confirmation</strong></td>
+                    <td>This menu displays the <strong>Transaction Confirmation</strong> which uses a biometric digital
+                        signature to create a digital receipt for any given transaction such as a payment
+                        authentication.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Grant Request</strong></td>
+                    <td>This menu allows the user to authorize an authorization code that was generated on a different
+                        and potentially non-FIDO2 compliant device
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Request Adding Authenticator</strong></td>
+                    <td>The menu enables a user to <strong>add additional authenticators</strong> (devices) to his
+                        account
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Request Temporary Access</strong></td>
+                    <td>The menu enables a user to request <strong>temporary access</strong> to his account from a
+                        device that may not be owned by the user or which does not support FIDO2
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Integrations</strong></td>
+                    <td>The menu demos LoginIDs OpenID Connect integration and Kong plugin</td>
+                </tr>
+            </table>
+        </div>
+        <div id="tabAbout" class="tab-pane" role="tabpanel">
+            <h2>About</h2>
+            <p>This tutorial is provided as an overview of features and tools that LoginID provides. It consists of a
+                few docker images and used online services. It can be deployed on a local computer since it is available
+                on GitHub.</p>
+            <p>The different components are built in java, javascript and take advantage of LoginID SDKs.</p>
+            <h3>Tutorial layout</h3>
+            <p>The image below gives an idea how the tutorial is laid out:</p>
+            <img class="img-fluid" src="images/setup.png" alt="Demo-Setup"/>
+            <ul>
+                <li>The FrontEnd, BackEnd and Gateway are docker images</li>
+                <li>The cloud services are public and are accessed via the demo</li>
+                <li>The FrontEnd displays the web UI which is accessed via a browser</li>
+                <li>The FrontEnd is configured with a <strong>Web App ClientID</strong> which it uses when
+                    registering/authenticating users
+                </li>
+                <li>The BackEnd exposes a simple management API and requires an authenticated user (valid JWT)</li>
+                <li>The BackEnd is configured with a <strong>Backend / API Credential</strong> and is able to
+                    generate
+                    serviceToken
+                    that are required to access LoginID management APIs
+                </li>
+                <li>The <a href="https://konghq.com" target="_blank">Kong Gateway</a> is configured with LoginIDs plugin
+                    to accept requests only if a valid LoginID
+                    issued JWT is
+                    included
+                </li>
+            </ul>
+            <h3>Get in contact</h3>
+            <p>To learn more about LoginID please visit: <a href="https://loginid.io"
+                                                            target="_blank">https://loginid.io</a></p>
+            <p>To view the developer documentation start here: <a href="https://docs.loginid.io" target="_blank">Dev @
+                LoginID</a>
+            </p>
+            <p>Find this and more examples on GitHub: <a href="https://github.com/loginid1/loginid-tutorial"
+                                                         target="_blank">LoginID
+                @ GitHub</a></p>
+            <br/>
+            <p>Please find our privacy notice <a href="https://loginid.io/privacy-notice" target="_blank">here</a>!</p>
+            <p><strong>Disclaimer: </strong>The hosted - online version of this tutorial is a shared environment and
+                meant for
+                evaluation purposes only.</p>
+        </div>
+        <div id="tabContent" class="tab-pane" role="tabpanel">
+            <p>tabContent</p>
+        </div>
+    </div>
+    <hr/>
+    <h3>API Responses</h3>
+    <button type="button" onclick="return clearApiResponses();">clear</button>
+    <div id="divResponse">Nothing to show</div>
+</div>
+</body>
+</html>
