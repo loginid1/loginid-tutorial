@@ -177,8 +177,7 @@ public class LoginIDUtil {
         }
     }
 
-    public String requestAuthCodeAuthenticator(String authorizationHeader, LoginIDUtil.CODE_TYPE type) throws Exception {
-        String username = getUsername(authorizationHeader);
+    public String requestAuthCodeAuthenticator(String username, LoginIDUtil.CODE_TYPE type) throws Exception {
         if (checkParam(username)) {
             UUID userId = mgmt.getUserId(username);
             CodesCodeTypeGenerateResponse generateResponse = mgmt.generateCode(userId.toString(), "short", type.toString(), false);
@@ -201,8 +200,7 @@ public class LoginIDUtil {
         }
     }
 
-    public String waitForAuthorizeAuthCode(String authorizationHeader, String code) throws Exception {
-        String username = getUsername(authorizationHeader);
+    public String waitForAuthorizeAuthCode(String username, String code) throws Exception {
         if (checkParam(username) && checkParam(code)) {
             String jwt = "";
             AuthenticateApi authenticateApi = new AuthenticateApi();
