@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.loginid.mgmt.exception.TutorialAuthException;
 import io.loginid.mgmt.model.CredentialForUI;
 import io.loginid.sdk.java.LoginIdManagement;
 import io.loginid.sdk.java.api.AuthenticateApi;
@@ -271,7 +272,7 @@ public class LoginIDUtil {
      * @return A map of claims
      * @throws Exception Whenever something goes wrong with validating the JWT
      */
-    private Map<String, String> requireJwt(String authJwt) throws Exception {
+    private Map<String, String> requireJwt(String authJwt) throws TutorialAuthException {
         if (authJwt != null) {
 
             try {
@@ -319,10 +320,10 @@ public class LoginIDUtil {
                 return result;
             } catch (Exception e) {
                 LOGGER.warning(e.getMessage());
-                throw e;
+                throw new TutorialAuthException(e);
             }
         } else {
-            throw new IllegalArgumentException("Missing or invalid authorization header");
+            throw new TutorialAuthException("Missing or invalid authorization header");
         }
     }
 
