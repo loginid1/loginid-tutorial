@@ -8,8 +8,8 @@
  * @param path Points to the backend which calls LoginID
  */
 async function waiForTemporaryAccess(path) {
-    let user = document.getElementById('idReqAuthCodeUsername').value;
-    let code = document.getElementById('idAuthCodeConfirm').value;
+    let user = document.getElementById('idReqAuthCodeTempUsername').value;
+    let code = document.getElementById('idAuthCodeTempConfirm').value;
     let msg = 'username=' + encodeURI(user) + '&code=' + encodeURI(code);
     $.ajax({
         type: 'POST',
@@ -73,9 +73,11 @@ function initiateTransaction(path) {
  * Used by menu: Additional Devices - Request Add Authenticator / Request Temporary Access
  * @param path Points to the backend which calls LoginID
  * @param confirmUsername 'true' for Add Authenticator. Simply places the username into a second text field
+ * @param usernameContainerId the container that holds the username
+ * @param codeContainerId the container holding the authCode
  */
-function requestAuthCode(path, confirmUsername) {
-    let username = document.getElementById('idReqAuthCodeUsername').value;
+function requestAuthCode(path, confirmUsername, usernameContainerId, codeContainerId) {
+    let username = document.getElementById(usernameContainerId).value;
     if(!username) {
         alert('Please provide a username!');
         return;
@@ -90,7 +92,7 @@ function requestAuthCode(path, confirmUsername) {
         async: true,
         statusCode: {
             200: function (data) {
-                let field = document.getElementById('idAuthCodeConfirm')
+                let field = document.getElementById(codeContainerId)
                 field.value = data.code;
                 if (confirmUsername) {  // add authenticator
                     document.getElementById('idReqAuthCodeUsernameConfirm').value = data.username;

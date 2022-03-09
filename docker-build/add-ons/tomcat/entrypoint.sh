@@ -27,10 +27,10 @@ fi
 if [ "$KONGLOCATION" ]
 then
   printf 'setting Kong location\n'
-  sed -i "s+@@kong_location@@+$KONGLOCATION+g" /usr/local/tomcat/webapps/ROOT/tabs/kong.tab.html
+  sed -i "s+@@kong_location@@+$KONGLOCATION+g" /usr/local/tomcat/webapps/ROOT/index.html
   sed -i "s+@@kong_location@@+$KONGLOCATION+g" /usr/local/tomcat/webapps/ROOT/script/spa-demo.js
 else
-  sed -i "s+@@kong_location@@+http://localhost:8090+g" /usr/local/tomcat/webapps/ROOT/tabs/kong.tab.html
+  sed -i "s+@@kong_location@@+http://localhost:8090+g" /usr/local/tomcat/webapps/ROOT/index.html
   sed -i "s+@@kong_location@@+http://localhost:8090+g" /usr/local/tomcat/webapps/ROOT/script/spa-demo.js
 fi
 if [ "$OIDC_PUBLIC_CLIENT_ID" ]

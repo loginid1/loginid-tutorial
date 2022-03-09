@@ -17,12 +17,6 @@
     <link href="static/favicon.ico" rel="icon" type="image/x-icon"/>
     <link href="static/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="js/html5shiv.min.js"></script>
-    <script src="js/respond.min.js"></script>
-    <![endif]-->
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
 
@@ -44,11 +38,22 @@
 
     <link href="css/prism.css" rel="stylesheet"/>
     <script src="js/prism.js"></script>
+
+    <script src="js/jquery-stickytabs.js" type="text/javascript"></script>
+    <script>
+        $(function() {
+            let options = {
+                selectorAttribute: "data-bs-target",
+                backToTop: true
+            };
+            $('.nav-tabs').stickyTabs( options );
+        });
+    </script>
 </head>
 <body onload="checkSession();">
 <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container-fluid">
-        <a class="navbar-brand active" href="index.html">
+        <a class="navbar-brand active" href="/">
             <img src="images/logo.svg" alt="LoginID" width="146px"/>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarItems"
@@ -104,8 +109,8 @@
                         Logged out
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="idCurrentUser">
-                        <li><a class="dropdown-item loginid-nav" href="#" onclick="return deleteSession();"
-                               data-toggle="tab">Logout</a></li>
+                        <li><a class="dropdown-item loginid-nav" href="#" onclick="return deleteSession();" data-toggle="tab">Logout</a></li>
+                        <li><a href="#tabAuthenticate" class="dropdown-item loginid-nav">Login (again)</a></li>
                     </ul>
                 </li>
             </ul>
@@ -177,34 +182,40 @@
                 <li>Login with a username using a registered authenticator (device)</li>
             </ol>
             <p>The <strong>Sign-In</strong> feature will figure out if the user is already known and will prompt for
-                registration if
-                needed!</p>
-            <hr/>
-            <form class="row row-cols-3">
-                <div class="input-group">
-                    <span class="input-group-text">Sign-In</span>
-                    <input class="form-control" type="email" id="idSignInName" name="signInName" size="35"
-                           placeholder="Your username">
-                    <button class="btn btn-primary oidc" type="button" value="check" id="btnSignInName"
-                            name="btnSignInName" onclick="return signInUser(dw);">
-                        <img src="images/button_loginid.png" alt="Sign In with LoginID"
-                             onload="return isFidoSupported('idIsFidoSupported');"/>
-                    </button>
+                registration if needed!</p>
+            <form>
+                <div class="row g-4">
+                    <div class="col-sm-1">
+                        <label for="idSignInName" class="col-form-label">Sign-In:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input class="form-control" type="email" id="idSignInName" name="signInName" placeholder="Your username">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-primary oidc" type="button" value="check" id="btnSignInName" name="btnSignInName" onclick="return signInUser(dw);">
+                            <img src="images/button_loginid.png" alt="Sign In with FIDO2" onload="return isFidoSupported('idIsFidoSupported');"/>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <form>
+                <div class="row g-6">
+                    <div class="col-sm-6">
+                        <small>Enable a roaming key (i.e.: YubiKey) that takes advantage of a PIN: </small>
+                        <input type="checkbox" class="form-check-input" id="idUseRoaming">
+                    </div>
                 </div>
             </form>
             <p>
                 <span id="idIsFidoSupported"></span>
-                <label class="form-check-label" for="idUseRoaming"><small>Enable a roaming key (i.e.: YubiKey) that
-                    takes advantage of a PIN: </small></label>
-                <input type="checkbox" class="form-check-input" id="idUseRoaming">
             </p>
             <hr/>
-            <p>
+            <small>
                 <strong>NOTE:</strong><br/>
                 If <strong>Sign-In</strong> and <strong>Register</strong> fail, please be sure you are using a
                 registered device! If this is a new device, follow the instructions found in the top menu <strong>Additional
                 Devices</strong>.
-            </p>
+            </small>
         </div>
         <div class="tab-pane fade" id="tabManageCreds" role="tabpanel" aria-labelledby="manage-creds-tab">
             <h2>Manage Authenticators</h2>
@@ -217,47 +228,41 @@
             <hr/>
             <p>Choose one of the tasks from the list below:</p>
             <form>
-                <table class="table-condensed">
-                    <tr>
-                        <td>
-                            <label for="btnCredentials">List all credentials: </label>
-                        </td>
-                        <td>
-                            <button id="btnCredentials" type="button"
-                                    onclick="return protectedCall('/users/credentials');">List Credentials
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="btnUpdateCredential">Update a credentials name: </label>
-                        </td>
-                        <td>
-                            <input id="idCredentialId" type="text" class="input-sm" placeholder="id of the credential"
-                                   size="25">
-                            <input id="idNewCredentialName" type="text" class="input-sm"
-                                   placeholder="new name for the credential"
-                                   size="25">
-                            <button id="btnUpdateCredential" type="button"
-                                    onclick="return updateCredentialName('/users/credentials');">Update
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="btnUpdateCredential">Revoke a credential: </label>
-                        </td>
-                        <td>
-                            <input id="idCredentialIdDelete" type="text" class="input-sm"
-                                   placeholder="id of the credential"
-                                   size="25">
-                            <button id="btnDeleteCredential" type="button"
-                                    onclick="return deleteCredentialName('/users/credentials');">Revoke
-                                (Disable)
-                            </button>
-                        </td>
-                    </tr>
-                </table>
+                <div class="row g-4">
+                    <label for="btnCredentials" class="col-sm-3 col-form-label">List all credentials: </label>
+                    <div class="col-sm-3" style="margin-bottom: 5px">
+                        <button id="btnCredentials" type="button" onclick="return protectedCall('/users/credentials');">
+                            List Credentials
+                        </button>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <label for="idCredentialId" class="col-sm-3 col-form-label">Update a credentials name: </label>
+                    <div class="col-sm-3">
+                        <input id="idCredentialId" type="text" class="form-control" placeholder="id of the credential">
+                    </div>
+                    <div class="col-sm-3">
+                        <input id="idNewCredentialName" type="text" class="form-control"
+                               placeholder="new name for the credential">
+                    </div>
+                    <div class="col-sm-3" style="margin-bottom: 5px">
+                        <button id="btnUpdateCredential" type="button"
+                                onclick="return updateCredentialName('/users/credentials');">Update
+                        </button>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <label for="idCredentialIdDelete" class="col-sm-3 col-form-label">Revoke a credential: </label>
+                    <div class="col-sm-3">
+                        <input id="idCredentialIdDelete" type="text" class="form-control"
+                               placeholder="id of the credential">
+                    </div>
+                    <div class="col-sm-3">
+                        <button id="btnDeleteCredential" type="button"
+                                onclick="return deleteCredentialName('/users/credentials');">Revoke (Disable)
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
         <div class="tab-pane fade" id="txTab" role="tabpanel" aria-labelledby="tx-tab">
@@ -296,26 +301,26 @@
             <hr/>
             <p>Confirm the transaction once the TransactionID has been received!</p>
             <form>
-                <table class="table-condensed">
-                    <tr>
-                        <td><label for="transactionId">TransactionID</label></td>
-                        <td><input type="text" class="form-control" id="transactionId" size="50" readonly/></td>
-                        <td>
-                            <button id="btnTxIdConfirm" type="button"
-                                    onclick="return confirmTransaction(dw);">Confirm Transaction
-                            </button>
-                        </td>
-                    </tr>
-                </table>
+                <div class="row g-3">
+                    <label for="transactionId" class="col-sm-2 col-form-label">TransactionID:</label>
+                    <div class="col-sm-3">
+                        <input type="text" class="form-control" id="transactionId" readonly/>
+                    </div>
+                    <div class="col-sm-3" style="margin-bottom: 5px">
+                        <button id="btnTxIdConfirm" type="button" onclick="return confirmTransaction(dw);">Confirm
+                            Transaction
+                        </button>
+                    </div>
+                </div>
             </form>
+            <hr/>
             <h3>Transaction Verifications</h3>
             <p>There are two types of verifications a client can implement locally:</p>
             <ul>
-                <li>Verifying the payload based hash against this value: <strong>tx_hash</strong><br/><code>tx_hash ==
-                    base64url(SHA256(payload + nonce + server_nonce))</code></li>
+                <li>Verifying the payload based hash: <code>tx_hash == base64url(SHA256(payload + nonce +
+                    server_nonce))</code></li>
                 <li>Verifying the jwt-signature</li>
             </ul>
-
             <p>
                 <strong>NOTE: </strong><br/>
                 The Transaction Confirmation returns a token (JWT) and a success indicator. However, the below API
@@ -347,46 +352,43 @@
             </ol>
             <hr/>
             <form>
-                <table class="table-condensed">
-                    <tr>
-                        <td>
-                            <label for="idReqAuthCodeUsername">Provide your username as used with other
-                                devices: </label>
-                        </td>
-                        <td colspan="2">
-                            <input id="idReqAuthCodeUsername" type="text" class="input-sm"
-                                   placeholder="your existing username"
-                                   size="25">
-                        </td>
-                        <td>
-                            <button id="btnReqAuthCode" type="button"
-                                    onclick="return requestAuthCode('/users/reqauthenticator', true);">
-                                Generate Code
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="idReqAuthCodeUsernameConfirm">Continue after granting the authorization
-                                code:<br/><small>(if no authorization code is displayed after clicking
-                                    <strong>Generate</strong>, please refresh the page and try again)</small></label>
-                        </td>
-                        <td>
-                            <input id="idReqAuthCodeUsernameConfirm" type="text" class="input-sm"
-                                   placeholder="your existing username" size="25" readonly>
-                        </td>
-                        <td>
-                            <input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code"
-                                   size="25"
-                                   readonly>
-                        </td>
-                        <td>
-                            <button id="btnAddAuthenticator" type="button"
-                                    onclick="return addAuthenticator(dw);">Add Authenticator
-                            </button>
-                        </td>
-                    </tr>
-                </table>
+                <div class="row g-4">
+                    <div class="col-sm-3">
+                        <label for="idReqAuthCodeAuthenticatorUsername" class="col-form-label"><strong>1. </strong>Your
+                            username as used on other devices:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input id="idReqAuthCodeAuthenticatorUsername" type="text" class="form-control"
+                               placeholder="existing username">
+                    </div>
+                    <div class="col-sm-3">
+                        <button id="btnReqAuthCodeAuthenticator" type="button"
+                                onclick="return requestAuthCode('/users/reqauthenticator', true, 'idReqAuthCodeAuthenticatorUsername', 'idAuthCodeConfirm');">
+                            Generate Code
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <form>
+                <div class="row g-4">
+                    <div class="col-sm-3">
+                        <label for="idReqAuthCodeUsernameConfirm"><strong>2. </strong>Continue after granting the
+                            authorization code:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input id="idReqAuthCodeUsernameConfirm" type="text" class="form-control"
+                               placeholder="existing username" readonly>
+                    </div>
+                    <div class="col-sm-2">
+                        <input id="idAuthCodeConfirm" type="text" class="form-control" placeholder="the authorized code"
+                               readonly>
+                    </div>
+                    <div class="col-sm-3">
+                        <button id="btnAddAuthenticator" type="button" onclick="return addAuthenticator(dw);">Add
+                            Authenticator
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
         <div class="tab-pane fade" id="tabRequestTempAccessTab" role="tabpanel"
@@ -410,34 +412,37 @@
             </ol>
             <hr/>
             <form>
-                <table class="table-condensed">
-                    <tr>
-                        <td>
-                            <label for="idReqAuthCodeUsername">Provide your username as used with other
-                                devices: </label>
-                        </td>
-                        <td>
-                            <input id="idReqAuthCodeUsername" type="text" class="input-sm"
-                                   placeholder="your existing username" size="25">
-                            <button id="btnReqAuthCode" type="button"
-                                    onclick="return requestAuthCode('/users/reqtemporary', false);">
-                                Generate Code
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="idAuthCodeConfirm">The generated authorization code: </label>
-                        </td>
-                        <td>
-                            <input id="idAuthCodeConfirm" type="text" class="input-sm" placeholder="the authorized code"
-                                   size="25" readonly>
-                        </td>
-                    </tr>
-                </table>
-                <p><small><strong>Info: </strong>The current timeout for authorizing the code is set to 30
-                    seconds!</small></p>
+                <div class="row g-3">
+                    <div class="col-sm-3">
+                        <label for="idReqAuthCodeTempUsername" class="col-form-label">Your username as used on other
+                            devices:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input id="idReqAuthCodeTempUsername" type="text" class="form-control"
+                               placeholder="your existing username">
+                    </div>
+                    <div class="col-sm-3">
+                        <button id="btnReqAuthCode" type="button"
+                                onclick="return requestAuthCode('/users/reqtemporary', false, 'idReqAuthCodeTempUsername', 'idAuthCodeTempConfirm');">
+                            Generate Code
+                        </button>
+                    </div>
+                </div>
             </form>
+            <form>
+                <div class="row g-3">
+                    <div class="col-sm-3">
+                        <label for="idAuthCodeTempConfirm" class="col-form-label">The generated authorization
+                            code:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input id="idAuthCodeTempConfirm" type="text" class="form-control"
+                               placeholder="the authorized code" readonly>
+                    </div>
+                </div>
+            </form>
+            <p><small><strong>Info: </strong>The current timeout for authorizing the code is set to 30 seconds!</small>
+            </p>
         </div>
         <div class="tab-pane fade" id="tabGrantRequestTab" role="tabpanel" aria-labelledby="grant-request-tab">
             <h2>Grant Request</h2>
@@ -457,31 +462,25 @@
             <hr/>
             <p>Use the dialog below after generating an authorization code in the other browser.</p>
             <form>
-                <table class="table-condensed">
-                    <tr>
-                        <td><label for="idAuthCode">Paste the authorization code: </label></td>
-                        <td><input id="idAuthCode" type="text" class="input-sm" placeholder="authorization-code"
-                                   size="25"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="btnCredentials">Authorize a new authenticator: </label></td>
-                        <td>
-                            <button id="btnCredentials" type="button"
-                                    onclick="return grantAuthCode('/users/grantauthenticator');">
-                                Authorize Authenticator
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="btnTempAccess">Grant temporary access: </label></td>
-                        <td>
-                            <button id="btnTempAccess" type="button"
-                                    onclick="return grantAuthCode('/users/granttempaccess');">
-                                Grant Temporary Access
-                            </button>
-                        </td>
-                    </tr>
-                </table>
+                <div class="row g-4">
+                    <div class="col-sm-3">
+                        <label for="idAuthCode" class="col-form-label">Paste the authorization code: </label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input id="idAuthCode" type="text" class="form-control" placeholder="authorization-code">
+                    </div>
+                    <div class="col-sm-3">
+                        <button id="btnGrantAuthenticator" type="button"
+                                onclick="return grantAuthCode('/users/grantauthenticator');">Authorize Authenticator
+                        </button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button id="btnTempAccess" type="button"
+                                onclick="return grantAuthCode('/users/granttempaccess');">
+                            Grant Temporary Access
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
         <div class="tab-pane fade" id="tabOidc" role="tabpanel" aria-labelledby="oidc-tab">
@@ -491,13 +490,17 @@
                 through the
                 simplicity of an OIDC authorization code flow.</p>
             <p><strong>Initiate the authorization flow:</strong></p>
-            <form class="row row-cols-lg-auto g-3">
-                <label for="login_hint">login_hint (optional, forwarded to LoginID and used to pre-set the
-                    username)</label>
-                <div class="input-group">
-                    <input type="email" id="login_hint" name="login_hint" class="form-control" size="80">
-                    <button type="button" class="btn btn-primary oidc" onclick="return authorize();"><img
-                            src="images/button_loginid.png" alt="Sign In with LoginID"></button>
+            <form>
+                <label for="login_hint">login_hint<br/>(optional, forwarded to LoginID and used to pre-set the username)</label>
+                <div class="row g-2">
+                    <div class="col-sm-4">
+                        <input type="email" id="login_hint" name="login_hint" class="form-control">
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-primary oidc" onclick="return authorize();">
+                            <img src="images/button_loginid.png" alt="Sign In with LoginID">
+                        </button>
+                    </div>
                 </div>
             </form>
             <hr/>
@@ -537,46 +540,42 @@
                 validation purposes.</p>
             <p>This demo shows off how Kong fails any request if the current user has not authenticated beforehand.</p>
             <hr/>
-            <p><strong>https://catfact.ninja/fact</strong>: the public API which is called directly.</p>
-            <p><strong>http://local-kong-service:8090/fact</strong>: the same public API but hosted on Kong as a
-                protected API which requires
-                a
-                valid FIDO2 credential, issued by <strong>LoginID</strong>.
-            </p>
             <form>
-                <table>
-                    <tr>
-                        <td>
-                            <label for="btnDirect">Direct request: </label>
-                        </td>
-                        <td>
-                            <button id="btnDirect" type="button"
-                                    onclick="return directCall('https://catfact.ninja/fact');">
-                                https://catfact.ninja/fact
-                            </button>
-                        </td>
-                        <td>(client --> cat-fact-API)</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="btnProtected">Protected request: </label>
-                        </td>
-                        <td>
-                            <button id="btnProtected" type="button"
-                                    onclick="return protectedCallKong('/fact');">@@kong_location@@/fact
-                            </button>
-                        </td>
-                        <td>(client --> Kong --> cat-fact-API)</td>
-                    </tr>
-                </table>
+                <div class="row g-3">
+                    <div class="col-sm-2">
+                        <label for="btnDirect" class="col-form-label">Direct request: </label>
+                    </div>
+                    <div class="col-sm-3">
+                        <button id="btnDirect" type="button" onclick="return directCall('https://catfact.ninja/fact');">https://catfact.ninja/fact</button>
+                    </div>
+                    <div class="col-sm-4">
+                        A direct request to the API
+                    </div>
+                </div>
             </form>
-            <p><strong>NOTES: </strong></p>
-            <ul>
-                <li>By default the Kong plugin is configured to accept no JWT older than 5 minutes. Re-authenticate if
-                    requests fail!
-                </li>
-                <li>The call to Kong is currently only supported when running the tutorial locally!</li>
-            </ul>
+            <form>
+                <div class="row g-3">
+                    <div class="col-sm-2">
+                        <label for="btnProtected" class="col-form-label">Protected request: </label>
+                    </div>
+                    <div class="col-sm-3">
+                        <button id="btnProtected" type="button" onclick="return protectedCallKong('/fact');">@@kong_location@@/fact</button>
+                    </div>
+                    <div class="col-sm-4">
+                        The same request but requiring a LoginID issued JWT at the Kong gateway
+                    </div>
+                </div>
+            </form>
+            <hr/>
+            <small>
+                <strong>NOTES: </strong>
+                <ul>
+                    <li>By default the Kong plugin is configured to accept no JWT older than 5 minutes. Re-authenticate
+                        if requests fail!
+                    </li>
+                    <li>The call to Kong is currently only supported when running the tutorial locally!</li>
+                </ul>
+            </small>
         </div>
         <div class="tab-pane fade" id="tabAbout" role="tabpanel" aria-labelledby="about-tab">
             <h2>About</h2>
@@ -586,7 +585,7 @@
             <p>The different components are built in java, javascript and take advantage of LoginID SDKs.</p>
             <h3>Tutorial layout</h3>
             <p>The image below gives an idea how the tutorial is laid out:</p>
-            <figure class="figure">
+            <figure class="figure border border-1">
                 <img class="img-fluid" src="images/setup.png" alt="Demo-Setup"/>
                 <figcaption class="figure-caption">Demo-Setup</figcaption>
             </figure>
@@ -619,10 +618,11 @@
                                                          target="_blank">LoginID
                 @ GitHub</a></p>
             <br/>
-            <p>Please find our privacy notice <a href="https://loginid.io/privacy-notice" target="_blank">here</a>!</p>
             <p><strong>Disclaimer: </strong>The hosted - online version of this tutorial is a shared environment and
                 meant for
-                evaluation purposes only.</p>
+                evaluation purposes only.
+            </p>
+            <p>Please find our privacy notice <a href="https://loginid.io/privacy-notice" target="_blank">here</a>!</p>
         </div>
     </div>
     <hr/>
