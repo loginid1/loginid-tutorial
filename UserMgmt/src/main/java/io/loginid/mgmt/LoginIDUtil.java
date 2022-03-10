@@ -21,7 +21,9 @@ import io.loginid.sdk.java.LoginIdManagement;
 import io.loginid.sdk.java.api.AuthenticateApi;
 import io.loginid.sdk.java.api.TransactionsApi;
 import io.loginid.sdk.java.invokers.ApiClient;
+import io.loginid.sdk.java.invokers.ApiException;
 import io.loginid.sdk.java.model.*;
+import io.loginid.web.AuthException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -39,6 +41,8 @@ import org.jose4j.keys.resolvers.VerificationKeyResolver;
 import java.io.IOException;
 import java.security.Key;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 import java.util.logging.Logger;
@@ -120,11 +124,12 @@ public class LoginIDUtil {
 
     /**
      * Credentials refer to FIDO2 credentials that are used
+     *
      * @param authorizationHeader The header that contains the JWT credential
      * @return
      * @throws Exception
      */
-    public List<CredentialForUI> getCredentials(String authorizationHeader) throws Exception {
+    public List<CredentialForUI> getCredentials(String authorizationHeader) throws AuthException, NoSuchAlgorithmException, InvalidKeySpecException, ApiException {
         String username = getUsername(authorizationHeader);
         if (checkParam(username)) {
             UUID userId = mgmt.getUserId(username);
@@ -140,12 +145,12 @@ public class LoginIDUtil {
             }
             return creds;
         } else {
-            throw new IllegalArgumentException("Missing or invalid username");
+            throw new AuthException("Missing or invalid username");
         }
 
     }
 
-    public CredentialForUI updateCredentialName(String authorizationHeader, String credentialId, String newCredentialName) throws Exception {
+    public CredentialForUI updateCredentialName(String authorizationHeader, String credentialId, String newCredentialName) throws AuthException, NoSuchAlgorithmException, InvalidKeySpecException, ApiException {
         String username = getUsername(authorizationHeader);
         if (checkParam(username) && checkParam(credentialId) && checkParam(newCredentialName)) {
             UUID userId = mgmt.getUserId(username);
@@ -161,7 +166,7 @@ public class LoginIDUtil {
         }
     }
 
-    public CredentialForUI deleteCredential(String authorizationHeader, String credentialId) throws Exception {
+    public CredentialForUI deleteCredential(String authorizationHeader, String credentialId) throws AuthException, NoSuchAlgorithmException, InvalidKeySpecException, ApiException {
         String username = getUsername(authorizationHeader);
         if (checkParam(username) && checkParam(credentialId)) {
             UUID userId = mgmt.getUserId(username);
@@ -188,7 +193,7 @@ public class LoginIDUtil {
         }
     }
 
-    public String authorizeAuthCode(String authorizationHeader, String code, LoginIDUtil.CODE_TYPE type) throws Exception {
+    public String authorizeAuthCode(String authorizationHeader, String code, LoginIDUtil.CODE_TYPE type) throws AuthException, NoSuchAlgorithmException, InvalidKeySpecException, ApiException {
         String username = getUsername(authorizationHeader);
         if (checkParam(username) && checkParam(code)) {
             UUID userId = mgmt.getUserId(username);
@@ -225,7 +230,7 @@ public class LoginIDUtil {
         }
     }
 
-    public String getTransactionId(String payload, String authorizationHeader) throws Exception {
+    public String getTransactionId(String payload, String authorizationHeader) throws AuthException, ApiException {
         String txClientId = getClaim(authorizationHeader, "aud");
         if (checkParam(payload, 1024) && checkParam(txClientId)) {
             TransactionsApi transactionsApi = new TransactionsApi();
@@ -247,11 +252,11 @@ public class LoginIDUtil {
         }
     }
 
-    public String getUsername(String authorizationHeader) throws Exception {
+    public String getUsername(String authorizationHeader) throws AuthException {
         return getClaim(authorizationHeader, "user");
     }
 
-    public String getClaim(String authorizationHeader, String claimName) throws Exception {
+    public String getClaim(String authorizationHeader, String claimName) throws AuthException {
         Map<String, String> claims = requireJwt(authorizationHeader);
         return claims.get(claimName);
     }
@@ -271,63 +276,60 @@ public class LoginIDUtil {
      * @return A map of claims
      * @throws Exception Whenever something goes wrong with validating the JWT
      */
-    private Map<String, String> requireJwt(String authJwt) throws Exception {
-        if (authJwt != null) {
+    private Map<String, String> requireJwt(String authJwt) throws AuthException {
 
-            try {
+        try {
 
-                Map<String, String> result = new HashMap<>();
+            Map<String, String> result = new HashMap<>();
 
-                authJwt = authJwt.split("[ ]")[1].trim(); // this may end up in an error ... exception
+            authJwt = authJwt.split("[ ]")[1].trim(); // this may end up in an error ... exception
 
-                JsonElement jwtHeader = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[0])));
-                JsonElement jwtPayload = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[1])));
+            JsonElement jwtHeader = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[0])));
+            JsonElement jwtPayload = new JsonParser().parse(new String(Base64.getDecoder().decode(authJwt.split("[.]")[1])));
 
-                // check if the issuer is 'loginid.io'. In that case the JWT was issued via the native interface
-                if("loginid.io".equals(jwtPayload.getAsJsonObject().get("iss").getAsString())) {
-                    Claims claims = Jwts.parserBuilder()
-                            .setSigningKey(
-                                    lookupVerificationKey(
-                                            jwtHeader.getAsJsonObject().get("kid").getAsString()))
-                            .requireIssuer("loginid.io").requireAudience(getWebClientId())
-                            .build()
-                            .parseClaimsJws(authJwt).getBody();
-                    result.put("user", (String)claims.get("udata"));
-                    result.put("aud", claims.getAudience());
-                } else {
-                    // handle the id_token issued via the OpenID Connect flow
-                    // NOTE: although it is handled here, the id_token is currently not a valid credential for accessing LoginID management APIs
-                    JsonObject jwks = get(oidcConfig.get("jwks_uri").getAsString());
-                    VerificationKeyResolver resolver = new JwksVerificationKeyResolver(new JsonWebKeySet(jwks.getAsJsonObject().toString()).getJsonWebKeys());
-                    JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                            .setRequireExpirationTime()
-                            .setAllowedClockSkewInSeconds(0)
-                            .setRequireSubject()
-                            .setExpectedAudience(oidcClientId)
-                            .setExpectedIssuer(oidcConfig.get("issuer").getAsString())
-                            .setVerificationKeyResolver(resolver)
-                            .setJwsAlgorithmConstraints(
-                                    AlgorithmConstraints.ConstraintType.PERMIT,
-                                    AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256
-                            )
-                            .build();
-                    JwtClaims claims = jwtConsumer.processToClaims(authJwt);
-                    String email = claims.getStringClaimValue("email");
-                    result.put("user", email == null ? claims.getStringClaimValue("sub") : email);
-                    result.put("aud", claims.getAudience().get(0));
-                }
-                return result;
-            } catch (Exception e) {
-                LOGGER.warning(e.getMessage());
-                throw e;
+            // check if the issuer is 'loginid.io'. In that case the JWT was issued via the native interface
+            if ("loginid.io".equals(jwtPayload.getAsJsonObject().get("iss").getAsString())) {
+                Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(
+                                lookupVerificationKey(
+                                        jwtHeader.getAsJsonObject().get("kid").getAsString()))
+                        .requireIssuer("loginid.io").requireAudience(getWebClientId())
+                        .build()
+                        .parseClaimsJws(authJwt).getBody();
+                result.put("user", (String) claims.get("udata"));
+                result.put("aud", claims.getAudience());
+            } else {
+                // handle the id_token issued via the OpenID Connect flow
+                // NOTE: although it is handled here, the id_token is currently not a valid credential for accessing LoginID management APIs
+                JsonObject jwks = get(oidcConfig.get("jwks_uri").getAsString());
+                VerificationKeyResolver resolver = new JwksVerificationKeyResolver(new JsonWebKeySet(jwks.getAsJsonObject().toString()).getJsonWebKeys());
+                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                        .setRequireExpirationTime()
+                        .setAllowedClockSkewInSeconds(0)
+                        .setRequireSubject()
+                        .setExpectedAudience(oidcClientId)
+                        .setExpectedIssuer(oidcConfig.get("issuer").getAsString())
+                        .setVerificationKeyResolver(resolver)
+                        .setJwsAlgorithmConstraints(
+                                AlgorithmConstraints.ConstraintType.PERMIT,
+                                AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256
+                        )
+                        .build();
+                JwtClaims claims = jwtConsumer.processToClaims(authJwt);
+                String email = claims.getStringClaimValue("email");
+                result.put("user", email == null ? claims.getStringClaimValue("sub") : email);
+                result.put("aud", claims.getAudience().get(0));
             }
-        } else {
-            throw new IllegalArgumentException("Missing or invalid authorization header");
+            return result;
+        } catch (Exception e) {
+            LOGGER.warning(e.getMessage());
+            throw new AuthException("Missing or invalid authorization header");
         }
     }
 
     /**
      * Retrieves the public key needed to validate the native JWT
+     *
      * @param keyId The keyId of the key that is needed for the signature validation
      * @return The public key
      * @throws Exception Whenever something goes wrong with the retrieving of the key
@@ -353,6 +355,7 @@ public class LoginIDUtil {
 
     /**
      * A simple helper to GET content (openid configuration, JWKS)
+     *
      * @param url
      * @return
      * @throws IOException

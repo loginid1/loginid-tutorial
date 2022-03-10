@@ -136,6 +136,11 @@ function updateCredentialName(path) {
             },
             400: function (data) {
                 printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            401: function (data) {
+                deleteSession();
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper Features menu to login"}');
+                printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }
         }
     });
@@ -164,6 +169,11 @@ function deleteCredentialName(path) {
             },
             400: function (data) {
                 printFlowResponse('<code class="language-json">' + JSON.stringify(data, null, 2) + '</code>');
+            },
+            401: function (data) {
+                deleteSession();
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"Unknown user! Choose Authentication from the upper Features menu to login"}');
+                printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }
         }
     });

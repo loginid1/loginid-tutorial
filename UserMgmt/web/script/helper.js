@@ -38,12 +38,12 @@ function getMsg(targetUrl, credential) {
                 deleteSession();
                 let error = JSON.parse('{"error":"invalid_request", "error_description":"the requested service is unknown. Check the console!"}');
                 printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
+            },
+            500: function (data) {
+                console.error(data);
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"something went terribly wrong! Check the console!"}');
+                printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }
-        },
-        error: function (data) {
-            console.error(data);
-            let error = JSON.parse('{"error":"invalid_request", "error_description":"something went terribly wrong! Check the console!"}');
-            printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
         }
     });
 }
