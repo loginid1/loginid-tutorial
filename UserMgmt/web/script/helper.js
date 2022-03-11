@@ -38,12 +38,12 @@ function getMsg(targetUrl, credential) {
                 deleteSession();
                 let error = JSON.parse('{"error":"invalid_request", "error_description":"the requested service is unknown. Check the console!"}');
                 printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
+            },
+            500: function (data) {
+                console.error(data);
+                let error = JSON.parse('{"error":"invalid_request", "error_description":"something went terribly wrong! Check the console!"}');
+                printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
             }
-        },
-        error: function (data) {
-            console.error(data);
-            let error = JSON.parse('{"error":"invalid_request", "error_description":"something went terribly wrong! Check the console!"}');
-            printFlowResponse('<code class="language-json">' + JSON.stringify(error, null, 2) + '</code>');
         }
     });
 }
@@ -69,7 +69,7 @@ function getTabContent(pageName) {
 
 function checkSession() {
     let token = sessionStorage.getItem('token');
-    let username = 'logged out';
+    let username = 'Logged out';
     if (token) {
         // native JWT
         username = JSON.parse(atob(token.split(".")[1])).udata;
@@ -97,7 +97,7 @@ function updateSession(token, username) {
 
 function deleteSession() {
     sessionStorage.removeItem('token')
-    document.getElementById('idCurrentUser').innerText = 'logged out';
+    document.getElementById('idCurrentUser').innerText = 'Logged out';
 }
 
 function clearApiResponses() {

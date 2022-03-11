@@ -13,7 +13,7 @@ package io.loginid.web;
 
 import com.google.gson.JsonObject;
 import io.loginid.mgmt.LoginIDUtil;
-import io.loginid.mgmt.exception.TutorialAuthException;
+import io.loginid.mgmt.exception.AuthException;
 import io.loginid.sdk.java.invokers.ApiException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -96,11 +96,11 @@ public class UserMgmt extends HttpServlet {
                 response.setStatus(200);
                 response.getWriter().printf(util.getTransactionId(payload, request.getHeader("authorization")));
             }
-        } catch (TutorialAuthException e) {
+        } catch (io.loginid.mgmt.exception.AuthException e) {
             LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(401);
-            response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"authentication is required\"}");
+            response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
@@ -125,11 +125,11 @@ public class UserMgmt extends HttpServlet {
                 response.setStatus(400);
                 response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\": \"you are looking for something that does not exist\"}");
             }
-        } catch (TutorialAuthException e) {
+        } catch (io.loginid.mgmt.exception.AuthException e) {
             LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(401);
-            response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"authentication is required\"}");
+            response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
@@ -151,11 +151,11 @@ public class UserMgmt extends HttpServlet {
                 response.setStatus(400);
                 response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\": \"you are looking for something that does not exist\"}");
             }
-        } catch (TutorialAuthException e) {
+        } catch (AuthException e) {
             LOGGER.warning(e.getMessage());
             response.setContentType("application/json");
             response.setStatus(401);
-            response.getWriter().println("{\"error\":\"invalid_request\", \"error_description\":\"authentication is required\"}");
+            response.getWriter().printf("{\"error\":\"invalid_request\", \"error_description\":\"%s\"}", e.getMessage());
         } catch (Exception e) {
             LOGGER.warning(e.getMessage());
             String error = e.getMessage();
