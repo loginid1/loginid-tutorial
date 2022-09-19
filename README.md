@@ -206,6 +206,10 @@ iat** value in JWT payload need to be below this max age|Number|-|
 
 To learn more about this tutorial, please check the repositories **[WIKI](https://github.com/loginid1/loginid-tutorial/wiki)** pages!
 
+## Tools
+
+The directory *Tools* provides a simple tool to generate a client secret and example on how to create a key pair which can be used as API Credential.
+
 ## Links
 
 - To learn more about LoginID please visit: [https://loginid.io](https://loginid.io)
