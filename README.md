@@ -12,10 +12,9 @@ This tutorial simulates a small setup that includes these components:
   - The tutorial connects to the public service Cat-Fact, once as an open API call, once protected by Kong
 - **User Management**:
   - Simulates a simple user management API. It receives a LoginID issued JWT and ... returns the username
-  - Connects to LoginID to call LoginID APIs that require so called *service token*
+  - Connects to LoginID to call LoginID APIs that require so-called *service token*
 - **OpenID Connect**
   - A simple Single-Page App client demonstrates the usage of LoginIDs OpenID Connect flow
-  - The guide for setting it up follows
 
 The tutorial setup looks like this:
 
@@ -54,9 +53,9 @@ Your project now includes the submodule that contains the java SDK but only as a
 
 ### Create client credentials
 
-To use this tutorial locally visit [LoginIDs dashboard](https://usw1.loginid.io/en/login/get-started-a) and register.
+To use this tutorial locally visit [LoginIDs dashboard](https://playground.loginid.io/) and register.
 
-In the dashboard create two applications:
+In the dashboard create two required applications (*Applications - Add Application*):
 
 - `Web App`
   - register an **Application Name** and a **Website URL**
@@ -66,20 +65,14 @@ In the dashboard create two applications:
   - register an **Application Name** and a **Website URL**
   - use **http://localhost** for the URL
   - attach an API Credential
-
-### Create OpenID Connect client credentials
-
-To register an OpenID Connect client for this tutorial visit [LoginIDs OpenID Connect dashboard](https://oauth2.sandbox-usw1.api.loginid.io) and register.
-
-In the dashboard create an applications:
-
-- `Public Client`
-  - register an **Application Name**
+- Optional: `OpenID Connect (OIDC)`
+  - register an **Application Name** and a **Redirect URI(s)**
   - use **http://localhost/oidc.html** as redirect_uri
-  - configure the client to be *public*
-  - fill in other details as requested
-
-**Tip:** More details about this client type can be found [here](https://docs.loginid.io/coming-soon): 
+  - select **Email** as an additional SCOPE
+  - select **Client Type = Public**
+  - Select **Next** and take note of the shown endpoint *OpenID configuration endpoint*
+  - do **NOT** attach an API Credential
+  - **Tip:** More details about this client type can be found [here](https://docs.loginid.io/coming-soon):
 
 ### Configure the tutorial
 
@@ -90,10 +83,11 @@ The following values need to be updated in `.env`:
 - `CLIENT_ID_BACKEND`: use the client ID of the Backend application
 - `API_PRIVATE_KEY`: use the Api Credential (you do not need to maintain the **\n** characters, but it needs to be one single line)
 - `CLIENT_ID_WEB`: use the client ID of the Web application
+- `OIDC_PUBLIC_CLIENT_ID`: configure the OpenID Connect client_id (optional, if an OIDC client was registered)
+- `OIDC_CONFIG_ENDPOINT`: configure this endpoint using the value that was shown after registering the OpenID Connect application (optional, if an OIDC client was registered)
+- `BASE_URL`: verify the value. It most likely does not need to be updated
 - `HOSTNAME`: update this variable if the tutorial is not running at *http://localhost*
   - i.e.: from *http://localhost* to *https://mydomain.com*
-- `BASE_URL`: verify the value. It most likely does not need to be updated
-- `OIDC_PUBLIC_CLIENT_ID`: configure the OpenID Connect client_id
 
 Please find more details within that file!
 
@@ -203,6 +197,8 @@ iat** value in JWT payload need to be below this max age|Number|-|
 |acr|Expected acr value. This value will be validated if the acr value is configured in the plugin. If not, this value will not be validated|String|-|
 |algorithm|Expected signing algorithm. Default value is ES256. This value will be validated against **alg** value in JWT header|String|-|
 |namespace_id|Expected namespace ID. This value will be validated against nid value in JWT payload|String|-|
+
+**Note**: By default no manual changes are needed. The file will be updated according to settings in **.env**.
 
 ### Learn more
 
