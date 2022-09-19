@@ -13,6 +13,7 @@
   <modules>
     <module>java-server-side-sdk</module>
     <module>UserMgmt</module>
+    <module>Tools</module>
   </modules>
 
   <build>

@@ -60,12 +60,14 @@ In the dashboard create two required applications (*Applications - Add Applicati
 - `Web App`
   - register an **Application Name** and a **Website URL**
   - use **http://localhost** for the URL
+  - take note of the generated *client ID*
   - do **NOT** attach an API Credential
 - `Backend/API`
   - register an **Application Name** and a **Website URL**
   - use **http://localhost** for the URL
   - attach an API Credential
 - Optional: `OpenID Connect (OIDC)`
+  - Once only: Open the *Settings* menu and enable OIDC (no need to update any fields)
   - register an **Application Name** and a **Redirect URI(s)**
   - use **http://localhost/oidc.html** as redirect_uri
   - select **Email** as an additional SCOPE

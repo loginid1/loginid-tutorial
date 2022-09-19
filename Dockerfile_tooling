@@ -11,7 +11,7 @@ RUN apt install procps
 
 # Downloading and installing Maven
 # 1- Define a constant with the version of maven you want to install
-ARG MAVEN_VERSION=3.8.4
+ARG MAVEN_VERSION=3.8.6
 
 # 2- Define a constant with the working directory
 ARG USER_HOME_DIR="/root"

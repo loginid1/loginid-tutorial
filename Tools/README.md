@@ -27,7 +27,7 @@ The tool can be used as follows:
 - **{iss}**: the client_id
 - **{exp}**: the number of days for which the secret should be valid for (1-60)
 - **{sub}**: the client_id
-- **{aud}**: the OpenID Connect base URL
+- **{aud}**: the OpenID Connect base URL  // see *Settings* in the dashboard
 - **{path-to-private-key}**: absolute path to the private key that is used as API credential 
 
 The generated JSON output includes the client_secret (JWT) and its payload for your convenience. It will look like this:
