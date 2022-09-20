@@ -2,6 +2,8 @@
 
 This tutorial simulates a small setup that includes these components:
 
+**A change has been made**
+
 - **Demo App**:
   - A simple web application that leverages our javascript libraries for FIDO2 based user registration and authentication
   - The app demos several features and flows
@@ -12,7 +14,7 @@ This tutorial simulates a small setup that includes these components:
   - The tutorial connects to the public service Cat-Fact, once as an open API call, once protected by Kong
 - **User Management**:
   - Simulates a simple user management API. It receives a LoginID issued JWT and ... returns the username
-  - Connects to LoginID to call LoginID APIs that require so-called *service token*
+  - Connects to LoginID to call LoginID APIs that require so-called _service token_
 - **OpenID Connect**
   - A simple Single-Page App client demonstrates the usage of LoginIDs OpenID Connect flow
 
@@ -24,11 +26,11 @@ FrontEnd, BackEnd and Gateway are implemented as Docker images!
 
 ## Options for using this tutorial
 
-There are multiple options for using this tutorial:
+**A change has been made**
 
 - **preferred for non-developers**, follow these steps:
-  - *Preparing the tutorial*
-  - *Running the tutorial*
+  - _Preparing the tutorial_
+  - _Running the tutorial_
   - Only **Docker** needs to be installed!
 - **preferred for developers**, follow all steps below
 
@@ -45,7 +47,7 @@ If you ran git clone without `--recurse-submodules` or if you are not working in
 - `git submodule init`
 - `git submodule update`
 
-Your project now includes the submodule that contains the java SDK but only as a *read* version, so to say.
+Your project now includes the submodule that contains the java SDK but only as a _read_ version, so to say.
 
 **Tip:** More information on git submodules can be found [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
@@ -55,24 +57,24 @@ Your project now includes the submodule that contains the java SDK but only as a
 
 To use this tutorial locally visit [LoginIDs dashboard](https://playground.loginid.io/) and register.
 
-In the dashboard create two required applications (*Applications - Add Application*):
+In the dashboard create two required applications (_Applications - Add Application_):
 
 - `Web App`
   - register an **Application Name** and a **Website URL**
   - use **http://localhost** for the URL
-  - take note of the generated *client ID*
+  - take note of the generated _client ID_
   - do **NOT** attach an API Credential
 - `Backend/API`
   - register an **Application Name** and a **Website URL**
   - use **http://localhost** for the URL
   - attach an API Credential
 - Optional: `OpenID Connect (OIDC)`
-  - Once only: Open the *Settings* menu and enable OIDC (no need to update any fields)
+  - Once only: Open the _Settings_ menu and enable OIDC (no need to update any fields)
   - register an **Application Name** and a **Redirect URI(s)**
   - use **http://localhost/oidc.html** as redirect_uri
   - select **Email** as an additional SCOPE
   - select **Client Type = Public**
-  - Select **Next** and take note of the shown endpoint *OpenID configuration endpoint*
+  - Select **Next** and take note of the shown endpoint _OpenID configuration endpoint_
   - do **NOT** attach an API Credential
   - **Tip:** More details about this client type can be found [here](https://docs.loginid.io/coming-soon):
 
@@ -88,8 +90,8 @@ The following values need to be updated in `.env`:
 - `OIDC_PUBLIC_CLIENT_ID`: configure the OpenID Connect client_id (optional, if an OIDC client was registered)
 - `OIDC_CONFIG_ENDPOINT`: configure this endpoint using the value that was shown after registering the OpenID Connect application (optional, if an OIDC client was registered)
 - `BASE_URL`: verify the value. It most likely does not need to be updated
-- `HOSTNAME`: update this variable if the tutorial is not running at *http://localhost*
-  - i.e.: from *http://localhost* to *https://mydomain.com*
+- `HOSTNAME`: update this variable if the tutorial is not running at _http://localhost_
+  - i.e.: from _http://localhost_ to *https://mydomain.com*
 
 Please find more details within that file!
 
@@ -149,7 +151,7 @@ After building the project you are ready to launch the system:
 Once you are done, terminate the containers by running:
 
 - `docker-compose down`
-- `docker-compose -f docker-compose-hub.ym down` // for the pre-built tutorial 
+- `docker-compose -f docker-compose-hub.ym down` // for the pre-built tutorial
 
 **Tip:** if you run into trouble when launching docker because it complains about conflicting containers already running, use this command to stop and remove them:
 
@@ -160,7 +162,7 @@ Once you are done, terminate the containers by running:
 
 To debug java code do the following:
 
-- run `docker-compose -f docker-compose-dev.yml up`  // use this instead of `docker-compose up`
+- run `docker-compose -f docker-compose-dev.yml up` // use this instead of `docker-compose up`
 - use java remote debugging on port 8000 (for more details see **JAVA_OPTS** in the compose file)
 
 You can now set breakpoints in the code of the UserMgmt module.
@@ -181,24 +183,24 @@ Try out the different menus to learn more about LoginID features!
 ### Kong Plugin configuration
 
 The Kong plugin configuration can be updated in this file:
- 
+
 - `./docker-build/add-ons/kong/kong.yml`
   - find the section called: **plugins - loginid**
 
 The following values may be configured:
 
-|Parameter|Description|Type|Required|
-|---------|-----------|----|--------|
-|login_id_base_url|The base URL as given by LoginID|String|X|
-|login_id_client_id|The client_id as given by LoginID|String|X|
-|login_id_public_key_url|LoginID public key retrieval URL|String|X|
-|issuer|Expected issuer of the JWT. This value will be validated against **iss** value in JWT payload. Defaults to **loginid.io**|String|-|
-|audience|Expected audience. This value will be validated against **aud** value in JWT payload|String|X|
-|maximum_age|Expected max. age in seconds. Default value is 300 seconds. Difference between current time and **
-iat** value in JWT payload need to be below this max age|Number|-|
-|acr|Expected acr value. This value will be validated if the acr value is configured in the plugin. If not, this value will not be validated|String|-|
-|algorithm|Expected signing algorithm. Default value is ES256. This value will be validated against **alg** value in JWT header|String|-|
-|namespace_id|Expected namespace ID. This value will be validated against nid value in JWT payload|String|-|
+| Parameter                                                  | Description                                                                                                                             | Type   | Required |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------ | -------- |
+| login_id_base_url                                          | The base URL as given by LoginID                                                                                                        | String | X        |
+| login_id_client_id                                         | The client_id as given by LoginID                                                                                                       | String | X        |
+| login_id_public_key_url                                    | LoginID public key retrieval URL                                                                                                        | String | X        |
+| issuer                                                     | Expected issuer of the JWT. This value will be validated against **iss** value in JWT payload. Defaults to **loginid.io**               | String | -        |
+| audience                                                   | Expected audience. This value will be validated against **aud** value in JWT payload                                                    | String | X        |
+| maximum_age                                                | Expected max. age in seconds. Default value is 300 seconds. Difference between current time and \*\*                                    |
+| iat\*\* value in JWT payload need to be below this max age | Number                                                                                                                                  | -      |
+| acr                                                        | Expected acr value. This value will be validated if the acr value is configured in the plugin. If not, this value will not be validated | String | -        |
+| algorithm                                                  | Expected signing algorithm. Default value is ES256. This value will be validated against **alg** value in JWT header                    | String | -        |
+| namespace_id                                               | Expected namespace ID. This value will be validated against nid value in JWT payload                                                    | String | -        |
 
 **Note**: By default no manual changes are needed. The file will be updated according to settings in **.env**.
 
@@ -208,10 +210,11 @@ To learn more about this tutorial, please check the repositories **[WIKI](https:
 
 ## Tools
 
-The directory *Tools* provides a simple tool to generate a client secret and example on how to create a key pair which can be used as API Credential.
+The directory _Tools_ provides a simple tool to generate a client secret and example on how to create a key pair which can be used as API Credential.
 
 ## Links
 
 - To learn more about LoginID please visit: [https://loginid.io](https://loginid.io)
 - To view the developer documentation start here: [Dev @ LoginID](https://docs.loginid.io)
 - More examples can be found here on GitHub: [LoginID @ GitHub](https://github.com/loginid1)
+
