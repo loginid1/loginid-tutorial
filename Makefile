@@ -9,7 +9,7 @@ build:
 	docker build --tag local/tutorial_backend:latest --no-cache .
 	docker build --tag local/tutorial_kong_gw:latest --no-cache -f Dockerfile_kong .
 
-# The third line is specific to windows, the rest is the same as for 'build'.
+# The first line is specific to windows, the rest is the same as for 'build'.
 # If this fails, please try one of these options:
 # - make sure to run it in Powershell
 # - use %cd% instead of ${PWD}
