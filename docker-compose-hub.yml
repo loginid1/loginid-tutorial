@@ -18,7 +18,7 @@ services:
     ports:
       - "80:${PORT_SERVICE}"
     environment:
-      - "HOSTNAME=${HOSTNAME}"
+      - "HOSTNAME=${HOST_NAME}"
       - "BASEURL=${BASE_URL}"
       - "WEBCLIENTID=${CLIENT_ID_WEB}"
       - "BACKENDCLIENTID=${CLIENT_ID_BACKEND}"
@@ -39,7 +39,7 @@ services:
     ports:
       - "8090:${PORT_KONG}"
     environment:
-      - "HOSTNAME=${HOSTNAME}"
+      - "HOSTNAME=${HOST_NAME}"
       - "BASEURL=${BASE_URL}"
       - "WEBCLIENTID=${CLIENT_ID_WEB}"
       - "PORT=${PORT_KONG}"

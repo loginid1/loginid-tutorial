@@ -88,7 +88,7 @@ The following values need to be updated in `.env`:
 - `OIDC_PUBLIC_CLIENT_ID`: configure the OpenID Connect client_id (optional, if an OIDC client was registered)
 - `OIDC_CONFIG_ENDPOINT`: configure this endpoint using the value that was shown after registering the OpenID Connect application (optional, if an OIDC client was registered)
 - `BASE_URL`: verify the value. It most likely does not need to be updated
-- `HOSTNAME`: update this variable if the tutorial is not running at *http://localhost*
+- `HOST_NAME`: update this variable if the tutorial is not running at *http://localhost*
   - i.e.: from *http://localhost* to *https://mydomain.com*
 
 Please find more details within that file!
